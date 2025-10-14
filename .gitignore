@@ -141,3 +141,4 @@ artifacts/*
 cache/*
 /ignition
 .vscode_hardhat_config_1760472460674.ts
+.vscode/settings.json

@@ -40,7 +40,7 @@ const config: HardhatUserConfig = {
         mainnet: {
             type: "http",
             chainType: "l1",
-            url: "https://ethereum-rpc.publicnode.com",
+            url: "https://1rpc.io/eth",
             accounts: [configVariable("MAINNET_PRIVATE_KEY")],
         },
         arbitrum: {

@@ -42,6 +42,7 @@ const config: HardhatUserConfig = {
             chainType: "l1",
             url: "https://1rpc.io/eth",
             accounts: [configVariable("MAINNET_PRIVATE_KEY")],
+            gasPrice: "auto",
         },
         arbitrum: {
             type: "http",

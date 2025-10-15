@@ -136,6 +136,34 @@ contract Hackathon {
         emit SubmissionMade(msg.sender, _projectName);
     }
 
+    /**
+     * @dev Submits a project for this hackathon (with specified participant)
+     * @param _participant Address of the participant
+     * @param _projectName Name of the project
+     * @param _projectUrl URL of the project repository or demo
+     */
+    function submitProjectForParticipant(
+        address _participant,
+        string memory _projectName,
+        string memory _projectUrl
+    ) external hackathonActive {
+        require(_participant != address(0), "Invalid participant address");
+        require(isRegistered[_participant], "Not registered for this hackathon");
+        require(!hasSubmitted[_participant], "Already submitted");
+
+        submissions[_participant] = Submission({
+            participant: _participant,
+            projectName: _projectName,
+            projectUrl: _projectUrl,
+            submissionTime: block.timestamp,
+            score: 0
+        });
+
+        hasSubmitted[_participant] = true;
+
+        emit SubmissionMade(_participant, _projectName);
+    }
+
 
     /**
      * @dev Checks if an address is registered for this hackathon

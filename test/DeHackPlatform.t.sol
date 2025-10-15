@@ -459,12 +459,21 @@ contract DeHackPlatformTest is Test {
             ,
         ) = platform.getHackathonDetails(1);
 
-        assertEq(storedName, name);
-        assertEq(storedPrize, prizeAmount);
+        assertEq(
+            storedName,
+            name
+        );
+
+        assertEq(
+            storedPrize,
+            prizeAmount
+        );
     }
 
     // Helper function to create a default hackathon
-    function _createDefaultHackathon() internal {
+    function _createDefaultHackathon()
+        internal
+    {
         vm.prank(organizer);
         platform.createHackathon{value: PRIZE_POOL}(
             "Web3 Hackathon",

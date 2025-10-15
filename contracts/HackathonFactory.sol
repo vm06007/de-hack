@@ -74,21 +74,123 @@ contract HackathonFactory {
     }
 
     /**
+     * @dev Creates a new hackathon contract with specified organizer
+     * @param _name Name of the hackathon
+     * @param _description Description of the hackathon
+     * @param _startTime Start time in Unix timestamp
+     * @param _endTime End time in Unix timestamp
+     * @param _organizer Address of the organizer
+     * @return hackathonAddress Address of the newly created hackathon
+     */
+    function createHackathonWithOrganizer(
+        string memory _name,
+        string memory _description,
+        uint256 _startTime,
+        uint256 _endTime,
+        address _organizer
+    )
+        external
+        payable
+        returns (address hackathonAddress)
+    {
+        // Deploy new hackathon contract
+        Hackathon newHackathon = new Hackathon{value: msg.value}(
+            _name,
+            _description,
+            _startTime,
+            _endTime,
+            _organizer
+        );
+
+        hackathonAddress = address(newHackathon);
+
+        // Store the hackathon address
+        uint256 organizerIndex = organizerHackathonCount[_organizer];
+        organizerHackathons[_organizer][organizerIndex] = hackathonAddress;
+        organizerHackathonCount[_organizer]++;
+        totalHackathons++;
+
+        emit HackathonCreated(
+            hackathonAddress,
+            _name,
+            _organizer,
+            msg.value
+        );
+
+        return hackathonAddress;
+    }
+
+    /**
      * @dev Registers a participant for a specific hackathon
      * @param _hackathonAddress Address of the hackathon contract
      */
-    function registerForHackathon(address _hackathonAddress) external {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
+    function registerForHackathon(
+        address _hackathonAddress
+    )
+        external
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
 
-        Hackathon hackathon = Hackathon(_hackathonAddress);
-        hackathon.registerParticipant(msg.sender);
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        hackathon.registerParticipant(
+            msg.sender
+        );
 
         // Track participant's hackathons
         uint256 participantIndex = participantHackathonCount[msg.sender];
         participantHackathons[msg.sender][participantIndex] = _hackathonAddress;
         participantHackathonCount[msg.sender]++;
 
-        emit ParticipantRegistered(_hackathonAddress, msg.sender);
+        emit ParticipantRegistered(
+            _hackathonAddress,
+            msg.sender
+        );
+    }
+
+    /**
+     * @dev Registers a participant for a specific hackathon (with specified participant)
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _participant Address of the participant to register
+     */
+    function registerParticipantForHackathon(
+        address _hackathonAddress,
+        address _participant
+    )
+        external
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        require(
+            _participant != address(0),
+            "Invalid participant address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        hackathon.registerParticipant(
+            _participant
+        );
+
+        // Track participant's hackathons
+        uint256 participantIndex = participantHackathonCount[_participant];
+        participantHackathons[_participant][participantIndex] = _hackathonAddress;
+        participantHackathonCount[_participant]++;
+
+        emit ParticipantRegistered(
+            _hackathonAddress,
+            _participant
+        );
     }
 
     // Note: For project submissions, participants should interact directly with the hackathon contract
@@ -98,7 +200,11 @@ contract HackathonFactory {
     /**
      * @dev Gets the total number of hackathons created
      */
-    function getHackathonCount() external view returns (uint256) {
+    function getHackathonCount()
+        external
+        view
+        returns (uint256)
+    {
         return totalHackathons;
     }
 
@@ -106,16 +212,32 @@ contract HackathonFactory {
      * @dev Gets the number of hackathons created by a specific organizer
      * @param _organizer Address of the organizer
      */
-    function getOrganizerHackathonCount(address _organizer) external view returns (uint256) {
-        return organizerHackathonCount[_organizer];
+    function getOrganizerHackathonCount(
+        address _organizer
+    )
+        external
+        view
+        returns (uint256)
+    {
+        return organizerHackathonCount[
+            _organizer
+        ];
     }
 
     /**
      * @dev Gets the number of hackathons a participant is registered for
      * @param _participant Address of the participant
      */
-    function getParticipantHackathonCount(address _participant) external view returns (uint256) {
-        return participantHackathonCount[_participant];
+    function getParticipantHackathonCount(
+        address _participant
+    )
+        external
+        view
+        returns (uint256)
+    {
+        return participantHackathonCount[
+            _participant
+        ];
     }
 
     /**
@@ -123,8 +245,19 @@ contract HackathonFactory {
      * @param _organizer Address of the organizer
      * @param _index Index of the hackathon
      */
-    function getOrganizerHackathon(address _organizer, uint256 _index) external view returns (address) {
-        require(_index < organizerHackathonCount[_organizer], "Index out of bounds");
+    function getOrganizerHackathon(
+        address _organizer,
+        uint256 _index
+    )
+        external
+        view
+        returns (address)
+    {
+        require(
+            _index < organizerHackathonCount[_organizer],
+            "Index out of bounds"
+        );
+
         return organizerHackathons[_organizer][_index];
     }
 
@@ -133,8 +266,19 @@ contract HackathonFactory {
      * @param _participant Address of the participant
      * @param _index Index of the hackathon
      */
-    function getParticipantHackathon(address _participant, uint256 _index) external view returns (address) {
-        require(_index < participantHackathonCount[_participant], "Index out of bounds");
+    function getParticipantHackathon(
+        address _participant,
+        uint256 _index
+    )
+        external
+        view
+        returns (address)
+    {
+        require(
+            _index < participantHackathonCount[_participant],
+            "Index out of bounds"
+        );
+
         return participantHackathons[_participant][_index];
     }
 
@@ -142,19 +286,30 @@ contract HackathonFactory {
      * @dev Gets hackathon details from a specific hackathon contract
      * @param _hackathonAddress Address of the hackathon contract
      */
-    function getHackathonDetails(address _hackathonAddress) external view returns (
-        string memory name,
-        string memory description,
-        uint256 startTime,
-        uint256 endTime,
-        uint256 prizePool,
-        address organizer,
-        bool isActive,
-        uint256 participantCount
+    function getHackathonDetails(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (
+            string memory name,
+            string memory description,
+            uint256 startTime,
+            uint256 endTime,
+            uint256 prizePool,
+            address organizer,
+            bool isActive,
+            uint256 participantCount
     ) {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
 
-        Hackathon hackathon = Hackathon(_hackathonAddress);
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
         return hackathon.getHackathonDetails();
     }
 
@@ -163,11 +318,26 @@ contract HackathonFactory {
      * @param _hackathonAddress Address of the hackathon contract
      * @param _participant Address of the participant to check
      */
-    function isParticipantRegistered(address _hackathonAddress, address _participant) external view returns (bool) {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
+    function isParticipantRegistered(
+        address _hackathonAddress,
+        address _participant
+    )
+        external
+        view
+        returns (bool)
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
 
-        Hackathon hackathon = Hackathon(_hackathonAddress);
-        return hackathon.isParticipantRegistered(_participant);
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        return hackathon.isParticipantRegistered(
+            _participant
+        );
     }
 
     /**
@@ -175,17 +345,31 @@ contract HackathonFactory {
      * @param _hackathonAddress Address of the hackathon contract
      * @param _participant Address of the participant
      */
-    function getSubmission(address _hackathonAddress, address _participant) external view returns (
-        address participant,
-        string memory projectName,
-        string memory projectUrl,
-        uint256 submissionTime,
-        uint256 score
+    function getSubmission(
+        address _hackathonAddress,
+        address _participant
+    )
+        external
+        view
+        returns (
+            address participant,
+            string memory projectName,
+            string memory projectUrl,
+            uint256 submissionTime,
+            uint256 score
     ) {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
 
-        Hackathon hackathon = Hackathon(_hackathonAddress);
-        return hackathon.getSubmission(_participant);
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        return hackathon.getSubmission(
+            _participant
+        );
     }
 
     // Note: For organizer-only functions like distributePrize, emergencyWithdraw, and endHackathon,

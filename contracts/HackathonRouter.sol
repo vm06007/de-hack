@@ -62,11 +62,12 @@ contract HackathonRouter {
         payable
         returns (address hackathonAddress)
     {
-        hackathonAddress = factory.createHackathon{value: msg.value}(
+        hackathonAddress = factory.createHackathonWithOrganizer{value: msg.value}(
             _name,
             _description,
             _startTime,
-            _endTime
+            _endTime,
+            msg.sender
         );
 
         emit HackathonCreated(
@@ -93,8 +94,9 @@ contract HackathonRouter {
             "Invalid hackathon address"
         );
 
-        factory.registerForHackathon(
-            _hackathonAddress
+        factory.registerParticipantForHackathon(
+            _hackathonAddress,
+            msg.sender
         );
 
         emit ParticipantRegistered(
@@ -125,7 +127,8 @@ contract HackathonRouter {
             _hackathonAddress
         );
 
-        hackathon.submitProject(
+        hackathon.submitProjectForParticipant(
+            msg.sender,
             _projectName,
             _projectUrl
         );

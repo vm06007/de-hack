@@ -170,7 +170,8 @@ contract HackathonRouterTest is Test {
             string memory projectName,
             string memory projectUrl,
             uint256 submissionTime,
-            uint256 score
+            uint256 score,
+            bool isEvaluated
         ) = router.getSubmission(hackathonAddress, participant1);
 
         assertEq(submitter, participant1);

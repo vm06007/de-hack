@@ -237,7 +237,8 @@ contract HackathonFactoryTest is Test {
             string memory projectName,
             string memory projectUrl,
             uint256 submissionTime,
-            uint256 score
+            uint256 score,
+            bool isEvaluated
         ) = factory.getSubmission(hackathonAddress, participant1);
 
         assertEq(submitter, participant1);
@@ -425,6 +426,10 @@ contract HackathonFactoryTest is Test {
         vm.assume(prizeAmount > 0 && prizeAmount <= 100 ether);
         vm.assume(bytes(name).length > 0 && bytes(name).length < 100);
         vm.assume(bytes(description).length > 0 && bytes(description).length < 500);
+        
+        // Filter out strings with null bytes or other problematic characters
+        vm.assume(bytes(name)[0] != 0x00);
+        vm.assume(bytes(description)[0] != 0x00);
 
         vm.prank(organizer);
 

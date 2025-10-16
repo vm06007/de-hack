@@ -173,7 +173,8 @@ contract HackathonTest is Test {
             string memory projectName,
             string memory projectUrl,
             uint256 submissionTime,
-            uint256 score
+            uint256 score,
+            bool isEvaluated
         ) = hackathon.getSubmission(participant1);
 
         assertEq(
@@ -279,7 +280,7 @@ contract HackathonTest is Test {
         vm.warp(block.timestamp + START_OFFSET + DURATION + 1);
 
         vm.prank(participant1);
-        vm.expectRevert("Only organizer can call this function");
+        vm.expectRevert("Only organizer or sponsors can distribute prizes");
         hackathon.distributePrize(participant1, 5 ether);
     }
 

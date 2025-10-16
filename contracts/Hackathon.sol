@@ -13,6 +13,13 @@ contract Hackathon {
         string projectUrl;
         uint256 submissionTime;
         uint256 score;
+        bool isEvaluated;
+    }
+
+    struct Sponsor {
+        address sponsorAddress;
+        uint256 contribution;
+        bool isActive;
     }
 
     // Hackathon details
@@ -30,10 +37,20 @@ contract Hackathon {
     mapping(address => bool) public hasSubmitted;
     mapping(address => bool) public isRegistered;
 
+    // Sponsors and judges
+    mapping(address => Sponsor) public sponsors;
+    mapping(address => bool) public isJudge;
+    address[] public sponsorList;
+    address[] public judgeList;
+    uint256 public totalSponsorContributions;
+
     event ParticipantRegistered(address indexed participant);
     event SubmissionMade(address indexed participant, string projectName);
     event PrizeDistributed(address indexed winner, uint256 amount);
     event HackathonEnded();
+    event SponsorAdded(address indexed sponsor, uint256 contribution);
+    event JudgeAdded(address indexed judge);
+    event SubmissionScored(address indexed participant, uint256 score);
 
     modifier onlyOrganizer() {
         require(msg.sender == organizer, "Only organizer can call this function");
@@ -49,6 +66,16 @@ contract Hackathon {
 
     modifier onlyRegistered() {
         require(isRegistered[msg.sender], "Not registered for this hackathon");
+        _;
+    }
+
+    modifier onlySponsor() {
+        require(sponsors[msg.sender].isActive, "Only sponsors can call this function");
+        _;
+    }
+
+    modifier onlyJudge() {
+        require(isJudge[msg.sender], "Only judges can call this function");
         _;
     }
 
@@ -80,6 +107,7 @@ contract Hackathon {
         organizer = _organizer;
         isActive = true;
         participantCount = 0;
+        totalSponsorContributions = 0;
     }
 
     /**
@@ -128,7 +156,8 @@ contract Hackathon {
             projectName: _projectName,
             projectUrl: _projectUrl,
             submissionTime: block.timestamp,
-            score: 0
+            score: 0,
+            isEvaluated: false
         });
 
         hasSubmitted[msg.sender] = true;
@@ -156,7 +185,8 @@ contract Hackathon {
             projectName: _projectName,
             projectUrl: _projectUrl,
             submissionTime: block.timestamp,
-            score: 0
+            score: 0,
+            isEvaluated: false
         });
 
         hasSubmitted[_participant] = true;
@@ -182,7 +212,8 @@ contract Hackathon {
         string memory projectName,
         string memory projectUrl,
         uint256 submissionTime,
-        uint256 score
+        uint256 score,
+        bool isEvaluated
     ) {
         Submission storage submission = submissions[_participant];
         return (
@@ -190,16 +221,23 @@ contract Hackathon {
             submission.projectName,
             submission.projectUrl,
             submission.submissionTime,
-            submission.score
+            submission.score,
+            submission.isEvaluated
         );
     }
 
     /**
-     * @dev Distributes prize to winner (only organizer)
+     * @dev Distributes prize to winner (only organizer or sponsors)
      * @param _winner Address of the winner
      * @param _amount Amount to distribute
      */
-    function distributePrize(address _winner, uint256 _amount) external onlyOrganizer {
+    function distributePrize(
+        address _winner,
+        uint256 _amount
+    )
+        external
+    {
+        require(msg.sender == organizer || sponsors[msg.sender].isActive, "Only organizer or sponsors can distribute prizes");
         require(!isActive || block.timestamp > endTime, "Hackathon is still active");
         require(_amount <= prizePool, "Amount exceeds prize pool");
         require(_amount > 0, "Amount must be greater than 0");
@@ -262,14 +300,113 @@ contract Hackathon {
     /**
      * @dev Checks if hackathon is currently accepting registrations
      */
-    function isRegistrationOpen() external view returns (bool) {
+    function isRegistrationOpen()
+        external
+        view
+        returns (bool)
+    {
         return isActive && block.timestamp < startTime;
     }
 
     /**
      * @dev Checks if hackathon is currently accepting submissions
      */
-    function isSubmissionOpen() external view returns (bool) {
+    function isSubmissionOpen()
+        external
+        view
+        returns (bool)
+    {
         return isActive && block.timestamp >= startTime && block.timestamp <= endTime;
+    }
+
+    /**
+     * @dev Adds a sponsor to the hackathon (only organizer)
+     * @param _sponsor Address of the sponsor
+     */
+    function addSponsor(address _sponsor) external onlyOrganizer {
+        require(_sponsor != address(0), "Invalid sponsor address");
+        require(!sponsors[_sponsor].isActive, "Sponsor already added");
+
+        sponsors[_sponsor] = Sponsor({
+            sponsorAddress: _sponsor,
+            contribution: 0,
+            isActive: true
+        });
+
+        sponsorList.push(_sponsor);
+        emit SponsorAdded(_sponsor, 0);
+    }
+
+    /**
+     * @dev Allows a sponsor to contribute funds to the hackathon
+     */
+    function sponsorContribute() external payable {
+        require(sponsors[msg.sender].isActive, "Not an active sponsor");
+        require(msg.value > 0, "Contribution must be greater than 0");
+
+        sponsors[msg.sender].contribution += msg.value;
+        totalSponsorContributions += msg.value;
+        prizePool += msg.value;
+
+        emit SponsorAdded(msg.sender, msg.value);
+    }
+
+    /**
+     * @dev Adds a judge to the hackathon (only organizer)
+     * @param _judge Address of the judge
+     */
+    function addJudge(address _judge) external onlyOrganizer {
+        require(_judge != address(0), "Invalid judge address");
+        require(!isJudge[_judge], "Judge already added");
+
+        isJudge[_judge] = true;
+        judgeList.push(_judge);
+
+        emit JudgeAdded(_judge);
+    }
+
+    /**
+     * @dev Allows a judge to score a submission
+     * @param _participant Address of the participant
+     * @param _score Score to assign (0-100)
+     */
+    function scoreSubmission(address _participant, uint256 _score) external onlyJudge {
+        require(hasSubmitted[_participant], "No submission found");
+        require(_score <= 100, "Score must be between 0 and 100");
+        require(!submissions[_participant].isEvaluated, "Submission already evaluated");
+
+        submissions[_participant].score = _score;
+        submissions[_participant].isEvaluated = true;
+
+        emit SubmissionScored(_participant, _score);
+    }
+
+    /**
+     * @dev Gets all sponsors
+     */
+    function getSponsors() external view returns (address[] memory) {
+        return sponsorList;
+    }
+
+    /**
+     * @dev Gets all judges
+     */
+    function getJudges() external view returns (address[] memory) {
+        return judgeList;
+    }
+
+    /**
+     * @dev Gets sponsor contribution amount
+     * @param _sponsor Address of the sponsor
+     */
+    function getSponsorContribution(address _sponsor) external view returns (uint256) {
+        return sponsors[_sponsor].contribution;
+    }
+
+    /**
+     * @dev Gets total prize pool including sponsor contributions
+     */
+    function getTotalPrizePool() external view returns (uint256) {
+        return prizePool;
     }
 }

@@ -356,7 +356,8 @@ contract HackathonFactory {
             string memory projectName,
             string memory projectUrl,
             uint256 submissionTime,
-            uint256 score
+            uint256 score,
+            bool isEvaluated
     ) {
         require(
             _hackathonAddress != address(0),
@@ -370,6 +371,91 @@ contract HackathonFactory {
         return hackathon.getSubmission(
             _participant
         );
+    }
+
+    /**
+     * @dev Adds a sponsor to a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _sponsor Address of the sponsor
+     */
+    function addSponsor(address _hackathonAddress, address _sponsor) external {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.addSponsor(_sponsor);
+    }
+
+    /**
+     * @dev Allows a sponsor to contribute to a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function sponsorContribute(address _hackathonAddress) external payable {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.sponsorContribute{value: msg.value}();
+    }
+
+    /**
+     * @dev Adds a judge to a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _judge Address of the judge
+     */
+    function addJudge(address _hackathonAddress, address _judge) external {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.addJudge(_judge);
+    }
+
+    /**
+     * @dev Allows a judge to score a submission
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _participant Address of the participant
+     * @param _score Score to assign (0-100)
+     */
+    function scoreSubmission(address _hackathonAddress, address _participant, uint256 _score) external {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.scoreSubmission(_participant, _score);
+    }
+
+    /**
+     * @dev Gets all sponsors for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getSponsors(address _hackathonAddress) external view returns (address[] memory) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getSponsors();
+    }
+
+    /**
+     * @dev Gets all judges for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getJudges(address _hackathonAddress) external view returns (address[] memory) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getJudges();
+    }
+
+    /**
+     * @dev Gets sponsor contribution for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _sponsor Address of the sponsor
+     */
+    function getSponsorContribution(address _hackathonAddress, address _sponsor) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getSponsorContribution(_sponsor);
+    }
+
+    /**
+     * @dev Gets total prize pool for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getTotalPrizePool(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getTotalPrizePool();
     }
 
     // Note: For organizer-only functions like distributePrize, emergencyWithdraw, and endHackathon,

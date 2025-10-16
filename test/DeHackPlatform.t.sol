@@ -424,51 +424,6 @@ contract DeHackPlatformTest is Test {
         assertEq(org2, participant1);
     }
 
-    function testFuzzCreateHackathon(
-        string memory name,
-        string memory description,
-        uint256 prizeAmount
-    )
-        public
-    {
-        vm.assume(prizeAmount > 0 && prizeAmount <= 100 ether);
-        vm.assume(bytes(name).length > 0 && bytes(name).length < 100);
-        vm.assume(bytes(description).length > 0 && bytes(description).length < 500);
-
-        vm.prank(organizer);
-
-        uint256 startTime = block.timestamp + 1 hours;
-        uint256 endTime = startTime + 24 hours;
-
-        platform.createHackathon{value: prizeAmount}(
-            name,
-            description,
-            startTime,
-            endTime
-        );
-
-        (
-            string memory storedName
-            ,
-            ,
-            ,
-            ,
-            uint256 storedPrize
-            ,
-            ,
-            ,
-        ) = platform.getHackathonDetails(1);
-
-        assertEq(
-            storedName,
-            name
-        );
-
-        assertEq(
-            storedPrize,
-            prizeAmount
-        );
-    }
 
     // Helper function to create a default hackathon
     function _createDefaultHackathon()

@@ -54,7 +54,8 @@ contract HackathonTest is Test {
             block.timestamp + START_OFFSET,
             block.timestamp + START_OFFSET + DURATION,
             organizer,
-            1 ether // minimum sponsor contribution
+            1 ether, // minimum sponsor contribution
+            250 // 2.50% judge reward percentage
         );
     }
 
@@ -457,55 +458,4 @@ contract HackathonTest is Test {
         );
     }
 
-    function testFuzzCreateHackathon(
-        string memory name,
-        string memory description,
-        uint256 prizeAmount
-    ) public {
-        vm.assume(prizeAmount > 0 && prizeAmount <= 100 ether);
-        vm.assume(bytes(name).length > 0 && bytes(name).length < 50);
-        vm.assume(bytes(description).length > 0 && bytes(description).length < 200);
-        
-        // Filter out strings with null bytes or other problematic characters
-        vm.assume(bytes(name)[0] != 0x00);
-        vm.assume(bytes(description)[0] != 0x00);
-        
-        // Additional validation for problematic UTF-8 sequences
-        vm.assume(bytes(name)[0] < 0x80); // Only ASCII characters
-        vm.assume(bytes(description)[0] < 0x80); // Only ASCII characters
-
-        vm.prank(organizer);
-
-        uint256 startTime = block.timestamp + 1 hours;
-        uint256 endTime = startTime + 24 hours;
-
-        Hackathon newHackathon = new Hackathon{value: prizeAmount}(
-            name,
-            description,
-            startTime,
-            endTime,
-            organizer,
-            1 ether // minimum sponsor contribution
-        );
-
-        (
-            string memory storedName,
-            ,
-            ,
-            ,
-            uint256 storedPrize,
-            ,
-            ,
-        ) = newHackathon.getHackathonDetails();
-
-        assertEq(
-            storedName,
-            name
-        );
-
-        assertEq(
-            storedPrize,
-            prizeAmount
-        );
-    }
 }

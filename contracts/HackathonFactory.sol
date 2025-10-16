@@ -39,6 +39,7 @@ contract HackathonFactory {
      * @param _startTime Start time in Unix timestamp
      * @param _endTime End time in Unix timestamp
      * @param _minimumSponsorContribution Minimum contribution required to become a sponsor
+     * @param _judgeRewardPercentage Judge reward percentage (0-500, representing 0.00% to 5.00%)
      * @return hackathonAddress Address of the newly created hackathon
      */
     function createHackathon(
@@ -46,7 +47,8 @@ contract HackathonFactory {
         string memory _description,
         uint256 _startTime,
         uint256 _endTime,
-        uint256 _minimumSponsorContribution
+        uint256 _minimumSponsorContribution,
+        uint256 _judgeRewardPercentage
     )
         external
         payable
@@ -61,7 +63,8 @@ contract HackathonFactory {
             _startTime,
             _endTime,
             msg.sender,
-            _minimumSponsorContribution
+            _minimumSponsorContribution,
+            _judgeRewardPercentage
         );
 
         hackathonAddress = address(
@@ -95,6 +98,8 @@ contract HackathonFactory {
      * @param _endTime End time in Unix timestamp
      * @param _organizer Address of the organizer
      * @param _minimumSponsorContribution Minimum contribution required to become a sponsor
+     * @param _selectedJudges Array of judge addresses to assign to this hackathon
+     * @param _judgeRewardPercentage Judge reward percentage (0-500, representing 0.00% to 5.00%)
      * @return hackathonAddress Address of the newly created hackathon
      */
     function createHackathonWithOrganizer(
@@ -103,7 +108,9 @@ contract HackathonFactory {
         uint256 _startTime,
         uint256 _endTime,
         address _organizer,
-        uint256 _minimumSponsorContribution
+        uint256 _minimumSponsorContribution,
+        address[] memory _selectedJudges,
+        uint256 _judgeRewardPercentage
     )
         external
         payable
@@ -116,8 +123,17 @@ contract HackathonFactory {
             _startTime,
             _endTime,
             _organizer,
-            _minimumSponsorContribution
+            _minimumSponsorContribution,
+            _judgeRewardPercentage
         );
+
+        // Add selected judges to the hackathon
+        for (uint256 i = 0; i < _selectedJudges.length; i++) {
+            newHackathon.addJudge(_selectedJudges[i]);
+        }
+
+        // Disable factory access to add judges after deployment
+        newHackathon.disableFactoryJudgeAccess();
 
         hackathonAddress = address(newHackathon);
 
@@ -417,7 +433,8 @@ contract HackathonFactory {
      * @param _participant Address of the participant
      * @param _score Score to assign (0-100)
      */
-    function scoreSubmission(address _hackathonAddress, address _participant, uint256 _score) external {
+    function scoreSubmission(
+        address _hackathonAddress, address _participant, uint256 _score) external {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
         Hackathon hackathon = Hackathon(_hackathonAddress);
         hackathon.scoreSubmission(_participant, _score);
@@ -472,6 +489,46 @@ contract HackathonFactory {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
         Hackathon hackathon = Hackathon(_hackathonAddress);
         return hackathon.getMinimumSponsorContribution();
+    }
+
+    /**
+     * @dev Allows judges to claim their reward
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function claimJudgeReward(address _hackathonAddress) external {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.claimJudgeReward();
+    }
+
+    /**
+     * @dev Gets judge reward pool for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getJudgeRewardPool(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getJudgeRewardPool();
+    }
+
+    /**
+     * @dev Gets reward per judge for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getRewardPerJudge(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getRewardPerJudge();
+    }
+
+    /**
+     * @dev Gets judge reward percentage for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getJudgeRewardPercentage(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getJudgeRewardPercentage();
     }
 
     // Note: For organizer-only functions like distributePrize, emergencyWithdraw, and endHackathon,

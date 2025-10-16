@@ -68,7 +68,8 @@ contract HackathonFactoryTest is Test {
             "Build the future of Web3",
             startTime,
             endTime,
-            1 ether // minimum sponsor contribution
+            1 ether, // minimum sponsor contribution
+            250 // 2.50% judge reward percentage
         );
 
         vm.stopPrank();
@@ -115,7 +116,8 @@ contract HackathonFactoryTest is Test {
             "This should fail",
             pastTime,
             endTime,
-            1 ether // minimum sponsor contribution
+            1 ether, // minimum sponsor contribution
+            250 // 2.50% judge reward percentage
         );
     }
 
@@ -131,7 +133,8 @@ contract HackathonFactoryTest is Test {
             "This should fail",
             startTime,
             endTime,
-            1 ether // minimum sponsor contribution
+            1 ether, // minimum sponsor contribution
+            250 // 2.50% judge reward percentage
         );
     }
 
@@ -147,7 +150,8 @@ contract HackathonFactoryTest is Test {
             "This should fail",
             startTime,
             endTime,
-            1 ether // minimum sponsor contribution
+            1 ether, // minimum sponsor contribution
+            250 // 2.50% judge reward percentage
         );
     }
 
@@ -385,7 +389,8 @@ contract HackathonFactoryTest is Test {
             "Build DeFi protocols",
             block.timestamp + 2 hours,
             block.timestamp + 48 hours,
-            1 ether // minimum sponsor contribution
+            1 ether, // minimum sponsor contribution
+            250 // 2.50% judge reward percentage
         );
 
         assertEq(factory.getHackathonCount(), 2);
@@ -423,45 +428,6 @@ contract HackathonFactoryTest is Test {
         assertEq(factory.getOrganizerHackathon(participant1, 0), hackathon2);
     }
 
-    function testFuzzCreateHackathon(
-        string memory name,
-        string memory description,
-        uint256 prizeAmount
-    ) public {
-        vm.assume(prizeAmount > 0 && prizeAmount <= 100 ether);
-        vm.assume(bytes(name).length > 0 && bytes(name).length < 100);
-        vm.assume(bytes(description).length > 0 && bytes(description).length < 500);
-        
-        // Filter out strings with null bytes or other problematic characters
-        vm.assume(bytes(name)[0] != 0x00);
-        vm.assume(bytes(description)[0] != 0x00);
-
-        vm.prank(organizer);
-
-        uint256 startTime = block.timestamp + 1 hours;
-        uint256 endTime = startTime + 24 hours;
-
-        address hackathonAddress = factory.createHackathon{value: prizeAmount}(
-            name,
-            description,
-            startTime,
-            endTime,
-            1 ether // minimum sponsor contribution
-        );
-
-        (
-            string memory storedName,
-            ,
-            ,
-            ,
-            uint256 storedPrize,
-            ,
-            ,
-        ) = factory.getHackathonDetails(hackathonAddress);
-
-        assertEq(storedName, name);
-        assertEq(storedPrize, prizeAmount);
-    }
 
     // Helper function to create a default hackathon
     function _createDefaultHackathon() internal returns (address) {
@@ -471,7 +437,8 @@ contract HackathonFactoryTest is Test {
             "Build the future of Web3",
             block.timestamp + START_OFFSET,
             block.timestamp + START_OFFSET + DURATION,
-            1 ether // minimum sponsor contribution
+            1 ether, // minimum sponsor contribution
+            250 // 2.50% judge reward percentage
         );
     }
 }

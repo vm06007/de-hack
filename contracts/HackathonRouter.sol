@@ -12,6 +12,23 @@ import "./Hackathon.sol";
 contract HackathonRouter {
 
     HackathonFactory public immutable factory;
+    
+    // Global judge governance
+    mapping(address => bool) public isGlobalJudge;
+    address[] public globalJudges;
+    uint256 public totalGlobalJudges;
+    
+    // Judge voting system
+    struct JudgeVote {
+        address voter;
+        address candidate;
+        bool isAdd; // true for adding, false for removing
+        bool hasVoted;
+    }
+    
+    mapping(bytes32 => mapping(address => bool)) public hasVotedOnProposal;
+    mapping(bytes32 => uint256) public votesForProposal;
+    mapping(bytes32 => JudgeVote) public judgeProposals;
 
     event HackathonCreated(
         address indexed hackathonAddress,
@@ -30,9 +47,16 @@ contract HackathonRouter {
         address indexed participant,
         string projectName
     );
+    
+    event GlobalJudgeAdded(address indexed judge);
+    event GlobalJudgeRemoved(address indexed judge);
+    event JudgeProposalCreated(bytes32 indexed proposalId, address indexed candidate, bool isAdd);
+    event JudgeProposalVoted(bytes32 indexed proposalId, address indexed voter);
+    event JudgeProposalExecuted(bytes32 indexed proposalId, address indexed candidate, bool isAdd);
 
     constructor(
-        address _factory
+        address _factory,
+        address[] memory _initialJudges
     ) {
         require(
             _factory != address(0),
@@ -42,6 +66,122 @@ contract HackathonRouter {
         factory = HackathonFactory(
             _factory
         );
+        
+        // Initialize with default judges
+        for (uint256 i = 0; i < _initialJudges.length; i++) {
+            require(_initialJudges[i] != address(0), "Invalid judge address");
+            isGlobalJudge[_initialJudges[i]] = true;
+            globalJudges.push(_initialJudges[i]);
+            emit GlobalJudgeAdded(_initialJudges[i]);
+        }
+        totalGlobalJudges = _initialJudges.length;
+    }
+
+    /**
+     * @dev Modifier to ensure only global judges can call certain functions
+     */
+    modifier onlyGlobalJudge() {
+        require(isGlobalJudge[msg.sender], "Only global judges can call this function");
+        _;
+    }
+    
+    /**
+     * @dev Calculate required majority for judge proposals
+     * @return Required number of votes (majority of current judges)
+     */
+    function getRequiredMajority() public view returns (uint256) {
+        if (totalGlobalJudges <= 1) return 1;
+        return (totalGlobalJudges / 2) + 1; // Simple majority
+    }
+    
+    /**
+     * @dev Propose to add or remove a judge
+     * @param _candidate Address of the judge to add/remove
+     * @param _isAdd True to add, false to remove
+     */
+    function proposeJudgeChange(address _candidate, bool _isAdd) external onlyGlobalJudge {
+        require(_candidate != address(0), "Invalid candidate address");
+        
+        if (_isAdd) {
+            require(!isGlobalJudge[_candidate], "Judge already exists");
+        } else {
+            require(isGlobalJudge[_candidate], "Judge does not exist");
+            require(totalGlobalJudges > 1, "Cannot remove last judge");
+        }
+        
+        bytes32 proposalId = keccak256(abi.encodePacked(_candidate, _isAdd, block.timestamp));
+        
+        judgeProposals[proposalId] = JudgeVote({
+            voter: msg.sender,
+            candidate: _candidate,
+            isAdd: _isAdd,
+            hasVoted: false
+        });
+        
+        emit JudgeProposalCreated(proposalId, _candidate, _isAdd);
+    }
+    
+    /**
+     * @dev Vote on a judge proposal
+     * @param _proposalId The proposal ID to vote on
+     */
+    function voteOnJudgeProposal(bytes32 _proposalId) external onlyGlobalJudge {
+        require(judgeProposals[_proposalId].voter != address(0), "Proposal does not exist");
+        require(!hasVotedOnProposal[_proposalId][msg.sender], "Already voted on this proposal");
+        
+        hasVotedOnProposal[_proposalId][msg.sender] = true;
+        votesForProposal[_proposalId]++;
+        
+        emit JudgeProposalVoted(_proposalId, msg.sender);
+        
+        // Check if majority reached
+        if (votesForProposal[_proposalId] >= getRequiredMajority()) {
+            _executeJudgeProposal(_proposalId);
+        }
+    }
+    
+    /**
+     * @dev Execute a judge proposal when majority is reached
+     * @param _proposalId The proposal ID to execute
+     */
+    function _executeJudgeProposal(bytes32 _proposalId) internal {
+        JudgeVote memory proposal = judgeProposals[_proposalId];
+        
+        if (proposal.isAdd) {
+            isGlobalJudge[proposal.candidate] = true;
+            globalJudges.push(proposal.candidate);
+            totalGlobalJudges++;
+            emit GlobalJudgeAdded(proposal.candidate);
+        } else {
+            isGlobalJudge[proposal.candidate] = false;
+            // Remove from array (find and swap with last element)
+            for (uint256 i = 0; i < globalJudges.length; i++) {
+                if (globalJudges[i] == proposal.candidate) {
+                    globalJudges[i] = globalJudges[globalJudges.length - 1];
+                    globalJudges.pop();
+                    break;
+                }
+            }
+            totalGlobalJudges--;
+            emit GlobalJudgeRemoved(proposal.candidate);
+        }
+        
+        emit JudgeProposalExecuted(_proposalId, proposal.candidate, proposal.isAdd);
+    }
+    
+    /**
+     * @dev Get all global judges
+     */
+    function getGlobalJudges() external view returns (address[] memory) {
+        return globalJudges;
+    }
+    
+    /**
+     * @dev Check if an address is a global judge
+     * @param _judge Address to check
+     */
+    function isAddressGlobalJudge(address _judge) external view returns (bool) {
+        return isGlobalJudge[_judge];
     }
 
     /**
@@ -51,6 +191,8 @@ contract HackathonRouter {
      * @param _startTime Start time in Unix timestamp
      * @param _endTime End time in Unix timestamp
      * @param _minimumSponsorContribution Minimum contribution required to become a sponsor
+     * @param _selectedJudges Array of global judge addresses to assign to this hackathon
+     * @param _judgeRewardPercentage Judge reward percentage (0-500, representing 0.00% to 5.00%)
      * @return hackathonAddress Address of the newly created hackathon
      */
     function createHackathon(
@@ -58,19 +200,27 @@ contract HackathonRouter {
         string memory _description,
         uint256 _startTime,
         uint256 _endTime,
-        uint256 _minimumSponsorContribution
+        uint256 _minimumSponsorContribution,
+        address[] memory _selectedJudges,
+        uint256 _judgeRewardPercentage
     )
         external
         payable
         returns (address hackathonAddress)
     {
+        // Validate that all selected judges are in the global whitelist
+        for (uint256 i = 0; i < _selectedJudges.length; i++) {
+            require(isGlobalJudge[_selectedJudges[i]], "Selected judge not in global whitelist");
+        }
         hackathonAddress = factory.createHackathonWithOrganizer{value: msg.value}(
             _name,
             _description,
             _startTime,
             _endTime,
             msg.sender,
-            _minimumSponsorContribution
+            _minimumSponsorContribution,
+            _selectedJudges,
+            _judgeRewardPercentage
         );
 
         emit HackathonCreated(
@@ -407,6 +557,61 @@ contract HackathonRouter {
         returns (uint256)
     {
         return factory.getMinimumSponsorContribution(_hackathonAddress);
+    }
+    
+    /**
+     * @dev Allows judges to claim their reward
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function claimJudgeReward(
+        address _hackathonAddress
+    )
+        external
+    {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        factory.claimJudgeReward(_hackathonAddress);
+    }
+    
+    /**
+     * @dev Gets judge reward pool for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getJudgeRewardPool(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (uint256)
+    {
+        return factory.getJudgeRewardPool(_hackathonAddress);
+    }
+    
+    /**
+     * @dev Gets reward per judge for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getRewardPerJudge(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (uint256)
+    {
+        return factory.getRewardPerJudge(_hackathonAddress);
+    }
+    
+    /**
+     * @dev Gets judge reward percentage for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getJudgeRewardPercentage(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (uint256)
+    {
+        return factory.getJudgeRewardPercentage(_hackathonAddress);
     }
 
 }

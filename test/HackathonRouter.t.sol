@@ -39,7 +39,13 @@ contract HackathonRouterTest is Test {
 
     function setUp() public {
         factory = new HackathonFactory();
-        router = new HackathonRouter(address(factory));
+        
+        // Create initial judges
+        address[] memory initialJudges = new address[](2);
+        initialJudges[0] = makeAddr("judge1");
+        initialJudges[1] = makeAddr("judge2");
+        
+        router = new HackathonRouter(address(factory), initialJudges);
 
         organizer = makeAddr("organizer");
         participant1 = makeAddr("participant1");
@@ -51,6 +57,8 @@ contract HackathonRouterTest is Test {
         vm.deal(participant1, 10 ether);
         vm.deal(participant2, 10 ether);
         vm.deal(participant3, 10 ether);
+        vm.deal(initialJudges[0], 10 ether);
+        vm.deal(initialJudges[1], 10 ether);
     }
 
     function testCreateHackathon() public {
@@ -73,12 +81,17 @@ contract HackathonRouterTest is Test {
             PRIZE_POOL
         );
 
+        // Get initial judges from router
+        address[] memory judges = router.getGlobalJudges();
+        
         address hackathonAddress = router.createHackathon{value: PRIZE_POOL}(
             "Web3 Hackathon",
             "Build the future of Web3",
             startTime,
             endTime,
-            1 ether // minimum sponsor contribution
+            1 ether, // minimum sponsor contribution
+            judges,
+            250 // 2.50% judge reward percentage
         );
 
         vm.stopPrank();
@@ -184,8 +197,9 @@ contract HackathonRouterTest is Test {
 
 
     function testRouterConstructorInvalidFactoryReverts() public {
+        address[] memory emptyJudges = new address[](0);
         vm.expectRevert("Invalid factory address");
-        new HackathonRouter(address(0));
+        new HackathonRouter(address(0), emptyJudges);
     }
 
     function testRegisterForInvalidHackathonReverts() public {
@@ -205,12 +219,17 @@ contract HackathonRouterTest is Test {
     // Helper function to create a default hackathon
     function _createDefaultHackathon() internal returns (address) {
         vm.prank(organizer);
+        // Get initial judges from router
+        address[] memory judges = router.getGlobalJudges();
+        
         return router.createHackathon{value: PRIZE_POOL}(
             "Web3 Hackathon",
             "Build the future of Web3",
             block.timestamp + START_OFFSET,
             block.timestamp + START_OFFSET + DURATION,
-            1 ether // minimum sponsor contribution
+            1 ether, // minimum sponsor contribution
+            judges,
+            250 // 2.50% judge reward percentage
         );
     }
 }

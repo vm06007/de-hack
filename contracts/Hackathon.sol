@@ -199,23 +199,40 @@ contract Hackathon {
      * @dev Checks if an address is registered for this hackathon
      * @param _participant Address to check
      */
-    function isParticipantRegistered(address _participant) external view returns (bool) {
-        return isRegistered[_participant];
+    function isParticipantRegistered(
+        address _participant
+    )
+        external
+        view
+        returns (bool)
+    {
+        return isRegistered[
+            _participant
+        ];
     }
 
     /**
      * @dev Gets submission details for a participant
      * @param _participant Address of the participant
      */
-    function getSubmission(address _participant) external view returns (
-        address participant,
-        string memory projectName,
-        string memory projectUrl,
-        uint256 submissionTime,
-        uint256 score,
-        bool isEvaluated
-    ) {
-        Submission storage submission = submissions[_participant];
+    function getSubmission(
+        address _participant
+    )
+        external
+        view
+        returns (
+            address participant,
+            string memory projectName,
+            string memory projectUrl,
+            uint256 submissionTime,
+            uint256 score,
+            bool isEvaluated
+        )
+    {
+        Submission storage submission = submissions[
+            _participant
+        ];
+
         return (
             submission.participant,
             submission.projectName,
@@ -243,16 +260,28 @@ contract Hackathon {
         require(_amount > 0, "Amount must be greater than 0");
 
         prizePool -= _amount;
-        payable(_winner).transfer(_amount);
 
-        emit PrizeDistributed(_winner, _amount);
+        payable(_winner).transfer(
+            _amount
+        );
+
+        emit PrizeDistributed(
+            _winner,
+            _amount
+        );
     }
 
     /**
      * @dev Emergency function to withdraw funds (only organizer)
      */
-    function emergencyWithdraw() external onlyOrganizer {
-        require(isActive, "Hackathon is not active");
+    function emergencyWithdraw()
+        external
+        onlyOrganizer
+    {
+        require(
+            isActive,
+            "Hackathon is not active"
+        );
 
         uint256 amount = prizePool;
         prizePool = 0;
@@ -264,7 +293,10 @@ contract Hackathon {
     /**
      * @dev Ends the hackathon (only organizer)
      */
-    function endHackathon() external onlyOrganizer {
+    function endHackathon()
+        external
+        onlyOrganizer
+    {
         require(isActive, "Hackathon is not active");
         require(block.timestamp > endTime, "Hackathon has not ended yet");
 
@@ -275,16 +307,20 @@ contract Hackathon {
     /**
      * @dev Gets hackathon details
      */
-    function getHackathonDetails() external view returns (
-        string memory _name,
-        string memory _description,
-        uint256 _startTime,
-        uint256 _endTime,
-        uint256 _prizePool,
-        address _organizer,
-        bool _isActive,
-        uint256 _participantCount
-    ) {
+    function getHackathonDetails()
+        external
+        view
+        returns (
+            string memory _name,
+            string memory _description,
+            uint256 _startTime,
+            uint256 _endTime,
+            uint256 _prizePool,
+            address _organizer,
+            bool _isActive,
+            uint256 _participantCount
+        )
+    {
         return (
             name,
             description,
@@ -323,9 +359,21 @@ contract Hackathon {
      * @dev Adds a sponsor to the hackathon (only organizer)
      * @param _sponsor Address of the sponsor
      */
-    function addSponsor(address _sponsor) external onlyOrganizer {
-        require(_sponsor != address(0), "Invalid sponsor address");
-        require(!sponsors[_sponsor].isActive, "Sponsor already added");
+    function addSponsor(
+        address _sponsor
+    )
+        external
+        onlyOrganizer
+    {
+        require(
+            _sponsor != address(0),
+            "Invalid sponsor address"
+        );
+
+        require(
+            sponsors[_sponsor].isActive == false,
+            "Sponsor already added"
+        );
 
         sponsors[_sponsor] = Sponsor({
             sponsorAddress: _sponsor,
@@ -340,7 +388,10 @@ contract Hackathon {
     /**
      * @dev Allows a sponsor to contribute funds to the hackathon
      */
-    function sponsorContribute() external payable {
+    function sponsorContribute()
+        external
+        payable
+    {
         require(sponsors[msg.sender].isActive, "Not an active sponsor");
         require(msg.value > 0, "Contribution must be greater than 0");
 

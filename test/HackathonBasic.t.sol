@@ -58,7 +58,8 @@ contract HackathonBasicTest is Test {
             250, // 2.50% judge reward percentage
             0.01 ether, // stake amount
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether), // prize distribution [3, 1.5, 0.5] = 5 ether total
-            1 days // prize claim cooldown
+            1 days, // prize claim cooldown
+            1 days // judging duration
         );
         
         hackathon = Hackathon(hackathonAddress);
@@ -75,7 +76,7 @@ contract HackathonBasicTest is Test {
         assertTrue(hackathon.isActive());
         assertEq(hackathon.participantCount(), 0);
         assertEq(hackathon.minimumSponsorContribution(), 1 ether);
-        assertEq(hackathon.judgeRewardPercentage(), 250);
+        assertEq(hackathon.getJudgeRewardPercentage(), 250);
         assertEq(hackathon.getStakeAmount(), 0.01 ether);
         assertEq(hackathon.getMaxWinners(), 3);
         assertEq(hackathon.getPrizeClaimCooldown(), 1 days);

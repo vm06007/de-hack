@@ -23,5 +23,8 @@
         "test:dehack": "hardhat test test/DeHackPlatform.t.sol",
         "deploy:counter": "hardhat ignition deploy ignition/modules/Counter.ts",
         "deploy:mainnet": "hardhat run scripts/deploy-and-verify.ts --network mainnet"
+    },
+    "dependencies": {
+        "@openzeppelin/contracts": "^5.4.0"
     }
 }

@@ -656,4 +656,68 @@ contract HackathonRouter {
         return factory.getJudgeRewardPercentage(_hackathonAddress);
     }
 
+    /**
+     * @dev Allows a judge to delegate their scoring responsibilities to an agent
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _delegate Address of the delegate (agent)
+     */
+    function delegateToAgent(
+        address _hackathonAddress,
+        address _delegate
+    )
+        external
+    {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        factory.delegateToAgent(_hackathonAddress, _delegate);
+    }
+
+    /**
+     * @dev Allows a judge to revoke their delegation
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function revokeDelegation(
+        address _hackathonAddress
+    )
+        external
+    {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        factory.revokeDelegation(_hackathonAddress);
+    }
+
+    /**
+     * @dev Gets the delegate for a judge
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _judge Address of the judge
+     * @return Address of the delegate (address(0) if no delegate)
+     */
+    function getJudgeDelegate(
+        address _hackathonAddress,
+        address _judge
+    )
+        external
+        view
+        returns (address)
+    {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        return factory.getJudgeDelegate(_hackathonAddress, _judge);
+    }
+
+    /**
+     * @dev Gets the judge for a delegate
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _delegate Address of the delegate
+     * @return Address of the judge (address(0) if not a delegate)
+     */
+    function getDelegateJudge(
+        address _hackathonAddress,
+        address _delegate
+    )
+        external
+        view
+        returns (address)
+    {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        return factory.getDelegateJudge(_hackathonAddress, _delegate);
+    }
+
 }

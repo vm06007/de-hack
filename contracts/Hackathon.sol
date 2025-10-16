@@ -50,6 +50,10 @@ contract Hackathon {
     uint256 public judgeRewardPool;
     mapping(address => bool) public hasReceivedJudgeReward;
 
+    // Judge delegation
+    mapping(address => address) public judgeDelegates; // judge => delegate
+    mapping(address => address) public delegateToJudge; // delegate => judge (for reverse lookup)
+
     event ParticipantRegistered(
         address indexed participant
     );
@@ -83,6 +87,11 @@ contract Hackathon {
     event JudgeRewardDistributed(
         address indexed judge,
         uint256 amount
+    );
+
+    event JudgeDelegated(
+        address indexed judge,
+        address indexed delegate
     );
 
     modifier onlyOrganizer() {
@@ -125,7 +134,10 @@ contract Hackathon {
     }
 
     modifier onlyJudge() {
-        require(isJudge[msg.sender], "Only judges can call this function");
+        require(
+            isJudge[msg.sender] || isJudge[delegateToJudge[msg.sender]],
+            "Only judges or their delegates can call this function"
+        );
         _;
     }
 
@@ -579,6 +591,38 @@ contract Hackathon {
         emit JudgeAdded(_newJudge);
     }
 
+    /**
+     * @dev Allows a judge to delegate their scoring responsibilities to an agent
+     * @param _delegate Address of the delegate (agent) that will score on behalf of the judge
+     */
+    function delegateToAgent(address _delegate) external {
+        require(isJudge[msg.sender], "Only judges can delegate");
+        require(_delegate != address(0), "Invalid delegate address");
+        require(_delegate != msg.sender, "Cannot delegate to yourself");
+        require(judgeDelegates[msg.sender] == address(0), "Already has a delegate");
+
+        // Set delegation
+        judgeDelegates[msg.sender] = _delegate;
+        delegateToJudge[_delegate] = msg.sender;
+
+        emit JudgeDelegated(msg.sender, _delegate);
+    }
+
+    /**
+     * @dev Allows a judge to revoke their delegation
+     */
+    function revokeDelegation() external {
+        require(isJudge[msg.sender], "Only judges can revoke delegation");
+        require(judgeDelegates[msg.sender] != address(0), "No delegation to revoke");
+
+        address delegate = judgeDelegates[msg.sender];
+        
+        // Clear delegation
+        judgeDelegates[msg.sender] = address(0);
+        delegateToJudge[delegate] = address(0);
+
+        emit JudgeDelegated(msg.sender, address(0));
+    }
 
     /**
      * @dev Allows a judge to score a submission
@@ -644,17 +688,20 @@ contract Hackathon {
         onlyJudge
     {
         require(!isActive || block.timestamp > endTime, "Hackathon must be ended");
-        require(!hasReceivedJudgeReward[msg.sender], "Already claimed judge reward");
         require(judgeRewardPool > 0, "No judge rewards available");
+
+        // Determine the actual judge (either msg.sender or their delegate)
+        address actualJudge = isJudge[msg.sender] ? msg.sender : delegateToJudge[msg.sender];
+        require(!hasReceivedJudgeReward[actualJudge], "Already claimed judge reward");
 
         uint256 rewardPerJudge = judgeRewardPool / judgeList.length;
         require(rewardPerJudge > 0, "Insufficient reward per judge");
 
-        hasReceivedJudgeReward[msg.sender] = true;
+        hasReceivedJudgeReward[actualJudge] = true;
         payable(msg.sender).transfer(rewardPerJudge);
 
         emit JudgeRewardDistributed(
-            msg.sender,
+            actualJudge,
             rewardPerJudge
         );
     }
@@ -691,5 +738,31 @@ contract Hackathon {
         returns (uint256)
     {
         return judgeRewardPercentage;
+    }
+
+    /**
+     * @dev Gets the delegate for a judge
+     * @param _judge Address of the judge
+     * @return Address of the delegate (address(0) if no delegate)
+     */
+    function getJudgeDelegate(address _judge)
+        external
+        view
+        returns (address)
+    {
+        return judgeDelegates[_judge];
+    }
+
+    /**
+     * @dev Gets the judge for a delegate
+     * @param _delegate Address of the delegate
+     * @return Address of the judge (address(0) if not a delegate)
+     */
+    function getDelegateJudge(address _delegate)
+        external
+        view
+        returns (address)
+    {
+        return delegateToJudge[_delegate];
     }
 }

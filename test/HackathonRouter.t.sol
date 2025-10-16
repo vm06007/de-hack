@@ -232,4 +232,64 @@ contract HackathonRouterTest is Test {
             250 // 2.50% judge reward percentage
         );
     }
+
+    function testAddMoreJudge() public {
+        // Create hackathon without initial judges
+        address[] memory emptyJudges = new address[](0);
+        vm.prank(organizer);
+        address hackathonAddress = router.createHackathon{value: PRIZE_POOL}(
+            "Web3 Hackathon",
+            "Build the future of Web3",
+            block.timestamp + START_OFFSET,
+            block.timestamp + START_OFFSET + DURATION,
+            1 ether, // minimum sponsor contribution
+            emptyJudges,
+            250 // 2.50% judge reward percentage
+        );
+        
+        // Use an existing global judge
+        address[] memory globalJudges = router.getGlobalJudges();
+        address newJudge = globalJudges[1]; // Use the second global judge
+        
+        // Add judge to hackathon directly (organizer should interact with hackathon directly)
+        Hackathon hackathon = Hackathon(hackathonAddress);
+        vm.prank(organizer);
+        hackathon.addMoreJudge(newJudge);
+        
+        // Verify judge was added
+        assertTrue(hackathon.isJudge(newJudge));
+    }
+    
+    
+    function testReplaceJudge() public {
+        // Create hackathon with one initial judge
+        address[] memory initialJudges = new address[](1);
+        initialJudges[0] = router.getGlobalJudges()[0];
+        
+        vm.prank(organizer);
+        address hackathonAddress = router.createHackathon{value: PRIZE_POOL}(
+            "Web3 Hackathon",
+            "Build the future of Web3",
+            block.timestamp + START_OFFSET,
+            block.timestamp + START_OFFSET + DURATION,
+            1 ether, // minimum sponsor contribution
+            initialJudges,
+            250 // 2.50% judge reward percentage
+        );
+        
+        address oldJudge = initialJudges[0];
+        // Use an existing global judge as replacement
+        address[] memory globalJudges = router.getGlobalJudges();
+        address newJudge = globalJudges[1]; // Use the second global judge
+        
+        // Replace judge directly (organizer should interact with hackathon directly)
+        Hackathon hackathon = Hackathon(hackathonAddress);
+        vm.prank(organizer);
+        hackathon.replaceJudge(oldJudge, newJudge);
+        
+        // Verify replacement
+        assertFalse(hackathon.isJudge(oldJudge));
+        assertTrue(hackathon.isJudge(newJudge));
+    }
+    
 }

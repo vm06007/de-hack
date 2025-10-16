@@ -458,4 +458,233 @@ contract HackathonTest is Test {
         );
     }
 
+    function testAddMoreJudge() public {
+        address newJudge = makeAddr("newJudge");
+        vm.deal(newJudge, 10 ether);
+        
+        // First disable factory access by calling disableFactoryJudgeAccess
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Add a new judge
+        vm.prank(organizer);
+        hackathon.addMoreJudge(newJudge);
+        
+        // Verify judge was added
+        assertTrue(hackathon.isJudge(newJudge));
+        address[] memory judges = hackathon.getJudges();
+        assertEq(judges.length, 1); // Only the new judge since no initial judges
+    }
+    
+    function testAddMoreJudgeNonOrganizerReverts() public {
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        vm.prank(participant1);
+        vm.expectRevert("Only organizer can call this function");
+        hackathon.addMoreJudge(newJudge);
+    }
+    
+    function testAddMoreJudgeInvalidAddressReverts() public {
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        vm.prank(organizer);
+        vm.expectRevert("Invalid judge address");
+        hackathon.addMoreJudge(address(0));
+    }
+    
+    function testAddMoreJudgeAlreadyExistsReverts() public {
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Add judge first time
+        vm.prank(organizer);
+        hackathon.addMoreJudge(newJudge);
+        
+        // Try to add same judge again
+        vm.prank(organizer);
+        vm.expectRevert("Judge already added");
+        hackathon.addMoreJudge(newJudge);
+    }
+    
+    function testAddMoreJudgeInactiveHackathonReverts() public {
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Fast forward past end time to make hackathon inactive
+        vm.warp(block.timestamp + 25 hours);
+        
+        // Try to add judge to inactive hackathon
+        vm.prank(organizer);
+        vm.expectRevert("Cannot add judges after hackathon ends");
+        hackathon.addMoreJudge(newJudge);
+    }
+    
+    function testAddMoreJudgeAfterEndTimeReverts() public {
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Fast forward past end time
+        vm.warp(block.timestamp + 25 hours);
+        
+        // Try to add judge after hackathon ends
+        vm.prank(organizer);
+        vm.expectRevert("Cannot add judges after hackathon ends");
+        hackathon.addMoreJudge(newJudge);
+    }
+    
+    function testReplaceJudge() public {
+        address oldJudge = makeAddr("oldJudge");
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Add initial judge
+        vm.prank(organizer);
+        hackathon.addMoreJudge(oldJudge);
+        
+        // Replace judge
+        vm.prank(organizer);
+        hackathon.replaceJudge(oldJudge, newJudge);
+        
+        // Verify replacement
+        assertFalse(hackathon.isJudge(oldJudge));
+        assertTrue(hackathon.isJudge(newJudge));
+        
+        address[] memory judges = hackathon.getJudges();
+        assertEq(judges.length, 1);
+        assertEq(judges[0], newJudge);
+    }
+    
+    function testReplaceJudgeNonOrganizerReverts() public {
+        address oldJudge = makeAddr("oldJudge");
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Add initial judge
+        vm.prank(organizer);
+        hackathon.addMoreJudge(oldJudge);
+        
+        // Try to replace as non-organizer
+        vm.prank(participant1);
+        vm.expectRevert("Only organizer can call this function");
+        hackathon.replaceJudge(oldJudge, newJudge);
+    }
+    
+    function testReplaceJudgeInvalidAddressesReverts() public {
+        address oldJudge = makeAddr("oldJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Add initial judge
+        vm.prank(organizer);
+        hackathon.addMoreJudge(oldJudge);
+        
+        // Test invalid old judge
+        vm.prank(organizer);
+        vm.expectRevert("Invalid old judge address");
+        hackathon.replaceJudge(address(0), makeAddr("newJudge"));
+        
+        // Test invalid new judge
+        vm.prank(organizer);
+        vm.expectRevert("Invalid new judge address");
+        hackathon.replaceJudge(oldJudge, address(0));
+    }
+    
+    function testReplaceJudgeOldJudgeNotFoundReverts() public {
+        address nonExistentJudge = makeAddr("nonExistentJudge");
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        vm.prank(organizer);
+        vm.expectRevert("Old judge not found");
+        hackathon.replaceJudge(nonExistentJudge, newJudge);
+    }
+    
+    function testReplaceJudgeNewJudgeAlreadyExistsReverts() public {
+        address oldJudge = makeAddr("oldJudge");
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Add both judges
+        vm.prank(organizer);
+        hackathon.addMoreJudge(oldJudge);
+        vm.prank(organizer);
+        hackathon.addMoreJudge(newJudge);
+        
+        // Try to replace with existing judge
+        vm.prank(organizer);
+        vm.expectRevert("New judge already exists");
+        hackathon.replaceJudge(oldJudge, newJudge);
+    }
+    
+    function testReplaceJudgeInactiveHackathonReverts() public {
+        address oldJudge = makeAddr("oldJudge");
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Add initial judge
+        vm.prank(organizer);
+        hackathon.addMoreJudge(oldJudge);
+        
+        // Fast forward past end time to make hackathon inactive
+        vm.warp(block.timestamp + 25 hours);
+        
+        // Try to replace judge in inactive hackathon
+        vm.prank(organizer);
+        vm.expectRevert("Cannot replace judges after hackathon ends");
+        hackathon.replaceJudge(oldJudge, newJudge);
+    }
+    
+    function testReplaceJudgeAfterEndTimeReverts() public {
+        address oldJudge = makeAddr("oldJudge");
+        address newJudge = makeAddr("newJudge");
+        
+        // First disable factory access
+        vm.prank(organizer);
+        hackathon.disableFactoryJudgeAccess();
+        
+        // Add initial judge
+        vm.prank(organizer);
+        hackathon.addMoreJudge(oldJudge);
+        
+        // Fast forward past end time
+        vm.warp(block.timestamp + 25 hours);
+        
+        // Try to replace judge after hackathon ends
+        vm.prank(organizer);
+        vm.expectRevert("Cannot replace judges after hackathon ends");
+        hackathon.replaceJudge(oldJudge, newJudge);
+    }
+
 }

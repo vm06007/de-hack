@@ -77,7 +77,8 @@ contract HackathonRouterTest is Test {
             "Web3 Hackathon",
             "Build the future of Web3",
             startTime,
-            endTime
+            endTime,
+            1 ether // minimum sponsor contribution
         );
 
         vm.stopPrank();
@@ -208,7 +209,8 @@ contract HackathonRouterTest is Test {
             "Web3 Hackathon",
             "Build the future of Web3",
             block.timestamp + START_OFFSET,
-            block.timestamp + START_OFFSET + DURATION
+            block.timestamp + START_OFFSET + DURATION,
+            1 ether // minimum sponsor contribution
         );
     }
 }

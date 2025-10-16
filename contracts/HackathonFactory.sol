@@ -38,27 +38,41 @@ contract HackathonFactory {
      * @param _description Description of the hackathon
      * @param _startTime Start time in Unix timestamp
      * @param _endTime End time in Unix timestamp
+     * @param _minimumSponsorContribution Minimum contribution required to become a sponsor
      * @return hackathonAddress Address of the newly created hackathon
      */
     function createHackathon(
         string memory _name,
         string memory _description,
         uint256 _startTime,
-        uint256 _endTime
-    ) external payable returns (address hackathonAddress) {
+        uint256 _endTime,
+        uint256 _minimumSponsorContribution
+    )
+        external
+        payable
+        returns (address hackathonAddress)
+    {
         // Deploy new hackathon contract
-        Hackathon newHackathon = new Hackathon{value: msg.value}(
+        Hackathon newHackathon = new Hackathon{
+            value: msg.value
+        }(
             _name,
             _description,
             _startTime,
             _endTime,
-            msg.sender
+            msg.sender,
+            _minimumSponsorContribution
         );
 
-        hackathonAddress = address(newHackathon);
+        hackathonAddress = address(
+            newHackathon
+        );
 
         // Store the hackathon address
-        uint256 organizerIndex = organizerHackathonCount[msg.sender];
+        uint256 organizerIndex = organizerHackathonCount[
+            msg.sender
+        ];
+
         organizerHackathons[msg.sender][organizerIndex] = hackathonAddress;
         organizerHackathonCount[msg.sender]++;
         totalHackathons++;
@@ -80,6 +94,7 @@ contract HackathonFactory {
      * @param _startTime Start time in Unix timestamp
      * @param _endTime End time in Unix timestamp
      * @param _organizer Address of the organizer
+     * @param _minimumSponsorContribution Minimum contribution required to become a sponsor
      * @return hackathonAddress Address of the newly created hackathon
      */
     function createHackathonWithOrganizer(
@@ -87,7 +102,8 @@ contract HackathonFactory {
         string memory _description,
         uint256 _startTime,
         uint256 _endTime,
-        address _organizer
+        address _organizer,
+        uint256 _minimumSponsorContribution
     )
         external
         payable
@@ -99,7 +115,8 @@ contract HackathonFactory {
             _description,
             _startTime,
             _endTime,
-            _organizer
+            _organizer,
+            _minimumSponsorContribution
         );
 
         hackathonAddress = address(newHackathon);
@@ -374,24 +391,13 @@ contract HackathonFactory {
     }
 
     /**
-     * @dev Adds a sponsor to a hackathon
-     * @param _hackathonAddress Address of the hackathon contract
-     * @param _sponsor Address of the sponsor
-     */
-    function addSponsor(address _hackathonAddress, address _sponsor) external {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
-        Hackathon hackathon = Hackathon(_hackathonAddress);
-        hackathon.addSponsor(_sponsor);
-    }
-
-    /**
-     * @dev Allows a sponsor to contribute to a hackathon
+     * @dev Allows anyone to become a sponsor by contributing to a hackathon
      * @param _hackathonAddress Address of the hackathon contract
      */
-    function sponsorContribute(address _hackathonAddress) external payable {
+    function becomeSponsor(address _hackathonAddress) external payable {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
         Hackathon hackathon = Hackathon(_hackathonAddress);
-        hackathon.sponsorContribute{value: msg.value}();
+        hackathon.becomeSponsor{value: msg.value}();
     }
 
     /**
@@ -456,6 +462,16 @@ contract HackathonFactory {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
         Hackathon hackathon = Hackathon(_hackathonAddress);
         return hackathon.getTotalPrizePool();
+    }
+
+    /**
+     * @dev Gets minimum sponsor contribution for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getMinimumSponsorContribution(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getMinimumSponsorContribution();
     }
 
     // Note: For organizer-only functions like distributePrize, emergencyWithdraw, and endHackathon,

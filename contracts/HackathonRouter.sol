@@ -50,13 +50,15 @@ contract HackathonRouter {
      * @param _description Description of the hackathon
      * @param _startTime Start time in Unix timestamp
      * @param _endTime End time in Unix timestamp
+     * @param _minimumSponsorContribution Minimum contribution required to become a sponsor
      * @return hackathonAddress Address of the newly created hackathon
      */
     function createHackathon(
         string memory _name,
         string memory _description,
         uint256 _startTime,
-        uint256 _endTime
+        uint256 _endTime,
+        uint256 _minimumSponsorContribution
     )
         external
         payable
@@ -67,7 +69,8 @@ contract HackathonRouter {
             _description,
             _startTime,
             _endTime,
-            msg.sender
+            msg.sender,
+            _minimumSponsorContribution
         );
 
         emit HackathonCreated(
@@ -289,32 +292,17 @@ contract HackathonRouter {
     }
 
     /**
-     * @dev Adds a sponsor to a hackathon
-     * @param _hackathonAddress Address of the hackathon contract
-     * @param _sponsor Address of the sponsor
-     */
-    function addSponsor(
-        address _hackathonAddress,
-        address _sponsor
-    )
-        external
-    {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
-        factory.addSponsor(_hackathonAddress, _sponsor);
-    }
-
-    /**
-     * @dev Allows a sponsor to contribute to a hackathon
+     * @dev Allows anyone to become a sponsor by contributing to a hackathon
      * @param _hackathonAddress Address of the hackathon contract
      */
-    function sponsorContribute(
+    function becomeSponsor(
         address _hackathonAddress
     )
         external
         payable
     {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
-        factory.sponsorContribute{value: msg.value}(_hackathonAddress);
+        factory.becomeSponsor{value: msg.value}(_hackathonAddress);
     }
 
     /**
@@ -405,6 +393,20 @@ contract HackathonRouter {
         returns (uint256)
     {
         return factory.getTotalPrizePool(_hackathonAddress);
+    }
+
+    /**
+     * @dev Gets minimum sponsor contribution for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function getMinimumSponsorContribution(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (uint256)
+    {
+        return factory.getMinimumSponsorContribution(_hackathonAddress);
     }
 
 }

@@ -31,6 +31,7 @@ contract Hackathon {
     address public organizer;
     bool public isActive;
     uint256 public participantCount;
+    uint256 public minimumSponsorContribution;
 
     // Submissions and participants
     mapping(address => Submission) public submissions;
@@ -86,13 +87,15 @@ contract Hackathon {
      * @param _startTime Start time in Unix timestamp
      * @param _endTime End time in Unix timestamp
      * @param _organizer Address of the organizer
+     * @param _minimumSponsorContribution Minimum contribution required to become a sponsor
      */
     constructor(
         string memory _name,
         string memory _description,
         uint256 _startTime,
         uint256 _endTime,
-        address _organizer
+        address _organizer,
+        uint256 _minimumSponsorContribution
     ) payable {
         require(_startTime > block.timestamp, "Start time must be in the future");
         require(_endTime > _startTime, "End time must be after start time");
@@ -108,6 +111,7 @@ contract Hackathon {
         isActive = true;
         participantCount = 0;
         totalSponsorContributions = 0;
+        minimumSponsorContribution = _minimumSponsorContribution;
     }
 
     /**
@@ -356,46 +360,22 @@ contract Hackathon {
     }
 
     /**
-     * @dev Adds a sponsor to the hackathon (only organizer)
-     * @param _sponsor Address of the sponsor
+     * @dev Allows anyone to become a sponsor by contributing the minimum amount
      */
-    function addSponsor(
-        address _sponsor
-    )
-        external
-        onlyOrganizer
-    {
-        require(
-            _sponsor != address(0),
-            "Invalid sponsor address"
-        );
-
-        require(
-            sponsors[_sponsor].isActive == false,
-            "Sponsor already added"
-        );
-
-        sponsors[_sponsor] = Sponsor({
-            sponsorAddress: _sponsor,
-            contribution: 0,
-            isActive: true
-        });
-
-        sponsorList.push(_sponsor);
-        emit SponsorAdded(_sponsor, 0);
-    }
-
-    /**
-     * @dev Allows a sponsor to contribute funds to the hackathon
-     */
-    function sponsorContribute()
+    function becomeSponsor()
         external
         payable
     {
-        require(sponsors[msg.sender].isActive, "Not an active sponsor");
-        require(msg.value > 0, "Contribution must be greater than 0");
+        require(msg.value >= minimumSponsorContribution, "Contribution below minimum required");
+        require(!sponsors[msg.sender].isActive, "Already a sponsor");
 
-        sponsors[msg.sender].contribution += msg.value;
+        sponsors[msg.sender] = Sponsor({
+            sponsorAddress: msg.sender,
+            contribution: msg.value,
+            isActive: true
+        });
+
+        sponsorList.push(msg.sender);
         totalSponsorContributions += msg.value;
         prizePool += msg.value;
 
@@ -459,5 +439,12 @@ contract Hackathon {
      */
     function getTotalPrizePool() external view returns (uint256) {
         return prizePool;
+    }
+
+    /**
+     * @dev Gets minimum sponsor contribution required
+     */
+    function getMinimumSponsorContribution() external view returns (uint256) {
+        return minimumSponsorContribution;
     }
 }

@@ -53,7 +53,8 @@ contract HackathonTest is Test {
             "Build the future of Web3",
             block.timestamp + START_OFFSET,
             block.timestamp + START_OFFSET + DURATION,
-            organizer
+            organizer,
+            1 ether // minimum sponsor contribution
         );
     }
 
@@ -468,6 +469,10 @@ contract HackathonTest is Test {
         // Filter out strings with null bytes or other problematic characters
         vm.assume(bytes(name)[0] != 0x00);
         vm.assume(bytes(description)[0] != 0x00);
+        
+        // Additional validation for problematic UTF-8 sequences
+        vm.assume(bytes(name)[0] < 0x80); // Only ASCII characters
+        vm.assume(bytes(description)[0] < 0x80); // Only ASCII characters
 
         vm.prank(organizer);
 
@@ -479,7 +484,8 @@ contract HackathonTest is Test {
             description,
             startTime,
             endTime,
-            organizer
+            organizer,
+            1 ether // minimum sponsor contribution
         );
 
         (

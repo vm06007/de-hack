@@ -67,7 +67,8 @@ contract HackathonFactoryTest is Test {
             "Web3 Hackathon",
             "Build the future of Web3",
             startTime,
-            endTime
+            endTime,
+            1 ether // minimum sponsor contribution
         );
 
         vm.stopPrank();
@@ -113,7 +114,8 @@ contract HackathonFactoryTest is Test {
             "Invalid Hackathon",
             "This should fail",
             pastTime,
-            endTime
+            endTime,
+            1 ether // minimum sponsor contribution
         );
     }
 
@@ -128,7 +130,8 @@ contract HackathonFactoryTest is Test {
             "No Prize Hackathon",
             "This should fail",
             startTime,
-            endTime
+            endTime,
+            1 ether // minimum sponsor contribution
         );
     }
 
@@ -143,7 +146,8 @@ contract HackathonFactoryTest is Test {
             "Invalid Time Hackathon",
             "This should fail",
             startTime,
-            endTime
+            endTime,
+            1 ether // minimum sponsor contribution
         );
     }
 
@@ -380,7 +384,8 @@ contract HackathonFactoryTest is Test {
             "DeFi Hackathon",
             "Build DeFi protocols",
             block.timestamp + 2 hours,
-            block.timestamp + 48 hours
+            block.timestamp + 48 hours,
+            1 ether // minimum sponsor contribution
         );
 
         assertEq(factory.getHackathonCount(), 2);
@@ -440,7 +445,8 @@ contract HackathonFactoryTest is Test {
             name,
             description,
             startTime,
-            endTime
+            endTime,
+            1 ether // minimum sponsor contribution
         );
 
         (
@@ -464,7 +470,8 @@ contract HackathonFactoryTest is Test {
             "Web3 Hackathon",
             "Build the future of Web3",
             block.timestamp + START_OFFSET,
-            block.timestamp + START_OFFSET + DURATION
+            block.timestamp + START_OFFSET + DURATION,
+            1 ether // minimum sponsor contribution
         );
     }
 }

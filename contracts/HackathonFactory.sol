@@ -133,7 +133,7 @@ contract HackathonFactory {
         }
 
         // Disable factory access to add judges after deployment
-        newHackathon.disableFactoryJudgeAccess();
+        newHackathon.factoryDisableJudgeAccess();
 
         hackathonAddress = address(newHackathon);
 
@@ -410,10 +410,24 @@ contract HackathonFactory {
      * @dev Allows anyone to become a sponsor by contributing to a hackathon
      * @param _hackathonAddress Address of the hackathon contract
      */
-    function becomeSponsor(address _hackathonAddress) external payable {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
-        Hackathon hackathon = Hackathon(_hackathonAddress);
-        hackathon.becomeSponsor{value: msg.value}();
+    function becomeSponsor(
+        address _hackathonAddress
+    )
+        external
+        payable
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        hackathon.becomeSponsor{
+            value: msg.value
+        }();
     }
 
     /**
@@ -421,10 +435,24 @@ contract HackathonFactory {
      * @param _hackathonAddress Address of the hackathon contract
      * @param _judge Address of the judge
      */
-    function addJudge(address _hackathonAddress, address _judge) external {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
-        Hackathon hackathon = Hackathon(_hackathonAddress);
-        hackathon.addJudge(_judge);
+    function addJudge(
+        address _hackathonAddress,
+        address _judge
+    )
+        external
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        hackathon.addJudge(
+            _judge
+        );
     }
 
     /**
@@ -434,19 +462,47 @@ contract HackathonFactory {
      * @param _score Score to assign (0-100)
      */
     function scoreSubmission(
-        address _hackathonAddress, address _participant, uint256 _score) external {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
-        Hackathon hackathon = Hackathon(_hackathonAddress);
-        hackathon.scoreSubmission(_participant, _score);
+        address _hackathonAddress,
+        address _participant,
+        uint256 _score
+    )
+        external
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        hackathon.scoreSubmission(
+            _participant,
+            _score
+        );
     }
 
     /**
      * @dev Gets all sponsors for a hackathon
      * @param _hackathonAddress Address of the hackathon contract
      */
-    function getSponsors(address _hackathonAddress) external view returns (address[] memory) {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
-        Hackathon hackathon = Hackathon(_hackathonAddress);
+    function getSponsors(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (address[] memory)
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
         return hackathon.getSponsors();
     }
 
@@ -454,10 +510,45 @@ contract HackathonFactory {
      * @dev Gets all judges for a hackathon
      * @param _hackathonAddress Address of the hackathon contract
      */
-    function getJudges(address _hackathonAddress) external view returns (address[] memory) {
-        require(_hackathonAddress != address(0), "Invalid hackathon address");
-        Hackathon hackathon = Hackathon(_hackathonAddress);
+    function getJudges(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (address[] memory)
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
         return hackathon.getJudges();
+    }
+
+    /**
+     * @dev Checks if an address is a judge for a specific hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _judge Address to check
+     */
+    function isJudge(
+        address _hackathonAddress,
+        address _judge
+    )
+        external
+        view
+        returns (bool)
+    {
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        return hackathon.isJudge(
+            _judge
+        );
     }
 
     /**

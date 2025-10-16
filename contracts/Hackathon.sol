@@ -44,35 +44,78 @@ contract Hackathon {
     address[] public sponsorList;
     address[] public judgeList;
     uint256 public totalSponsorContributions;
-    
+
     // Judge incentives
     uint256 public judgeRewardPercentage; // Configurable percentage (0-500, representing 0.00% to 5.00%)
     uint256 public judgeRewardPool;
     mapping(address => bool) public hasReceivedJudgeReward;
 
-    event ParticipantRegistered(address indexed participant);
-    event SubmissionMade(address indexed participant, string projectName);
-    event PrizeDistributed(address indexed winner, uint256 amount);
+    event ParticipantRegistered(
+        address indexed participant
+    );
+
+    event SubmissionMade(
+        address indexed participant,
+        string projectName
+    );
+
+    event PrizeDistributed(
+        address indexed winner,
+        uint256 amount
+    );
+
     event HackathonEnded();
-    event SponsorAdded(address indexed sponsor, uint256 contribution);
-    event JudgeAdded(address indexed judge);
-    event SubmissionScored(address indexed participant, uint256 score);
-    event JudgeRewardDistributed(address indexed judge, uint256 amount);
+
+    event SponsorAdded(
+        address indexed sponsor,
+        uint256 contribution
+    );
+
+    event JudgeAdded(
+        address indexed judge
+    );
+
+    event SubmissionScored(
+        address indexed participant,
+        uint256 score
+    );
+
+    event JudgeRewardDistributed(
+        address indexed judge,
+        uint256 amount
+    );
 
     modifier onlyOrganizer() {
-        require(msg.sender == organizer, "Only organizer can call this function");
+        require(
+            msg.sender == organizer,
+            "Only organizer can call this function"
+        );
         _;
     }
 
     modifier hackathonActive() {
-        require(isActive, "Hackathon is not active");
-        require(block.timestamp >= startTime, "Hackathon has not started yet");
-        require(block.timestamp <= endTime, "Hackathon has ended");
+        require(
+            isActive,
+            "Hackathon is not active"
+        );
+
+        require(
+            block.timestamp >= startTime,
+            "Hackathon has not started yet"
+        );
+
+        require(
+            block.timestamp <= endTime,
+            "Hackathon has ended"
+        );
         _;
     }
 
     modifier onlyRegistered() {
-        require(isRegistered[msg.sender], "Not registered for this hackathon");
+        require(
+            isRegistered[msg.sender],
+            "Not registered for this hackathon"
+        );
         _;
     }
 
@@ -85,12 +128,15 @@ contract Hackathon {
         require(isJudge[msg.sender], "Only judges can call this function");
         _;
     }
-    
+
     modifier onlyOrganizerOrFactory() {
-        require(msg.sender == organizer || msg.sender == address(this), "Only organizer or factory can call this function");
+        require(
+            msg.sender == organizer || msg.sender == address(this),
+            "Only organizer or factory can call this function"
+        );
         _;
     }
-    
+
     // Flag to allow factory to add judges during deployment
     bool private factoryCanAddJudges = true;
 
@@ -112,7 +158,9 @@ contract Hackathon {
         address _organizer,
         uint256 _minimumSponsorContribution,
         uint256 _judgeRewardPercentage
-    ) payable {
+    )
+        payable
+    {
         require(_startTime > block.timestamp, "Start time must be in the future");
         require(_endTime > _startTime, "End time must be after start time");
         require(msg.value > 0, "Prize pool must be greater than 0");
@@ -136,7 +184,9 @@ contract Hackathon {
     /**
      * @dev Registers a participant for this hackathon
      */
-    function register() external {
+    function register()
+        external
+    {
         require(isActive, "Hackathon is not active");
         require(block.timestamp < startTime, "Registration closed - hackathon has started");
         require(!isRegistered[msg.sender], "Already registered");
@@ -151,7 +201,11 @@ contract Hackathon {
      * @dev Registers a participant for this hackathon (called by factory)
      * @param _participant Address of the participant to register
      */
-    function registerParticipant(address _participant) external {
+    function registerParticipant(
+        address _participant
+    )
+        external
+    {
         require(isActive, "Hackathon is not active");
         require(block.timestamp < startTime, "Registration closed - hackathon has started");
         require(!isRegistered[_participant], "Already registered");
@@ -160,7 +214,9 @@ contract Hackathon {
         isRegistered[_participant] = true;
         participantCount++;
 
-        emit ParticipantRegistered(_participant);
+        emit ParticipantRegistered(
+            _participant
+        );
     }
 
     /**
@@ -277,7 +333,11 @@ contract Hackathon {
     )
         external
     {
-        require(msg.sender == organizer || sponsors[msg.sender].isActive, "Only organizer or sponsors can distribute prizes");
+        require(
+            msg.sender == organizer || sponsors[msg.sender].isActive,
+            "Only organizer or sponsors can distribute prizes"
+        );
+
         require(!isActive || block.timestamp > endTime, "Hackathon is still active");
         require(_amount <= prizePool, "Amount exceeds prize pool");
         require(_amount > 0, "Amount must be greater than 0");
@@ -320,8 +380,15 @@ contract Hackathon {
         external
         onlyOrganizer
     {
-        require(isActive, "Hackathon is not active");
-        require(block.timestamp > endTime, "Hackathon has not ended yet");
+        require(
+            isActive,
+            "Hackathon is not active"
+        );
+
+        require(
+            block.timestamp > endTime,
+            "Hackathon has not ended yet"
+        );
 
         isActive = false;
         emit HackathonEnded();
@@ -385,8 +452,15 @@ contract Hackathon {
         external
         payable
     {
-        require(msg.value >= minimumSponsorContribution, "Contribution below minimum required");
-        require(!sponsors[msg.sender].isActive, "Already a sponsor");
+        require(
+            msg.value >= minimumSponsorContribution,
+            "Contribution below minimum required"
+        );
+
+        require(
+            !sponsors[msg.sender].isActive,
+            "Already a sponsor"
+        );
 
         sponsors[msg.sender] = Sponsor({
             sponsorAddress: msg.sender,
@@ -397,20 +471,28 @@ contract Hackathon {
         sponsorList.push(msg.sender);
         totalSponsorContributions += msg.value;
         prizePool += msg.value;
-        
-        // Add configured percentage of sponsor contribution to judge reward pool
-        uint256 judgeReward = (msg.value * judgeRewardPercentage) / 10000; // Divide by 10000 for 2 decimal precision
+
+        uint256 judgeReward = msg.value
+            * judgeRewardPercentage
+            / 10000;
+
         judgeRewardPool += judgeReward;
 
-        emit SponsorAdded(msg.sender, msg.value);
+        emit SponsorAdded(
+            msg.sender,
+            msg.value
+        );
     }
 
     /**
      * @dev Adds a judge to the hackathon (only organizer or factory during deployment)
      * @param _judge Address of the judge
      */
-    function addJudge(address _judge) external {
-        require(_judge != address(0), "Invalid judge address");
+    function addJudge(
+        address _judge
+    )
+        external
+    {
         require(!isJudge[_judge], "Judge already added");
         require(msg.sender == organizer || factoryCanAddJudges, "Only organizer can add judges after deployment");
 
@@ -419,14 +501,84 @@ contract Hackathon {
 
         emit JudgeAdded(_judge);
     }
-    
+
     /**
      * @dev Disables factory access to add judges (called after deployment)
      */
-    function disableFactoryJudgeAccess() external {
+    function disableFactoryJudgeAccess()
+        external
+    {
         require(msg.sender == organizer || factoryCanAddJudges, "Only organizer or factory can call this function");
         factoryCanAddJudges = false;
     }
+
+    /**
+     * @dev Allows factory to disable factory access (called during deployment)
+     */
+    function factoryDisableJudgeAccess()
+        external
+    {
+        require(
+            factoryCanAddJudges,
+            "Factory access already disabled"
+        );
+
+        factoryCanAddJudges = false;
+    }
+
+    /**
+     * @dev Allows organizer to add more judges to the hackathon
+     * @param _newJudge Address of the new judge to add
+     */
+    function addMoreJudge(address _newJudge) external onlyOrganizer {
+        require(_newJudge != address(0), "Invalid judge address");
+        require(!isJudge[_newJudge], "Judge already added");
+        require(isActive, "Cannot add judges to inactive hackathon");
+        require(block.timestamp < endTime, "Cannot add judges after hackathon ends");
+
+        isJudge[_newJudge] = true;
+        judgeList.push(_newJudge);
+
+        emit JudgeAdded(_newJudge);
+    }
+
+    /**
+     * @dev Allows organizer to replace an existing judge with a new one
+     * @param _oldJudge Address of the judge to replace
+     * @param _newJudge Address of the new judge
+     */
+    function replaceJudge(
+        address _oldJudge,
+        address _newJudge
+    )
+        external
+        onlyOrganizer
+    {
+        require(_oldJudge != address(0), "Invalid old judge address");
+        require(_newJudge != address(0), "Invalid new judge address");
+        require(isJudge[_oldJudge], "Old judge not found");
+        require(!isJudge[_newJudge], "New judge already exists");
+        require(factoryCanAddJudges == false, "Cannot replace judges during deployment phase");
+        require(isActive, "Cannot replace judges in inactive hackathon");
+        require(block.timestamp < endTime, "Cannot replace judges after hackathon ends");
+
+        // Remove old judge
+        isJudge[_oldJudge] = false;
+
+        // Find and replace in array
+        for (uint256 i = 0; i < judgeList.length; i++) {
+            if (judgeList[i] == _oldJudge) {
+                judgeList[i] = _newJudge;
+                break;
+            }
+        }
+
+        // Add new judge
+        isJudge[_newJudge] = true;
+
+        emit JudgeAdded(_newJudge);
+    }
+
 
     /**
      * @dev Allows a judge to score a submission
@@ -476,46 +628,68 @@ contract Hackathon {
     /**
      * @dev Gets minimum sponsor contribution required
      */
-    function getMinimumSponsorContribution() external view returns (uint256) {
+    function getMinimumSponsorContribution()
+        external
+        view
+        returns (uint256)
+    {
         return minimumSponsorContribution;
     }
-    
+
     /**
      * @dev Allows judges to claim their reward after hackathon ends
      */
-    function claimJudgeReward() external onlyJudge {
+    function claimJudgeReward()
+        external
+        onlyJudge
+    {
         require(!isActive || block.timestamp > endTime, "Hackathon must be ended");
         require(!hasReceivedJudgeReward[msg.sender], "Already claimed judge reward");
         require(judgeRewardPool > 0, "No judge rewards available");
-        
+
         uint256 rewardPerJudge = judgeRewardPool / judgeList.length;
         require(rewardPerJudge > 0, "Insufficient reward per judge");
-        
+
         hasReceivedJudgeReward[msg.sender] = true;
         payable(msg.sender).transfer(rewardPerJudge);
-        
-        emit JudgeRewardDistributed(msg.sender, rewardPerJudge);
+
+        emit JudgeRewardDistributed(
+            msg.sender,
+            rewardPerJudge
+        );
     }
-    
+
     /**
      * @dev Gets judge reward pool amount
      */
-    function getJudgeRewardPool() external view returns (uint256) {
+    function getJudgeRewardPool()
+        external
+        view
+        returns (uint256)
+    {
         return judgeRewardPool;
     }
-    
+
     /**
      * @dev Gets reward per judge
      */
-    function getRewardPerJudge() external view returns (uint256) {
+    function getRewardPerJudge()
+        external
+        view
+        returns (uint256)
+    {
         if (judgeList.length == 0) return 0;
         return judgeRewardPool / judgeList.length;
     }
-    
+
     /**
      * @dev Gets judge reward percentage (in basis points, 0-500 for 0.00%-5.00%)
      */
-    function getJudgeRewardPercentage() external view returns (uint256) {
+    function getJudgeRewardPercentage()
+        external
+        view
+        returns (uint256)
+    {
         return judgeRewardPercentage;
     }
 }

@@ -20,6 +20,9 @@ contract HackathonFactory {
     // Total hackathon count
     uint256 public totalHackathons;
 
+    // Maximum cooldown period (7 days)
+    uint256 public constant MAX_PRIZE_CLAIM_COOLDOWN = 7 days;
+
     event HackathonCreated(
         address indexed hackathonAddress,
         string name,
@@ -48,12 +51,21 @@ contract HackathonFactory {
         uint256 _startTime,
         uint256 _endTime,
         uint256 _minimumSponsorContribution,
-        uint256 _judgeRewardPercentage
+        uint256 _judgeRewardPercentage,
+        uint256 _stakeAmount,
+        uint256 _maxWinners,
+        uint256 _prizeClaimCooldown
     )
         external
         payable
         returns (address hackathonAddress)
     {
+        // Validate cooldown period
+        require(
+            _prizeClaimCooldown <= MAX_PRIZE_CLAIM_COOLDOWN,
+            "Prize claim cooldown cannot exceed 7 days"
+        );
+
         // Deploy new hackathon contract
         Hackathon newHackathon = new Hackathon{
             value: msg.value
@@ -64,7 +76,10 @@ contract HackathonFactory {
             _endTime,
             msg.sender,
             _minimumSponsorContribution,
-            _judgeRewardPercentage
+            _judgeRewardPercentage,
+            _stakeAmount,
+            _maxWinners,
+            _prizeClaimCooldown
         );
 
         hackathonAddress = address(
@@ -110,12 +125,21 @@ contract HackathonFactory {
         address _organizer,
         uint256 _minimumSponsorContribution,
         address[] memory _selectedJudges,
-        uint256 _judgeRewardPercentage
+        uint256 _judgeRewardPercentage,
+        uint256 _stakeAmount,
+        uint256 _maxWinners,
+        uint256 _prizeClaimCooldown
     )
         external
         payable
         returns (address hackathonAddress)
     {
+        // Validate cooldown period
+        require(
+            _prizeClaimCooldown <= MAX_PRIZE_CLAIM_COOLDOWN,
+            "Prize claim cooldown cannot exceed 7 days"
+        );
+
         // Deploy new hackathon contract
         Hackathon newHackathon = new Hackathon{value: msg.value}(
             _name,
@@ -124,7 +148,10 @@ contract HackathonFactory {
             _endTime,
             _organizer,
             _minimumSponsorContribution,
-            _judgeRewardPercentage
+            _judgeRewardPercentage,
+            _stakeAmount,
+            _maxWinners,
+            _prizeClaimCooldown
         );
 
         // Add selected judges to the hackathon
@@ -207,15 +234,7 @@ contract HackathonFactory {
             "Invalid participant address"
         );
 
-        Hackathon hackathon = Hackathon(
-            _hackathonAddress
-        );
-
-        hackathon.registerParticipant(
-            _participant
-        );
-
-        // Track participant's hackathons
+        // Track participant's hackathons (hackathon registration is handled by caller)
         uint256 participantIndex = participantHackathonCount[_participant];
         participantHackathons[_participant][participantIndex] = _hackathonAddress;
         participantHackathonCount[_participant]++;

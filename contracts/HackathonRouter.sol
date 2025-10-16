@@ -169,16 +169,27 @@ contract HackathonRouter {
                 }
             }
             totalGlobalJudges--;
-            emit GlobalJudgeRemoved(proposal.candidate);
+
+            emit GlobalJudgeRemoved(
+                proposal.candidate
+            );
         }
 
-        emit JudgeProposalExecuted(_proposalId, proposal.candidate, proposal.isAdd);
+        emit JudgeProposalExecuted(
+            _proposalId,
+            proposal.candidate,
+            proposal.isAdd
+        );
     }
 
     /**
      * @dev Get all global judges
      */
-    function getGlobalJudges() external view returns (address[] memory) {
+    function getGlobalJudges()
+        external
+        view
+        returns (address[] memory)
+    {
         return globalJudges;
     }
 
@@ -186,7 +197,13 @@ contract HackathonRouter {
      * @dev Check if an address is a global judge
      * @param _judge Address to check
      */
-    function isAddressGlobalJudge(address _judge) external view returns (bool) {
+    function isAddressGlobalJudge(
+        address _judge
+    )
+        external
+        view
+        returns (bool)
+    {
         return isGlobalJudge[_judge];
     }
 
@@ -208,7 +225,10 @@ contract HackathonRouter {
         uint256 _endTime,
         uint256 _minimumSponsorContribution,
         address[] memory _selectedJudges,
-        uint256 _judgeRewardPercentage
+        uint256 _judgeRewardPercentage,
+        uint256 _stakeAmount,
+        uint256 _maxWinners,
+        uint256 _prizeClaimCooldown
     )
         external
         payable
@@ -226,7 +246,10 @@ contract HackathonRouter {
             msg.sender,
             _minimumSponsorContribution,
             _selectedJudges,
-            _judgeRewardPercentage
+            _judgeRewardPercentage,
+            _stakeAmount,
+            _maxWinners,
+            _prizeClaimCooldown
         );
 
         emit HackathonCreated(
@@ -247,13 +270,22 @@ contract HackathonRouter {
         address _hackathonAddress
     )
         external
+        payable
     {
         require(
             _hackathonAddress != address(0),
             "Invalid hackathon address"
         );
 
-        // Register with factory (which also registers with hackathon)
+        // Get stake amount from hackathon
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        uint256 stakeAmount = hackathon.getStakeAmount();
+        require(msg.value == stakeAmount, "Must send exact stake amount");
+
+        // Register with hackathon directly
+        hackathon.registerParticipant{value: msg.value}(msg.sender);
+
+        // Also register with factory to track participant's hackathons
         factory.registerParticipantForHackathon(_hackathonAddress, msg.sender);
 
         emit ParticipantRegistered(

@@ -54,6 +54,25 @@ contract Hackathon {
     mapping(address => address) public judgeDelegates; // judge => delegate
     mapping(address => address) public delegateToJudge; // delegate => judge (for reverse lookup)
 
+    // Stake system
+    uint256 public stakeAmount; // Amount hackers must deposit when joining
+    mapping(address => uint256) public participantStakes; // participant => stake amount
+    uint256 public totalStakes; // Total stakes collected
+
+    // Judge voting system
+    uint256 public maxWinners; // Maximum number of winners (set by organizer)
+    uint256 public pointsPerJudge; // Points each judge can distribute
+    mapping(address => mapping(address => uint256)) public judgeVotes; // judge => participant => points
+    mapping(address => uint256) public totalPoints; // participant => total points received
+    mapping(address => bool) public hasVoted; // judge => has voted
+    uint256 public votingDeadline; // When voting ends
+    bool public votingOpen; // Whether voting is currently open
+
+    // Prize claiming
+    uint256 public prizeClaimCooldown; // Cooldown period before winners can claim
+    uint256 public votingEndTime; // When voting actually ended
+    mapping(address => bool) public hasClaimedPrize; // participant => has claimed prize
+
     event ParticipantRegistered(
         address indexed participant
     );
@@ -92,6 +111,35 @@ contract Hackathon {
     event JudgeDelegated(
         address indexed judge,
         address indexed delegate
+    );
+
+    event StakeDeposited(
+        address indexed participant,
+        uint256 amount
+    );
+
+    event StakeReturned(
+        address indexed participant,
+        uint256 amount
+    );
+
+    event JudgeVoted(
+        address indexed judge,
+        address indexed participant,
+        uint256 points
+    );
+
+    event VotingOpened(
+        uint256 deadline
+    );
+
+    event VotingClosed(
+        uint256 endTime
+    );
+
+    event PrizeClaimed(
+        address indexed winner,
+        uint256 amount
     );
 
     modifier onlyOrganizer() {
@@ -169,7 +217,10 @@ contract Hackathon {
         uint256 _endTime,
         address _organizer,
         uint256 _minimumSponsorContribution,
-        uint256 _judgeRewardPercentage
+        uint256 _judgeRewardPercentage,
+        uint256 _stakeAmount,
+        uint256 _maxWinners,
+        uint256 _prizeClaimCooldown
     )
         payable
     {
@@ -178,6 +229,8 @@ contract Hackathon {
         require(msg.value > 0, "Prize pool must be greater than 0");
         require(_organizer != address(0), "Invalid organizer address");
         require(_judgeRewardPercentage <= 500, "Judge reward percentage cannot exceed 5.00%");
+        require(_maxWinners > 0, "Must have at least 1 winner");
+        require(_prizeClaimCooldown > 0, "Prize claim cooldown must be greater than 0");
 
         name = _name;
         description = _description;
@@ -191,6 +244,14 @@ contract Hackathon {
         minimumSponsorContribution = _minimumSponsorContribution;
         judgeRewardPercentage = _judgeRewardPercentage;
         judgeRewardPool = (msg.value * _judgeRewardPercentage) / 10000; // Divide by 10000 for 2 decimal precision
+        
+        // New parameters
+        stakeAmount = _stakeAmount;
+        maxWinners = _maxWinners;
+        prizeClaimCooldown = _prizeClaimCooldown;
+        pointsPerJudge = 100; // Each judge can distribute 100 points
+        votingOpen = false;
+        totalStakes = 0;
     }
 
     /**
@@ -198,15 +259,20 @@ contract Hackathon {
      */
     function register()
         external
+        payable
     {
         require(isActive, "Hackathon is not active");
         require(block.timestamp < startTime, "Registration closed - hackathon has started");
         require(!isRegistered[msg.sender], "Already registered");
+        require(msg.value == stakeAmount, "Must deposit exact stake amount");
 
         isRegistered[msg.sender] = true;
         participantCount++;
+        participantStakes[msg.sender] = msg.value;
+        totalStakes += msg.value;
 
         emit ParticipantRegistered(msg.sender);
+        emit StakeDeposited(msg.sender, msg.value);
     }
 
     /**
@@ -217,18 +283,21 @@ contract Hackathon {
         address _participant
     )
         external
+        payable
     {
         require(isActive, "Hackathon is not active");
         require(block.timestamp < startTime, "Registration closed - hackathon has started");
         require(!isRegistered[_participant], "Already registered");
         require(_participant != address(0), "Invalid participant address");
+        require(msg.value == stakeAmount, "Must deposit exact stake amount");
 
         isRegistered[_participant] = true;
         participantCount++;
+        participantStakes[_participant] = msg.value;
+        totalStakes += msg.value;
 
-        emit ParticipantRegistered(
-            _participant
-        );
+        emit ParticipantRegistered(_participant);
+        emit StakeDeposited(_participant, msg.value);
     }
 
     /**
@@ -252,6 +321,15 @@ contract Hackathon {
         });
 
         hasSubmitted[msg.sender] = true;
+
+        // Return stake to participant
+        uint256 stake = participantStakes[msg.sender];
+        if (stake > 0) {
+            participantStakes[msg.sender] = 0;
+            totalStakes -= stake;
+            payable(msg.sender).transfer(stake);
+            emit StakeReturned(msg.sender, stake);
+        }
 
         emit SubmissionMade(msg.sender, _projectName);
     }
@@ -281,6 +359,15 @@ contract Hackathon {
         });
 
         hasSubmitted[_participant] = true;
+
+        // Return stake to participant
+        uint256 stake = participantStakes[_participant];
+        if (stake > 0) {
+            participantStakes[_participant] = 0;
+            totalStakes -= stake;
+            payable(_participant).transfer(stake);
+            emit StakeReturned(_participant, stake);
+        }
 
         emit SubmissionMade(_participant, _projectName);
     }

@@ -2,14 +2,16 @@
 pragma solidity ^0.8.28;
 
 import "./Hackathon.sol";
+import "./JudgeCouncil.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
 /**
  * @title HackathonFactory
  * @dev Factory contract for creating new hackathon instances using cloning
  * @notice This contract serves as a factory for deploying individual hackathon contracts using the clone pattern for gas efficiency.
+ * @notice This contract also manages global judge governance.
  */
-contract HackathonFactory {
+contract HackathonFactory is JudgeCouncil {
 
     mapping(address => uint256) public organizerHackathonCount;
     mapping(address => mapping(uint256 => address)) public organizerHackathons;
@@ -28,11 +30,19 @@ contract HackathonFactory {
     );
 
     /**
-     * @dev Constructor that sets the implementation contract address
+     * @dev Constructor that sets the implementation contract address and initializes judge governance
      * @param _implementation Address of the HackathonImplementation contract
      */
-    constructor(address _implementation) {
-        require(_implementation != address(0), "Invalid implementation address");
+    constructor(
+        address _implementation
+    )
+        JudgeCouncil(address(this))
+    {
+        require(
+            _implementation != address(0),
+            "Invalid implementation address"
+        );
+
         implementation = _implementation;
     }
 
@@ -49,6 +59,7 @@ contract HackathonFactory {
      * @param _stakeAmount Amount participants must stake when joining
      * @param _prizeDistribution Array defining how the prize pool is distributed among winners
      * @param _prizeClaimCooldown Cooldown period before winners can claim prizes
+     * @param _judgingDuration Duration of judging phase (2 hours to 2 days)
      * @return hackathonAddress Address of the newly created hackathon
      */
     function createHackathon(
@@ -61,7 +72,8 @@ contract HackathonFactory {
         uint256 _judgeRewardPercentage,
         uint256 _stakeAmount,
         uint256[] memory _prizeDistribution,
-        uint256 _prizeClaimCooldown
+        uint256 _prizeClaimCooldown,
+        uint256 _judgingDuration
     )
         external
         payable
@@ -73,10 +85,24 @@ contract HackathonFactory {
             "Prize claim cooldown cannot exceed 7 days"
         );
 
+        // Validate judging duration
+        require(
+            _judgingDuration >= 2 hours && _judgingDuration <= 2 days,
+            "Judging duration must be between 2 hours and 2 days"
+        );
+
         require(
             msg.value > 0,
             "Prize pool must be greater than 0"
         );
+
+        // Validate that all selected judges are in the global registry
+        for (uint256 i = 0; i < _selectedJudges.length; i++) {
+            require(
+                isJudgeOrDelegate(_selectedJudges[i]),
+                "Selected judge is not in global registry"
+            );
+        }
 
         // Clone the implementation contract
         hackathonAddress = Clones.clone(implementation);
@@ -93,6 +119,7 @@ contract HackathonFactory {
             _stakeAmount,
             _prizeDistribution,
             _prizeClaimCooldown,
+            _judgingDuration,
             address(this), // factory
             _selectedJudges
         );

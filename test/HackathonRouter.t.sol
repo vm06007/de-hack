@@ -91,7 +91,10 @@ contract HackathonRouterTest is Test {
             endTime,
             1 ether, // minimum sponsor contribution
             judges,
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
 
         vm.stopPrank();
@@ -138,7 +141,7 @@ contract HackathonRouterTest is Test {
         );
 
         vm.prank(participant1);
-        router.registerForHackathon(hackathonAddress);
+        router.registerForHackathon{value: 0.01 ether}(hackathonAddress);
 
         // Check participant is registered
         assertTrue(router.isParticipantRegistered(hackathonAddress, participant1));
@@ -151,7 +154,7 @@ contract HackathonRouterTest is Test {
 
         // Register participant
         vm.prank(participant1);
-        router.registerForHackathon(hackathonAddress);
+        router.registerForHackathon{value: 0.01 ether}(hackathonAddress);
 
         // Fast forward to hackathon start
         vm.warp(block.timestamp + START_OFFSET + 1);
@@ -213,7 +216,29 @@ contract HackathonRouterTest is Test {
         router.submitProject(address(0), "Test Project", "https://test.com");
     }
 
-
+    function testCreateHackathonWithExcessiveCooldownReverts() public {
+        vm.prank(organizer);
+        
+        uint256 startTime = block.timestamp + START_OFFSET;
+        uint256 endTime = startTime + DURATION;
+        
+        // Get initial judges from router
+        address[] memory judges = router.getGlobalJudges();
+        
+        vm.expectRevert("Prize claim cooldown cannot exceed 7 days");
+        router.createHackathon{value: PRIZE_POOL}(
+            "Invalid Cooldown Hackathon",
+            "This should fail",
+            startTime,
+            endTime,
+            1 ether, // minimum sponsor contribution
+            judges,
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            8 days // prize claim cooldown (exceeds 7 days)
+        );
+    }
 
     // Helper function to create a default hackathon
     function _createDefaultHackathon() internal returns (address) {
@@ -228,7 +253,10 @@ contract HackathonRouterTest is Test {
             block.timestamp + START_OFFSET + DURATION,
             1 ether, // minimum sponsor contribution
             judges,
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
     }
 
@@ -243,7 +271,10 @@ contract HackathonRouterTest is Test {
             block.timestamp + START_OFFSET + DURATION,
             1 ether, // minimum sponsor contribution
             emptyJudges,
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
         
         // Use an existing global judge
@@ -273,7 +304,10 @@ contract HackathonRouterTest is Test {
             block.timestamp + START_OFFSET + DURATION,
             1 ether, // minimum sponsor contribution
             initialJudges,
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
         
         address oldJudge = initialJudges[0];

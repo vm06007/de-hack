@@ -59,7 +59,10 @@ contract HackathonTest is Test {
             block.timestamp + START_OFFSET + DURATION,
             organizer,
             1 ether, // minimum sponsor contribution
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
     }
 
@@ -124,7 +127,7 @@ contract HackathonTest is Test {
         vm.expectEmit(true, false, false, false);
         emit ParticipantRegistered(participant1);
 
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         assertTrue(
             hackathon.isRegistered(participant1)
@@ -139,10 +142,10 @@ contract HackathonTest is Test {
     function testRegisterTwiceReverts() public {
         vm.startPrank(participant1);
 
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         vm.expectRevert("Already registered");
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         vm.stopPrank();
     }
@@ -152,13 +155,13 @@ contract HackathonTest is Test {
 
         vm.prank(participant1);
         vm.expectRevert("Registration closed - hackathon has started");
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
     }
 
     function testSubmitProject() public {
         // Register participant first
         vm.prank(participant1);
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         // Fast forward to hackathon start
         vm.warp(block.timestamp + START_OFFSET + 1);
@@ -219,7 +222,7 @@ contract HackathonTest is Test {
 
     function testSubmitProjectTwiceReverts() public {
         vm.prank(participant1);
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         vm.warp(block.timestamp + START_OFFSET + 1);
 
@@ -235,7 +238,7 @@ contract HackathonTest is Test {
 
     function testSubmitBeforeStartReverts() public {
         vm.prank(participant1);
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         vm.prank(participant1);
         vm.expectRevert("Hackathon has not started yet");
@@ -244,7 +247,7 @@ contract HackathonTest is Test {
 
     function testSubmitAfterEndReverts() public {
         vm.prank(participant1);
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         vm.warp(block.timestamp + START_OFFSET + DURATION + 1);
 
@@ -435,13 +438,13 @@ contract HackathonTest is Test {
     function testMultipleParticipants() public {
         // Register multiple participants
         vm.prank(participant1);
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         vm.prank(participant2);
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         vm.prank(participant3);
-        hackathon.register();
+        hackathon.register{value: 0.01 ether}();
 
         assertEq(
             hackathon.participantCount(),
@@ -811,7 +814,7 @@ contract HackathonTest is Test {
         hackathon.addMoreJudge(judge1);
         
         // Register participant
-        hackathon.registerParticipant(participant);
+        hackathon.registerParticipant{value: 0.01 ether}(participant);
         
         // Fast forward to hackathon start time
         vm.warp(block.timestamp + START_OFFSET + 1);

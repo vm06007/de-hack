@@ -68,7 +68,10 @@ contract HackathonFactoryTest is Test {
             startTime,
             endTime,
             1 ether, // minimum sponsor contribution
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
 
         vm.stopPrank();
@@ -116,7 +119,10 @@ contract HackathonFactoryTest is Test {
             pastTime,
             endTime,
             1 ether, // minimum sponsor contribution
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
     }
 
@@ -133,7 +139,10 @@ contract HackathonFactoryTest is Test {
             startTime,
             endTime,
             1 ether, // minimum sponsor contribution
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
     }
 
@@ -150,7 +159,30 @@ contract HackathonFactoryTest is Test {
             startTime,
             endTime,
             1 ether, // minimum sponsor contribution
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
+        );
+    }
+
+    function testCreateHackathonWithExcessiveCooldownReverts() public {
+        vm.prank(organizer);
+
+        uint256 startTime = block.timestamp + START_OFFSET;
+        uint256 endTime = startTime + DURATION;
+
+        vm.expectRevert("Prize claim cooldown cannot exceed 7 days");
+        factory.createHackathon{value: PRIZE_POOL}(
+            "Invalid Cooldown Hackathon",
+            "This should fail",
+            startTime,
+            endTime,
+            1 ether, // minimum sponsor contribution
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            8 days // prize claim cooldown (exceeds 7 days)
         );
     }
 
@@ -164,7 +196,7 @@ contract HackathonFactoryTest is Test {
 
         vm.prank(participant1);
         vm.expectRevert("Registration closed - hackathon has started");
-        Hackathon(hackathonAddress).register();
+        Hackathon(hackathonAddress).register{value: 0.01 ether}();
     }
 
     function testRegisterForInactiveHackathonReverts() public {
@@ -177,7 +209,7 @@ contract HackathonFactoryTest is Test {
 
         vm.prank(participant1);
         vm.expectRevert("Hackathon is not active");
-        Hackathon(hackathonAddress).register();
+        Hackathon(hackathonAddress).register{value: 0.01 ether}();
     }
 
     function testSubmitProject() public {
@@ -185,7 +217,7 @@ contract HackathonFactoryTest is Test {
 
         // Register participant
         vm.prank(participant1);
-        Hackathon(hackathonAddress).register();
+        Hackathon(hackathonAddress).register{value: 0.01 ether}();
 
         // Fast forward to hackathon start
         vm.warp(block.timestamp + START_OFFSET + 1);
@@ -219,7 +251,7 @@ contract HackathonFactoryTest is Test {
         address hackathonAddress = _createDefaultHackathon();
 
         vm.prank(participant1);
-        Hackathon(hackathonAddress).register();
+        Hackathon(hackathonAddress).register{value: 0.01 ether}();
 
         vm.warp(block.timestamp + START_OFFSET + 1);
 
@@ -242,7 +274,7 @@ contract HackathonFactoryTest is Test {
         address hackathonAddress = _createDefaultHackathon();
 
         vm.prank(participant1);
-        Hackathon(hackathonAddress).register();
+        Hackathon(hackathonAddress).register{value: 0.01 ether}();
 
         // Don't warp time - still before start
         vm.prank(participant1);
@@ -255,7 +287,7 @@ contract HackathonFactoryTest is Test {
         address hackathonAddress = _createDefaultHackathon();
 
         vm.prank(participant1);
-        Hackathon(hackathonAddress).register();
+        Hackathon(hackathonAddress).register{value: 0.01 ether}();
 
         // Warp to after end time
         vm.warp(block.timestamp + START_OFFSET + DURATION + 1);
@@ -349,7 +381,10 @@ contract HackathonFactoryTest is Test {
             block.timestamp + 2 hours,
             block.timestamp + 48 hours,
             1 ether, // minimum sponsor contribution
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
 
         assertEq(factory.getHackathonCount(), 2);
@@ -397,7 +432,10 @@ contract HackathonFactoryTest is Test {
             block.timestamp + START_OFFSET,
             block.timestamp + START_OFFSET + DURATION,
             1 ether, // minimum sponsor contribution
-            250 // 2.50% judge reward percentage
+            250, // 2.50% judge reward percentage
+            0.01 ether, // stake amount
+            3, // max winners
+            1 days // prize claim cooldown
         );
     }
 }

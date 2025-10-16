@@ -51,26 +51,6 @@ contract VotingSystem {
 
 
     /**
-     * @notice Start voting automatically when hackathon ends
-     * @dev Internal function to start voting with hardcoded duration
-     */
-    function _startVoting()
-        internal
-    {
-        require(
-            votingOpen == false,
-            "Voting is already open"
-        );
-
-        votingOpen = true;
-        votingDeadline = block.timestamp + 7 days; // Hardcoded 7 days voting period
-
-        emit VotingOpened(
-            votingDeadline
-        );
-    }
-
-    /**
      * @notice Vote for a participant's submission
      * @dev Internal function for judges to allocate points to participants and update winner list
      * @param _participant Address of the participant to vote for

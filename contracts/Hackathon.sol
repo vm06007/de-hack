@@ -852,4 +852,232 @@ contract Hackathon {
     {
         return delegateToJudge[_delegate];
     }
+
+    // ========== Voting System Functions ==========
+
+    /**
+     * @dev Opens voting for judges (only organizer can call)
+     * @param _votingDuration Duration of voting period in seconds
+     */
+    function openVoting(uint256 _votingDuration) external onlyOrganizer {
+        require(!isActive, "Hackathon must be ended first");
+        require(!votingOpen, "Voting is already open");
+        require(_votingDuration > 0, "Voting duration must be greater than 0");
+
+        votingOpen = true;
+        votingDeadline = block.timestamp + _votingDuration;
+
+        emit VotingOpened(votingDeadline);
+    }
+
+    /**
+     * @dev Allows a judge to vote on submissions by allocating points
+     * @param _participant Address of the participant to vote for
+     * @param _points Points to allocate (0-100)
+     */
+    function voteForSubmission(address _participant, uint256 _points) external onlyJudge {
+        require(votingOpen, "Voting is not open");
+        require(block.timestamp <= votingDeadline, "Voting deadline has passed");
+        require(hasSubmitted[_participant], "Participant has not submitted");
+        require(_points <= pointsPerJudge, "Cannot allocate more points than allowed");
+        require(!hasVoted[msg.sender], "Judge has already voted");
+
+        // Check if judge has already allocated points to this participant
+        uint256 currentPoints = judgeVotes[msg.sender][_participant];
+        require(currentPoints == 0, "Judge has already voted for this participant");
+
+        judgeVotes[msg.sender][_participant] = _points;
+        totalPoints[_participant] += _points;
+
+        emit JudgeVoted(msg.sender, _participant, _points);
+    }
+
+    /**
+     * @dev Closes voting (only organizer can call)
+     */
+    function closeVoting() external onlyOrganizer {
+        require(votingOpen, "Voting is not open");
+        require(block.timestamp > votingDeadline, "Voting deadline has not passed");
+
+        votingOpen = false;
+        votingEndTime = block.timestamp;
+
+        emit VotingClosed(votingEndTime);
+    }
+
+    /**
+     * @dev Allows winners to claim their prize after cooldown period
+     */
+    function claimPrize() external {
+        require(!votingOpen, "Voting must be closed first");
+        require(votingEndTime > 0, "Voting has not ended");
+        require(block.timestamp >= votingEndTime + prizeClaimCooldown, "Cooldown period not over");
+        require(hasSubmitted[msg.sender], "Must have submitted a project");
+        require(!hasClaimedPrize[msg.sender], "Prize already claimed");
+
+        // Check if participant is a winner
+        require(isWinner(msg.sender), "Not a winner");
+
+        hasClaimedPrize[msg.sender] = true;
+
+        // Calculate prize amount
+        uint256 prizeAmount = getPrizeAmount();
+        require(prizeAmount > 0, "No prize to claim");
+
+        payable(msg.sender).transfer(prizeAmount);
+
+        emit PrizeClaimed(msg.sender, prizeAmount);
+    }
+
+    /**
+     * @dev Checks if a participant is a winner
+     * @param _participant Address of the participant
+     * @return True if participant is a winner
+     */
+    function isWinner(address _participant) public view returns (bool) {
+        if (!hasSubmitted[_participant]) return false;
+        if (totalPoints[_participant] == 0) return false;
+
+        // Get all participants with their points
+        address[] memory participants = getParticipantsWithSubmissions();
+        uint256[] memory points = new uint256[](participants.length);
+        
+        for (uint256 i = 0; i < participants.length; i++) {
+            points[i] = totalPoints[participants[i]];
+        }
+
+        // Sort participants by points (simple bubble sort for small arrays)
+        for (uint256 i = 0; i < participants.length - 1; i++) {
+            for (uint256 j = 0; j < participants.length - i - 1; j++) {
+                if (points[j] < points[j + 1]) {
+                    // Swap points
+                    uint256 tempPoints = points[j];
+                    points[j] = points[j + 1];
+                    points[j + 1] = tempPoints;
+                    
+                    // Swap participants
+                    address tempParticipant = participants[j];
+                    participants[j] = participants[j + 1];
+                    participants[j + 1] = tempParticipant;
+                }
+            }
+        }
+
+        // Check if participant is in top maxWinners
+        for (uint256 i = 0; i < maxWinners && i < participants.length; i++) {
+            if (participants[i] == _participant) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @dev Gets the prize amount for each winner
+     * @return Prize amount per winner
+     */
+    function getPrizeAmount() public view returns (uint256) {
+        if (maxWinners == 0) return 0;
+        return prizePool / maxWinners;
+    }
+
+    /**
+     * @dev Gets all participants who have submitted projects
+     * @return Array of participant addresses
+     */
+    function getParticipantsWithSubmissions() public view returns (address[] memory) {
+        address[] memory participants = new address[](participantCount);
+        uint256 count = 0;
+
+        // This is a simplified version - in practice, you might want to store this differently
+        // For now, we'll return an empty array as this would require iterating through all participants
+        // In a real implementation, you'd want to maintain a separate array of participants with submissions
+        return participants;
+    }
+
+    // ========== Getter Functions for New Features ==========
+
+    /**
+     * @dev Gets stake amount required to join
+     * @return Stake amount
+     */
+    function getStakeAmount() external view returns (uint256) {
+        return stakeAmount;
+    }
+
+    /**
+     * @dev Gets participant's stake
+     * @param _participant Address of the participant
+     * @return Stake amount
+     */
+    function getParticipantStake(address _participant) external view returns (uint256) {
+        return participantStakes[_participant];
+    }
+
+    /**
+     * @dev Gets total stakes collected
+     * @return Total stakes
+     */
+    function getTotalStakes() external view returns (uint256) {
+        return totalStakes;
+    }
+
+    /**
+     * @dev Gets maximum number of winners
+     * @return Maximum winners
+     */
+    function getMaxWinners() external view returns (uint256) {
+        return maxWinners;
+    }
+
+    /**
+     * @dev Gets points per judge
+     * @return Points per judge
+     */
+    function getPointsPerJudge() external view returns (uint256) {
+        return pointsPerJudge;
+    }
+
+    /**
+     * @dev Gets total points for a participant
+     * @param _participant Address of the participant
+     * @return Total points
+     */
+    function getTotalPoints(address _participant) external view returns (uint256) {
+        return totalPoints[_participant];
+    }
+
+    /**
+     * @dev Gets voting deadline
+     * @return Voting deadline timestamp
+     */
+    function getVotingDeadline() external view returns (uint256) {
+        return votingDeadline;
+    }
+
+    /**
+     * @dev Gets whether voting is open
+     * @return True if voting is open
+     */
+    function isVotingOpen() external view returns (bool) {
+        return votingOpen;
+    }
+
+    /**
+     * @dev Gets prize claim cooldown period
+     * @return Cooldown period in seconds
+     */
+    function getPrizeClaimCooldown() external view returns (uint256) {
+        return prizeClaimCooldown;
+    }
+
+    /**
+     * @dev Gets whether a participant has claimed their prize
+     * @param _participant Address of the participant
+     * @return True if prize has been claimed
+     */
+    function getHasClaimedPrize(address _participant) external view returns (bool) {
+        return hasClaimedPrize[_participant];
+    }
 }

@@ -750,4 +750,259 @@ contract HackathonRouter {
         return hackathon.getDelegateJudge(_delegate);
     }
 
+    // ========== Stake System Functions ==========
+
+    /**
+     * @dev Gets stake amount required to join a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @return Stake amount
+     */
+    function getStakeAmount(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getStakeAmount();
+    }
+
+    /**
+     * @dev Gets participant's stake for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _participant Address of the participant
+     * @return Stake amount
+     */
+    function getParticipantStake(address _hackathonAddress, address _participant) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getParticipantStake(_participant);
+    }
+
+    /**
+     * @dev Gets total stakes collected for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @return Total stakes
+     */
+    function getTotalStakes(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getTotalStakes();
+    }
+
+    // ========== Voting System Functions ==========
+
+    /**
+     * @dev Opens voting for judges in a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _votingDuration Duration of voting period in seconds
+     */
+    function openVoting(address _hackathonAddress, uint256 _votingDuration) external {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.openVoting(_votingDuration);
+    }
+
+    /**
+     * @dev Allows a judge to vote on submissions
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _participant Address of the participant to vote for
+     * @param _points Points to allocate
+     */
+    function voteForSubmission(address _hackathonAddress, address _participant, uint256 _points) external {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.voteForSubmission(_participant, _points);
+    }
+
+    /**
+     * @dev Closes voting for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function closeVoting(address _hackathonAddress) external {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.closeVoting();
+    }
+
+    /**
+     * @dev Allows winners to claim their prize
+     * @param _hackathonAddress Address of the hackathon contract
+     */
+    function claimPrize(address _hackathonAddress) external {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.claimPrize();
+    }
+
+    /**
+     * @dev Checks if a participant is a winner
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _participant Address of the participant
+     * @return True if participant is a winner
+     */
+    function isWinner(address _hackathonAddress, address _participant) external view returns (bool) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.isWinner(_participant);
+    }
+
+    /**
+     * @dev Gets the prize amount for each winner
+     * @param _hackathonAddress Address of the hackathon contract
+     * @return Prize amount per winner
+     */
+    function getPrizeAmount(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getPrizeAmount();
+    }
+
+    // ========== Getter Functions for New Features ==========
+
+    /**
+     * @dev Gets maximum number of winners for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @return Maximum winners
+     */
+    function getMaxWinners(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getMaxWinners();
+    }
+
+    /**
+     * @dev Gets points per judge for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @return Points per judge
+     */
+    function getPointsPerJudge(address _hackathonAddress) external view returns (uint256) {
+        require(_hackathonAddress != address(0), "Invalid hackathon address");
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getPointsPerJudge();
+    }
+
+    /**
+     * @dev Gets total points for a participant
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _participant Address of the participant
+     * @return Total points
+     */
+    function getTotalPoints(
+        address _hackathonAddress,
+        address _participant
+    )
+        external
+        view
+        returns (uint256)
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        return hackathon.getTotalPoints(
+            _participant
+        );
+    }
+
+    /**
+     * @dev Gets voting deadline for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @return Voting deadline timestamp
+     */
+    function getVotingDeadline(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (uint256)
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        return hackathon.getVotingDeadline();
+    }
+
+    /**
+     * @dev Gets whether voting is open for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @return True if voting is open
+     */
+    function isVotingOpen(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (bool)
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        return hackathon.isVotingOpen();
+    }
+
+    /**
+     * @dev Gets prize claim cooldown period for a hackathon
+     * @param _hackathonAddress Address of the hackathon contract
+     * @return Cooldown period in seconds
+     */
+    function getPrizeClaimCooldown(
+        address _hackathonAddress
+    )
+        external
+        view
+        returns (uint256)
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        return hackathon.getPrizeClaimCooldown();
+    }
+
+    /**
+     * @dev Gets whether a participant has claimed their prize
+     * @param _hackathonAddress Address of the hackathon contract
+     * @param _participant Address of the participant
+     * @return True if prize has been claimed
+     */
+    function hasClaimedPrize(
+        address _hackathonAddress,
+        address _participant
+    )
+        external
+        view
+        returns (bool)
+    {
+        require(
+            _hackathonAddress != address(0),
+            "Invalid hackathon address"
+        );
+
+        Hackathon hackathon = Hackathon(
+            _hackathonAddress
+        );
+
+        return hackathon.getHasClaimedPrize(
+            _participant
+        );
+    }
 }

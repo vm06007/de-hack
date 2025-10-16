@@ -125,8 +125,6 @@ contract HackathonRouterTest is Test {
     function testRegisterForHackathon() public {
         address hackathonAddress = _createDefaultHackathon();
 
-        vm.prank(participant1);
-
         vm.expectEmit(
             true,
             true,
@@ -139,6 +137,7 @@ contract HackathonRouterTest is Test {
             participant1
         );
 
+        vm.prank(participant1);
         router.registerForHackathon(hackathonAddress);
 
         // Check participant is registered

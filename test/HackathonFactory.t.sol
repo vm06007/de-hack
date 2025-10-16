@@ -25,7 +25,6 @@ contract HackathonFactoryTest is Test {
     );
 
     event ParticipantRegistered(
-        address indexed hackathonAddress,
         address indexed participant
     );
 
@@ -88,7 +87,7 @@ contract HackathonFactoryTest is Test {
             address storedOrganizer,
             bool isActive,
             uint256 participantCount
-        ) = factory.getHackathonDetails(hackathonAddress);
+        ) = Hackathon(hackathonAddress).getHackathonDetails();
 
         assertEq(name, "Web3 Hackathon");
         assertEq(description, "Build the future of Web3");
@@ -155,47 +154,7 @@ contract HackathonFactoryTest is Test {
         );
     }
 
-    function testRegisterForHackathon() public {
-        address hackathonAddress = _createDefaultHackathon();
-
-        vm.prank(participant1);
-
-        vm.expectEmit(
-            true,
-            true,
-            false,
-            false
-        );
-
-        emit ParticipantRegistered(
-            hackathonAddress,
-            participant1
-        );
-
-        factory.registerForHackathon(hackathonAddress);
-
-        // Check participant count increased
-        (
-            ,
-            ,
-            ,
-            ,
-            ,
-            ,
-            bool isActive,
-            uint256 participantCount
-        ) = factory.getHackathonDetails(hackathonAddress);
-
-        assertTrue(isActive);
-        assertEq(participantCount, 1);
-
-        // Check participant is registered
-        assertTrue(factory.isParticipantRegistered(hackathonAddress, participant1));
-
-        // Check participant's hackathons
-        assertEq(factory.getParticipantHackathonCount(participant1), 1);
-        assertEq(factory.getParticipantHackathon(participant1, 0), hackathonAddress);
-    }
+    // Note: Registration tests moved to Router tests since Factory no longer proxies registration
 
     function testRegisterAfterHackathonStartsReverts() public {
         address hackathonAddress = _createDefaultHackathon();
@@ -205,7 +164,7 @@ contract HackathonFactoryTest is Test {
 
         vm.prank(participant1);
         vm.expectRevert("Registration closed - hackathon has started");
-        factory.registerForHackathon(hackathonAddress);
+        Hackathon(hackathonAddress).register();
     }
 
     function testRegisterForInactiveHackathonReverts() public {
@@ -218,7 +177,7 @@ contract HackathonFactoryTest is Test {
 
         vm.prank(participant1);
         vm.expectRevert("Hackathon is not active");
-        factory.registerForHackathon(hackathonAddress);
+        Hackathon(hackathonAddress).register();
     }
 
     function testSubmitProject() public {
@@ -226,7 +185,7 @@ contract HackathonFactoryTest is Test {
 
         // Register participant
         vm.prank(participant1);
-        factory.registerForHackathon(hackathonAddress);
+        Hackathon(hackathonAddress).register();
 
         // Fast forward to hackathon start
         vm.warp(block.timestamp + START_OFFSET + 1);
@@ -247,7 +206,7 @@ contract HackathonFactoryTest is Test {
             uint256 submissionTime,
             uint256 score,
             bool isEvaluated
-        ) = factory.getSubmission(hackathonAddress, participant1);
+        ) = Hackathon(hackathonAddress).getSubmission(participant1);
 
         assertEq(submitter, participant1);
         assertEq(projectName, "DeFi Protocol");
@@ -260,7 +219,7 @@ contract HackathonFactoryTest is Test {
         address hackathonAddress = _createDefaultHackathon();
 
         vm.prank(participant1);
-        factory.registerForHackathon(hackathonAddress);
+        Hackathon(hackathonAddress).register();
 
         vm.warp(block.timestamp + START_OFFSET + 1);
 
@@ -283,7 +242,7 @@ contract HackathonFactoryTest is Test {
         address hackathonAddress = _createDefaultHackathon();
 
         vm.prank(participant1);
-        factory.registerForHackathon(hackathonAddress);
+        Hackathon(hackathonAddress).register();
 
         // Don't warp time - still before start
         vm.prank(participant1);
@@ -296,7 +255,7 @@ contract HackathonFactoryTest is Test {
         address hackathonAddress = _createDefaultHackathon();
 
         vm.prank(participant1);
-        factory.registerForHackathon(hackathonAddress);
+        Hackathon(hackathonAddress).register();
 
         // Warp to after end time
         vm.warp(block.timestamp + START_OFFSET + DURATION + 1);
@@ -325,7 +284,7 @@ contract HackathonFactoryTest is Test {
             uint256 prizePool,
             ,
             bool isActive,
-        ) = factory.getHackathonDetails(hackathonAddress);
+        ) = Hackathon(hackathonAddress).getHackathonDetails();
 
         assertFalse(isActive);
         assertEq(prizePool, 0);
@@ -373,7 +332,7 @@ contract HackathonFactoryTest is Test {
             uint256 remainingPrizePool,
             ,
             ,
-        ) = factory.getHackathonDetails(hackathonAddress);
+        ) = Hackathon(hackathonAddress).getHackathonDetails();
 
         assertEq(remainingPrizePool, PRIZE_POOL - prizeAmount);
     }
@@ -404,7 +363,7 @@ contract HackathonFactoryTest is Test {
             ,
             ,
             ,
-        ) = factory.getHackathonDetails(hackathon1);
+        ) = Hackathon(hackathon1).getHackathonDetails();
 
         (
             string memory name2,
@@ -414,7 +373,7 @@ contract HackathonFactoryTest is Test {
             uint256 prize2,
             address org2,
             ,
-        ) = factory.getHackathonDetails(hackathon2);
+        ) = Hackathon(hackathon2).getHackathonDetails();
 
         assertEq(name1, "Web3 Hackathon");
         assertEq(name2, "DeFi Hackathon");

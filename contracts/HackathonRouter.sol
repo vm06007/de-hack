@@ -253,10 +253,8 @@ contract HackathonRouter {
             "Invalid hackathon address"
         );
 
-        factory.registerParticipantForHackathon(
-            _hackathonAddress,
-            msg.sender
-        );
+        // Register with factory (which also registers with hackathon)
+        factory.registerParticipantForHackathon(_hackathonAddress, msg.sender);
 
         emit ParticipantRegistered(
             _hackathonAddress,
@@ -318,9 +316,8 @@ contract HackathonRouter {
             bool isActive,
             uint256 participantCount
     ) {
-        return factory.getHackathonDetails(
-            _hackathonAddress
-        );
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getHackathonDetails();
     }
 
     /**
@@ -336,10 +333,8 @@ contract HackathonRouter {
         view
         returns (bool)
     {
-        return factory.isParticipantRegistered(
-            _hackathonAddress,
-            _participant
-        );
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.isRegistered(_participant);
     }
 
     /**
@@ -361,10 +356,8 @@ contract HackathonRouter {
             uint256 score,
             bool isEvaluated
     ) {
-        return factory.getSubmission(
-            _hackathonAddress,
-            _participant
-        );
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getSubmission(_participant);
     }
 
     /**
@@ -462,9 +455,8 @@ contract HackathonRouter {
             "Invalid hackathon address"
         );
 
-        factory.becomeSponsor{
-            value: msg.value
-        }(_hackathonAddress);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.becomeSponsor{value: msg.value}();
     }
 
     /**
@@ -483,10 +475,8 @@ contract HackathonRouter {
             "Invalid hackathon address"
         );
 
-        factory.addJudge(
-            _hackathonAddress,
-            _judge
-        );
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.addJudge(_judge);
     }
 
     /**
@@ -503,7 +493,8 @@ contract HackathonRouter {
         external
     {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
-        factory.scoreSubmission(_hackathonAddress, _participant, _score);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.scoreSubmission(_participant, _score);
     }
 
     /**
@@ -517,9 +508,8 @@ contract HackathonRouter {
         view
         returns (address[] memory)
     {
-        return factory.getSponsors(
-            _hackathonAddress
-        );
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getSponsors();
     }
 
     /**
@@ -533,9 +523,8 @@ contract HackathonRouter {
         view
         returns (address[] memory)
     {
-        return factory.getJudges(
-            _hackathonAddress
-        );
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getJudges();
     }
 
     /**
@@ -551,10 +540,8 @@ contract HackathonRouter {
         view
         returns (bool)
     {
-        return factory.isJudge(
-            _hackathonAddress,
-            _judge
-        );
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.isJudge(_judge);
     }
 
     /**
@@ -570,7 +557,8 @@ contract HackathonRouter {
         view
         returns (uint256)
     {
-        return factory.getSponsorContribution(_hackathonAddress, _sponsor);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getSponsorContribution(_sponsor);
     }
 
     /**
@@ -584,7 +572,8 @@ contract HackathonRouter {
         view
         returns (uint256)
     {
-        return factory.getTotalPrizePool(_hackathonAddress);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getTotalPrizePool();
     }
 
     /**
@@ -598,7 +587,8 @@ contract HackathonRouter {
         view
         returns (uint256)
     {
-        return factory.getMinimumSponsorContribution(_hackathonAddress);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getMinimumSponsorContribution();
     }
 
     /**
@@ -611,7 +601,8 @@ contract HackathonRouter {
         external
     {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
-        factory.claimJudgeReward(_hackathonAddress);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.claimJudgeReward();
     }
 
     /**
@@ -625,7 +616,8 @@ contract HackathonRouter {
         view
         returns (uint256)
     {
-        return factory.getJudgeRewardPool(_hackathonAddress);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getJudgeRewardPool();
     }
 
     /**
@@ -639,7 +631,8 @@ contract HackathonRouter {
         view
         returns (uint256)
     {
-        return factory.getRewardPerJudge(_hackathonAddress);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getRewardPerJudge();
     }
 
     /**
@@ -653,7 +646,8 @@ contract HackathonRouter {
         view
         returns (uint256)
     {
-        return factory.getJudgeRewardPercentage(_hackathonAddress);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getJudgeRewardPercentage();
     }
 
     /**
@@ -668,7 +662,8 @@ contract HackathonRouter {
         external
     {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
-        factory.delegateToAgent(_hackathonAddress, _delegate);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.delegateToAgent(_delegate);
     }
 
     /**
@@ -681,7 +676,8 @@ contract HackathonRouter {
         external
     {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
-        factory.revokeDelegation(_hackathonAddress);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        hackathon.revokeDelegation();
     }
 
     /**
@@ -699,7 +695,8 @@ contract HackathonRouter {
         returns (address)
     {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
-        return factory.getJudgeDelegate(_hackathonAddress, _judge);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getJudgeDelegate(_judge);
     }
 
     /**
@@ -717,7 +714,8 @@ contract HackathonRouter {
         returns (address)
     {
         require(_hackathonAddress != address(0), "Invalid hackathon address");
-        return factory.getDelegateJudge(_hackathonAddress, _delegate);
+        Hackathon hackathon = Hackathon(_hackathonAddress);
+        return hackathon.getDelegateJudge(_delegate);
     }
 
 }

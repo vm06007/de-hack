@@ -42,10 +42,10 @@ contract HackathonBasicTest is Test {
 
         // Deploy implementation contract
         Hackathon implementation = new Hackathon();
-        
+
         // Deploy factory with implementation
         HackathonFactory factory = new HackathonFactory(address(implementation));
-        
+
         // Create hackathon through factory
         vm.prank(organizer);
         address hackathonAddress = factory.createHackathon{value: PRIZE_POOL}(
@@ -61,7 +61,7 @@ contract HackathonBasicTest is Test {
             1 days, // prize claim cooldown
             1 days // judging duration
         );
-        
+
         hackathon = Hackathon(hackathonAddress);
     }
 
@@ -84,7 +84,7 @@ contract HackathonBasicTest is Test {
 
     function testRegisterParticipant() public {
         vm.prank(participant1);
-        
+
         hackathon.register{value: 0.01 ether}();
 
         assertTrue(hackathon.isRegistered(participant1));
@@ -178,7 +178,7 @@ contract HackathonBasicTest is Test {
         hackathon.register{value: 0.01 ether}();
 
         vm.prank(participant1);
-        vm.expectRevert("Hackathon has not started yet");
+        vm.expectRevert("Not during submission phase");
         hackathon.submitProject("Test Project", "https://test.com");
     }
 
@@ -191,7 +191,7 @@ contract HackathonBasicTest is Test {
         vm.warp(block.timestamp + START_OFFSET + DURATION + 1);
 
         vm.prank(participant1);
-        vm.expectRevert("Hackathon has ended");
+        vm.expectRevert("Not during submission phase");
         hackathon.submitProject("Test Project", "https://test.com");
     }
 
@@ -208,7 +208,9 @@ contract HackathonBasicTest is Test {
         assertFalse(hackathon.isRegistrationOpen());
     }
 
-    function testIsSubmissionOpen() public {
+    function testIsSubmissionOpen()
+        public
+    {
         // Before start time
         assertFalse(hackathon.isSubmissionOpen());
 

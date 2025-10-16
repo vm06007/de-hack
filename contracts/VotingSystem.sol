@@ -340,31 +340,7 @@ contract VotingSystem {
         return 0;
     }
 
-    /**
-     * @notice Select random winners if judges didn't vote
-     * @dev Fallback mechanism to distribute prizes when no voting occurred
-     * @param _participants Array of all participants who submitted projects
-     */
-    function _selectRandomWinners(address[] memory _participants) internal {
-        require(winners.length == 0, "Winners already determined");
-        require(_participants.length > 0, "No participants to select from");
 
-        uint256 numWinners = _participants.length < maxWinners ? _participants.length : maxWinners;
-
-        // Use block timestamp and block number for pseudo-randomness
-        uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, block.number, block.prevrandao)));
-
-        // Simple approach: use modulo to select winners (may have duplicates but that's acceptable for now)
-        // TODO: Replace with proper oracle-based randomness later
-        for (uint256 i = 0; i < numWinners; i++) {
-            // Generate random index
-            uint256 randomIndex = (seed + i) % _participants.length;
-
-            // Add to winners array
-            winners.push(_participants[randomIndex]);
-            winnerPosition[_participants[randomIndex]] = i + 1; // 1-indexed position
-        }
-    }
 
     /**
      * @notice Check if a participant is a winner
@@ -429,13 +405,7 @@ contract VotingSystem {
     )
         internal
     {
-        require(_isVotingEnded(), "Voting is still open or deadline not reached");
-        require(block.timestamp >= _getVotingEndTime() + prizeClaimCooldown, "Prize claim cooldown not expired");
         require(!hasClaimedPrize[_participant], "Prize already claimed");
-
-        // Ensure winners are determined (either through voting or random selection)
-        _ensureWinnersDetermined();
-
         require(_isWinner(_participant), "Not a winner");
 
         uint256 prizeAmount = _getPrizeAmount(_participant);
@@ -443,15 +413,6 @@ contract VotingSystem {
         payable(_participant).transfer(prizeAmount);
 
         emit PrizeClaimed(_participant, prizeAmount);
-    }
-
-    /**
-     * @notice Ensure winners are determined (either through voting or random selection)
-     * @dev This function should be overridden by the parent contract to provide participants
-     */
-    function _ensureWinnersDetermined() internal virtual {
-        // This should be implemented by the parent contract
-        // For now, do nothing - parent contract will override this
     }
 
     // Getter functions

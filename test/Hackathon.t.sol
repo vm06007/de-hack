@@ -11,6 +11,8 @@ contract HackathonTest is Test {
     address public participant1;
     address public participant2;
     address public participant3;
+    address public judge1;
+    address public judge2;
 
     uint256 constant PRIZE_POOL = 10 ether;
     uint256 constant START_OFFSET = 1 hours;
@@ -39,6 +41,8 @@ contract HackathonTest is Test {
         participant1 = makeAddr("participant1");
         participant2 = makeAddr("participant2");
         participant3 = makeAddr("participant3");
+        judge1 = makeAddr("judge1");
+        judge2 = makeAddr("judge2");
 
         // Fund accounts
         vm.deal(organizer, 100 ether);
@@ -685,6 +689,173 @@ contract HackathonTest is Test {
         vm.prank(organizer);
         vm.expectRevert("Cannot replace judges after hackathon ends");
         hackathon.replaceJudge(oldJudge, newJudge);
+    }
+
+    // ========== Judge Delegation Tests ==========
+
+    function testDelegateToAgent() public {
+        address delegate = makeAddr("delegate");
+        
+        // Add judge first
+        vm.prank(organizer);
+        hackathon.addMoreJudge(judge1);
+        
+        // Judge delegates to agent
+        vm.prank(judge1);
+        hackathon.delegateToAgent(delegate);
+        
+        // Verify delegation
+        assertEq(hackathon.getJudgeDelegate(judge1), delegate);
+        assertEq(hackathon.getDelegateJudge(delegate), judge1);
+    }
+
+    function testDelegateToAgentNonJudgeReverts() public {
+        address delegate = makeAddr("delegate");
+        address nonJudge = makeAddr("nonJudge");
+        
+        // Non-judge tries to delegate
+        vm.prank(nonJudge);
+        vm.expectRevert("Only judges can delegate");
+        hackathon.delegateToAgent(delegate);
+    }
+
+    function testDelegateToAgentInvalidAddressReverts() public {
+        // Add judge first
+        vm.prank(organizer);
+        hackathon.addMoreJudge(judge1);
+        
+        // Judge tries to delegate to zero address
+        vm.prank(judge1);
+        vm.expectRevert("Invalid delegate address");
+        hackathon.delegateToAgent(address(0));
+    }
+
+    function testDelegateToAgentSelfReverts() public {
+        // Add judge first
+        vm.prank(organizer);
+        hackathon.addMoreJudge(judge1);
+        
+        // Judge tries to delegate to themselves
+        vm.prank(judge1);
+        vm.expectRevert("Cannot delegate to yourself");
+        hackathon.delegateToAgent(judge1);
+    }
+
+    function testDelegateToAgentAlreadyHasDelegateReverts() public {
+        address delegate1 = makeAddr("delegate1");
+        address delegate2 = makeAddr("delegate2");
+        
+        // Add judge first
+        vm.prank(organizer);
+        hackathon.addMoreJudge(judge1);
+        
+        // First delegation
+        vm.prank(judge1);
+        hackathon.delegateToAgent(delegate1);
+        
+        // Try to delegate again
+        vm.prank(judge1);
+        vm.expectRevert("Already has a delegate");
+        hackathon.delegateToAgent(delegate2);
+    }
+
+    function testRevokeDelegation() public {
+        address delegate = makeAddr("delegate");
+        
+        // Add judge first
+        vm.prank(organizer);
+        hackathon.addMoreJudge(judge1);
+        
+        // Delegate first
+        vm.prank(judge1);
+        hackathon.delegateToAgent(delegate);
+        
+        // Verify delegation exists
+        assertEq(hackathon.getJudgeDelegate(judge1), delegate);
+        
+        // Revoke delegation
+        vm.prank(judge1);
+        hackathon.revokeDelegation();
+        
+        // Verify delegation is revoked
+        assertEq(hackathon.getJudgeDelegate(judge1), address(0));
+        assertEq(hackathon.getDelegateJudge(delegate), address(0));
+    }
+
+    function testRevokeDelegationNonJudgeReverts() public {
+        address nonJudge = makeAddr("nonJudge");
+        
+        // Non-judge tries to revoke delegation
+        vm.prank(nonJudge);
+        vm.expectRevert("Only judges can revoke delegation");
+        hackathon.revokeDelegation();
+    }
+
+    function testRevokeDelegationNoDelegateReverts() public {
+        // Add judge first
+        vm.prank(organizer);
+        hackathon.addMoreJudge(judge1);
+        
+        // Judge without delegate tries to revoke
+        vm.prank(judge1);
+        vm.expectRevert("No delegation to revoke");
+        hackathon.revokeDelegation();
+    }
+
+    function testDelegateCanScoreSubmission() public {
+        address delegate = makeAddr("delegate");
+        address participant = makeAddr("participant");
+        
+        // Add judge first
+        vm.prank(organizer);
+        hackathon.addMoreJudge(judge1);
+        
+        // Register participant
+        hackathon.registerParticipant(participant);
+        
+        // Fast forward to hackathon start time
+        vm.warp(block.timestamp + START_OFFSET + 1);
+        
+        // Create submission
+        vm.prank(participant);
+        hackathon.submitProject("Test Project", "https://github.com/test");
+        
+        // Judge delegates to agent
+        vm.prank(judge1);
+        hackathon.delegateToAgent(delegate);
+        
+        // Delegate scores submission
+        vm.prank(delegate);
+        hackathon.scoreSubmission(participant, 85);
+        
+        // Verify score was recorded
+        (address participantAddr, string memory name, string memory url, uint256 submissionTime, uint256 score, bool isEvaluated) = hackathon.getSubmission(participant);
+        assertEq(score, 85);
+        assertTrue(isEvaluated);
+    }
+
+    function testDelegateCanClaimJudgeReward() public {
+        address delegate = makeAddr("delegate");
+        
+        // Add judge first
+        vm.prank(organizer);
+        hackathon.addMoreJudge(judge1);
+        
+        // Judge delegates to agent
+        vm.prank(judge1);
+        hackathon.delegateToAgent(delegate);
+        
+        // Fast forward past hackathon end time to enable reward claiming
+        vm.warp(block.timestamp + START_OFFSET + DURATION + 1);
+        vm.prank(organizer);
+        hackathon.endHackathon();
+        
+        // Delegate claims reward (should work since they're acting on behalf of judge1)
+        vm.prank(delegate);
+        hackathon.claimJudgeReward();
+        
+        // Verify judge1 has received reward
+        assertTrue(hackathon.hasReceivedJudgeReward(judge1));
     }
 
 }

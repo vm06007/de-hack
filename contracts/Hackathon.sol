@@ -68,52 +68,9 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         uint256 contribution
     );
 
-    event JudgeAdded(
-        address indexed judge
-    );
-
     event SubmissionScored(
         address indexed participant,
         uint256 score
-    );
-
-    event JudgeRewardDistributed(
-        address indexed judge,
-        uint256 amount
-    );
-
-    event JudgeDelegated(
-        address indexed judge,
-        address indexed delegate
-    );
-
-    event StakeDeposited(
-        address indexed participant,
-        uint256 amount
-    );
-
-    event StakeReturned(
-        address indexed participant,
-        uint256 amount
-    );
-
-    event JudgeVoted(
-        address indexed judge,
-        address indexed participant,
-        uint256 points
-    );
-
-    event VotingOpened(
-        uint256 deadline
-    );
-
-    event VotingClosed(
-        uint256 endTime
-    );
-
-    event PrizeClaimed(
-        address indexed winner,
-        uint256 amount
     );
 
     modifier onlyOrganizer() {
@@ -519,6 +476,29 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         return isActive && block.timestamp >= startTime && block.timestamp <= endTime;
     }
 
+
+    modifier onlyDuringSubmission() {
+        require(isActive && block.timestamp >= startTime && block.timestamp <= endTime, "Not during submission phase");
+        _;
+    }
+
+    modifier onlyDuringVoting() {
+        require(block.timestamp >= votingStartTime && block.timestamp <= votingEndTime, "Not during voting phase");
+        _;
+    }
+
+    modifier onlyDuringClaiming() {
+        require(block.timestamp >= claimingStartTime, "Not during claiming phase");
+        _;
+    }
+
+    /**
+     * @dev Check if hackathon is currently active based on timestamps
+     */
+    function _updateActiveStatus() internal {
+        isActive = block.timestamp >= startTime && block.timestamp <= endTime;
+    }
+
     /**
      * @dev Allows anyone to become a sponsor by contributing the minimum amount
      */
@@ -609,15 +589,12 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
     /**
      * @dev Gets all sponsors
      */
-    function getSponsors() external view returns (address[] memory) {
+    function getSponsors()
+        external
+        view
+        returns (address[] memory)
+    {
         return sponsorList;
-    }
-
-    /**
-     * @dev Gets all judges
-     */
-    function getJudges() external view returns (address[] memory) {
-        return judgeList;
     }
 
     /**
@@ -653,16 +630,6 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         emit JudgeRewardDistributed(actualJudge, rewardPerJudge);
     }
 
-    /**
-     * @dev Gets judge reward pool amount
-     */
-    function getJudgeRewardPool()
-        external
-        view
-        returns (uint256)
-    {
-        return judgeRewardPool;
-    }
 
     /**
      * @dev Gets total prize pool including sponsor contributions
@@ -686,48 +653,10 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         return minimumSponsorContribution;
     }
 
-    /**
-     * @dev Gets the delegate for a judge
-     * @param _judge Address of the judge
-     * @return Address of the delegate (address(0) if no delegate)
-     */
-    function getJudgeDelegate(address _judge)
-        external
-        view
-        returns (address)
-    {
-        return judgeDelegates[_judge];
-    }
 
-    /**
-     * @dev Gets the judge for a delegate
-     * @param _delegate Address of the delegate
-     * @return Address of the judge (address(0) if not a delegate)
-     */
-    function getDelegateJudge(address _delegate)
-        external
-        view
-        returns (address)
-    {
-        return delegateToJudge[_delegate];
-    }
 
     // ========== Voting System Functions ==========
 
-    /**
-     * @dev Opens voting for judges (only organizer can call)
-     * @param _votingDuration Duration of voting period in seconds
-     */
-    function openVoting(uint256 _votingDuration) external onlyOrganizer {
-        require(!isActive, "Hackathon must be ended first");
-        require(!votingOpen, "Voting is already open");
-        require(_votingDuration > 0, "Voting duration must be greater than 0");
-
-        votingOpen = true;
-        votingDeadline = block.timestamp + _votingDuration;
-
-        emit VotingOpened(votingDeadline);
-    }
 
     /**
      * @dev Allows a judge to vote on submissions by allocating points

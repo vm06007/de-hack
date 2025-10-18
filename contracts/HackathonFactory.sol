@@ -3,6 +3,11 @@ pragma solidity ^0.8.28;
 
 import "./Hackathon.sol";
 import "./JudgeCouncil.sol";
+import "./VotingTypes.sol";
+import "./OpenVoting.sol";
+import "./RevealCommitVoting.sol";
+import "./ZKVotingSystem.sol";
+import "./QuadraticVoting.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
 /**
@@ -19,14 +24,27 @@ contract HackathonFactory is JudgeCouncil {
     uint256 public totalHackathons;
     uint256 public constant MAX_PRIZE_CLAIM_COOLDOWN = 7 days;
 
-    // Implementation contract address
+    // Implementation contract addresses
     address public immutable implementation;
+
+    // Voting system implementation addresses
+    address public immutable openVotingImplementation;
+    address public immutable RevealCommitVotingImplementation;
+    address public immutable zkVotingImplementation;
 
     event HackathonCreated(
         address indexed hackathonAddress,
         string name,
         address indexed organizer,
-        uint256 prizePool
+        uint256 prizePool,
+        VotingSystemType votingSystem,
+        bool useQuadraticVoting
+    );
+
+    event VotingSystemDeployed(
+        address indexed votingContract,
+        VotingSystemType systemType,
+        bool useQuadraticVoting
     );
 
     /**
@@ -44,6 +62,19 @@ contract HackathonFactory is JudgeCouncil {
         );
 
         implementation = _implementation;
+
+        // Deploy voting system implementations (initial)
+        openVotingImplementation = address(
+            new OpenVoting()
+        );
+
+        RevealCommitVotingImplementation = address(
+            new RevealCommitVoting()
+        );
+
+        zkVotingImplementation = address(
+            new ZKVotingSystem()
+        );
     }
 
     /**
@@ -60,6 +91,7 @@ contract HackathonFactory is JudgeCouncil {
      * @param _prizeDistribution Array defining how the prize pool is distributed among winners
      * @param _prizeClaimCooldown Cooldown period before winners can claim prizes
      * @param _judgingDuration Duration of judging phase (2 hours to 2 days)
+     * @param _votingConfig Voting system configuration
      * @return hackathonAddress Address of the newly created hackathon
      */
     function createHackathon(
@@ -73,7 +105,8 @@ contract HackathonFactory is JudgeCouncil {
         uint256 _stakeAmount,
         uint256[] memory _prizeDistribution,
         uint256 _prizeClaimCooldown,
-        uint256 _judgingDuration
+        uint256 _judgingDuration,
+        VotingConfig memory _votingConfig
     )
         external
         payable
@@ -103,6 +136,12 @@ contract HackathonFactory is JudgeCouncil {
                 "Selected judge is not in global registry"
             );
         }
+
+        // Deploy voting system
+        _deployVotingSystem(
+            _votingConfig,
+            _selectedJudges
+        );
 
         // Clone the implementation contract
         hackathonAddress = Clones.clone(implementation);
@@ -135,10 +174,63 @@ contract HackathonFactory is JudgeCouncil {
             hackathonAddress,
             _name,
             msg.sender,
-            msg.value
+            msg.value,
+            _votingConfig.systemType,
+            _votingConfig.useQuadraticVoting
         );
 
         return hackathonAddress;
+    }
+
+    /**
+     * @dev Deploy voting system based on configuration using clone pattern
+     * @param _votingConfig Voting system configuration
+     * @param _judges Array of judge addresses
+     * @return votingContract Address of the deployed voting contract
+     */
+    function _deployVotingSystem(
+        VotingConfig memory _votingConfig,
+        address[] memory _judges
+    ) internal returns (address votingContract) {
+        // Clone base voting system
+        if (_votingConfig.systemType == VotingSystemType.OPEN) {
+            votingContract = Clones.clone(openVotingImplementation);
+        } else if (_votingConfig.systemType == VotingSystemType.COMMIT_REVEAL) {
+            votingContract = Clones.clone(RevealCommitVotingImplementation);
+        } else if (_votingConfig.systemType == VotingSystemType.ZK_SNARK) {
+            votingContract = Clones.clone(zkVotingImplementation);
+        } else if (_votingConfig.systemType == VotingSystemType.QUADRATIC) {
+            // Quadratic voting uses the same OpenVoting but with quadratic validation
+            votingContract = Clones.clone(openVotingImplementation);
+        } else {
+            revert("Unsupported voting system type");
+        }
+
+        // Initialize the voting system
+        IVotingSystem(votingContract).initialize(
+            _votingConfig.pointsPerJudge,
+            _votingConfig.maxWinners,
+            _judges
+        );
+
+        // Wrap with quadratic voting if enabled
+        if (_votingConfig.useQuadraticVoting) {
+            // For quadratic voting, we need to deploy a new QVWrapper since it has constructor parameters
+            // This is still more efficient than deploying the entire voting system
+            address qvWrapper = address(new QVWrapper(
+                votingContract,
+                _votingConfig.creditsPerJudge
+            ));
+            votingContract = qvWrapper;
+        }
+
+        emit VotingSystemDeployed(
+            votingContract,
+            _votingConfig.systemType,
+            _votingConfig.useQuadraticVoting
+        );
+
+        return votingContract;
     }
 
     /**

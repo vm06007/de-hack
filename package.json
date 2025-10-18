@@ -25,6 +25,8 @@
         "deploy:mainnet": "hardhat run scripts/deploy-and-verify.ts --network mainnet"
     },
     "dependencies": {
-        "@openzeppelin/contracts": "^5.4.0"
+        "@openzeppelin/contracts": "^5.4.0",
+        "fhevm": "^0.6.2",
+        "fhevm-contracts": "^0.2.4"
     }
 }

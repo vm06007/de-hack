@@ -219,7 +219,7 @@ contract HackathonFactory is JudgeCouncil {
 
         // Initialize the voting system
         IVotingSystem(votingContract).initialize(
-            _votingConfig.pointsPerJudge,
+            _votingConfig.votingPowerPerJudge,
             _votingConfig.maxWinners,
             _judges
         );
@@ -234,7 +234,7 @@ contract HackathonFactory is JudgeCouncil {
             // Initialize the QVWrapper
             QVWrapper(qvWrapper).initialize(
                 votingContract,
-                _votingConfig.creditsPerJudge
+                _votingConfig.votingPowerPerJudge
             );
 
             votingContract = qvWrapper;

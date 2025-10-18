@@ -26,9 +26,8 @@ enum VotingSystemType {
 struct VotingConfig {
     VotingSystemType systemType;
     bool useQuadraticVoting;
-    uint256 creditsPerJudge;  // For quadratic voting
-    uint256 pointsPerJudge;   // For normal voting
-    uint256 maxWinners;       // Number of winners to track
+    uint256 votingPowerPerJudge; // Credits for quadratic voting, points for normal voting
+    uint256 maxWinners;          // Number of winners to track
 }
 
 /**

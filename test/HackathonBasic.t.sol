@@ -63,8 +63,7 @@ contract HackathonBasicTest is Test {
             VotingConfig({
                 systemType: VotingSystemType.OPEN,
                 useQuadraticVoting: false,
-                creditsPerJudge: 0,
-                pointsPerJudge: 100,
+                votingPowerPerJudge: 100,
                 maxWinners: 3
             })
         );

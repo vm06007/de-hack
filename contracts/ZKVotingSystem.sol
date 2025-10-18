@@ -84,7 +84,10 @@ contract ZKVotingSystem is IVotingSystem {
         uint256 _pointsPerJudge,
         uint256 _maxWinners,
         address[] calldata _judges
-    ) external override {
+    )
+        external
+        override
+    {
         require(pointsPerJudge == 0, "Already initialized");
 
         pointsPerJudge = _pointsPerJudge;
@@ -102,7 +105,11 @@ contract ZKVotingSystem is IVotingSystem {
     /**
      * @dev Set voting deadline (called by Hackathon contract)
      */
-    function setVotingDeadline(uint256 _deadline) external {
+    function setVotingDeadline(
+        uint256 _deadline
+    )
+        external
+    {
         require(votingDeadline == 0, "Deadline already set");
         votingDeadline = _deadline;
     }
@@ -115,7 +122,11 @@ contract ZKVotingSystem is IVotingSystem {
     function submitVotes(
         address[] calldata /* _participants */,
         uint256[] calldata /* _points */
-    ) external pure override {
+    )
+        external
+        pure
+        override
+    {
         // This function signature is required by interface but ZK uses commit-reveal
         revert("Use commitBatchVotes and revealBatchVotes for ZK voting");
     }
@@ -141,6 +152,7 @@ contract ZKVotingSystem is IVotingSystem {
             require(_points[i] > 0, "Points must be greater than 0");
             totalPointsUsed += _points[i];
         }
+
         require(totalPointsUsed <= pointsPerJudge, "Exceeds points per judge limit");
 
         // Create batch commitment
@@ -154,7 +166,10 @@ contract ZKVotingSystem is IVotingSystem {
         batchCommitments[msg.sender] = commitment;
         hasCommitted[msg.sender] = true;
 
-        emit BatchVotesCommitted(msg.sender, commitment);
+        emit BatchVotesCommitted(
+            msg.sender,
+            commitment
+        );
     }
 
     /**
@@ -169,7 +184,10 @@ contract ZKVotingSystem is IVotingSystem {
         uint256[] calldata _points,
         uint256 _nonce,
         bytes calldata _zkProof
-    ) external onlyJudge {
+    )
+        external
+        onlyJudge
+    {
         require(hasCommitted[msg.sender], "Must commit votes first");
         require(!hasRevealed[msg.sender], "Judge has already revealed");
         require(_participants.length == _points.length, "Arrays length mismatch");
@@ -181,11 +199,16 @@ contract ZKVotingSystem is IVotingSystem {
             _points,
             _nonce
         ));
+
         require(batchCommitments[msg.sender] == expectedCommitment, "Commitment mismatch");
 
         // Verify ZK proof for batch vote validity
         require(
-            verifyBatchVoteProof(_zkProof, _participants, _points),
+            _verifyBatchVoteProof(
+                _zkProof,
+                _participants,
+                _points
+            ),
             "Invalid ZK proof for batch vote"
         );
 
@@ -215,7 +238,12 @@ contract ZKVotingSystem is IVotingSystem {
         revealedNonces[msg.sender] = _nonce;
         hasRevealed[msg.sender] = true;
 
-        emit BatchVotesRevealed(msg.sender, _participants, _points, _zkProof);
+        emit BatchVotesRevealed(
+            msg.sender,
+            _participants,
+            _points,
+            _zkProof
+        );
     }
 
     // ============ ZK PROOF VERIFICATION ============
@@ -226,11 +254,15 @@ contract ZKVotingSystem is IVotingSystem {
      * @param _points Array of points for each participant
      * @return True if proof is valid
      */
-    function verifyBatchVoteProof(
+    function _verifyBatchVoteProof(
         bytes calldata _zkProof,
         address[] calldata /* _participants */,
         uint256[] calldata _points
-    ) internal view returns (bool) {
+    )
+        internal
+        view
+        returns (bool)
+    {
         // Verify that sum of points doesn't exceed limit
         uint256 totalPointsSum = 0;
         for (uint256 i = 0; i < _points.length; i++) {
@@ -251,7 +283,10 @@ contract ZKVotingSystem is IVotingSystem {
         // Verify ZK proof using the proof verifier
         // In a real implementation, this would verify the actual ZK proof
         // For now, we'll use a simplified verification
-        return _verifySimplifiedBatchProof(_zkProof, _points);
+        return _verifySimplifiedBatchProof(
+            _zkProof,
+            _points
+        );
     }
 
     /**
@@ -260,7 +295,12 @@ contract ZKVotingSystem is IVotingSystem {
     function _verifySimplifiedBatchProof(
         bytes calldata _zkProof,
         uint256[] calldata /* _points */
-    ) internal pure returns (bool) {
+    )
+        internal
+        pure
+        returns (bool)
+    {
+        // @TODO: Implement actual ZK proof verification
         // Simplified verification - in production, this would verify actual ZK proof
         // For now, just check that proof is not empty
         return _zkProof.length > 0;
@@ -268,21 +308,35 @@ contract ZKVotingSystem is IVotingSystem {
 
     // ============ JUDGE MANAGEMENT ============
 
-    function addJudge(address _judge) external override {
+    function addJudge(
+        address _judge
+    )
+        external
+        override
+    {
         require(_judge != address(0), "Invalid judge address");
         require(!isJudge[_judge], "Judge already exists");
 
         _addJudge(_judge);
     }
 
-    function removeJudge(address _judge) external override {
+    function removeJudge(
+        address _judge
+    )
+        external
+        override
+    {
         require(isJudge[_judge], "Judge does not exist");
         require(!hasCommitted[_judge], "Cannot remove judge who has committed");
 
         _removeJudge(_judge);
     }
 
-    function _addJudge(address _judge) internal {
+    function _addJudge(
+        address _judge
+    )
+        internal
+    {
         isJudge[_judge] = true;
         judges.push(_judge);
         totalJudges++;
@@ -290,7 +344,11 @@ contract ZKVotingSystem is IVotingSystem {
         emit JudgeAdded(_judge);
     }
 
-    function _removeJudge(address _judge) internal {
+    function _removeJudge(
+        address _judge
+    )
+        internal
+    {
         isJudge[_judge] = false;
 
         for (uint256 i = 0; i < judges.length; i++) {
@@ -386,7 +444,12 @@ contract ZKVotingSystem is IVotingSystem {
         }
     }
 
-    function _removeWinner(address _participant, uint256 position) internal {
+    function _removeWinner(
+        address _participant,
+        uint256 position
+    )
+        internal
+    {
         if (position < winners.length) {
             address lastWinner = winners[winners.length - 1];
             winners[position - 1] = lastWinner;
@@ -397,7 +460,13 @@ contract ZKVotingSystem is IVotingSystem {
         winnerPosition[_participant] = 0;
     }
 
-    function _swapWinners(address _participant, uint256 fromPosition, uint256 toPosition) internal {
+    function _swapWinners(
+        address _participant,
+        uint256 fromPosition,
+        uint256 toPosition
+    )
+        internal
+    {
         if (fromPosition != toPosition) {
             winnerPosition[_participant] = toPosition;
             winnerPosition[winners[toPosition - 1]] = fromPosition;
@@ -408,34 +477,69 @@ contract ZKVotingSystem is IVotingSystem {
         }
     }
 
-    function _getLowestWinner() internal view returns (address) {
+    function _getLowestWinner()
+        internal
+        view
+        returns (address)
+    {
         if (winners.length == 0) return address(0);
         return winners[winners.length - 1];
     }
 
     // ============ VIEW FUNCTIONS ============
 
-    function getWinners() external view override returns (address[] memory) {
+    function getWinners()
+        external
+        view
+        override
+        returns (address[] memory)
+    {
         return winners;
     }
 
-    function getParticipantPoints(address _participant) external view override returns (uint256) {
+    function getParticipantPoints(
+        address _participant
+    )
+        external
+        view
+        override
+        returns (uint256)
+    {
         return totalPoints[_participant];
     }
 
-    function getParticipantRanking(address _participant) external view override returns (uint256) {
+    function getParticipantRanking(
+        address _participant
+    )
+        external
+        view
+        override
+        returns (uint256)
+    {
         return winnerPosition[_participant];
     }
 
-    function hasJudgeVoted(address _judge) external view override returns (bool) {
+    function hasJudgeVoted(
+        address _judge
+    )
+        external
+        view
+        override
+        returns (bool)
+    {
         return hasRevealed[_judge];
     }
 
-    function getVotingStats() external view override returns (
-        uint256 _totalJudges,
-        uint256 _votedJudges,
-        uint256 _totalParticipants
-    ) {
+    function getVotingStats()
+        external
+        view
+        override
+        returns (
+            uint256 _totalJudges,
+            uint256 _votedJudges,
+            uint256 _totalParticipants
+        )
+    {
         _totalJudges = totalJudges;
 
         uint256 votedCount = 0;
@@ -449,21 +553,38 @@ contract ZKVotingSystem is IVotingSystem {
         _totalParticipants = winners.length;
     }
 
-    function getWinnerCount() external view override returns (uint256) {
+    function getWinnerCount()
+        external
+        view
+        override
+        returns (uint256)
+    {
         return winners.length;
     }
 
-    function getWinnerAtPosition(uint256 _position) external view override returns (address) {
+    function getWinnerAtPosition(
+        uint256 _position
+    )
+        external
+        view
+        override
+        returns (address)
+    {
         require(_position > 0 && _position <= winners.length, "Invalid position");
         return winners[_position - 1];
     }
 
-    function isWinner(address _participant) external view override returns (bool) {
+    function isWinner(
+        address _participant
+    )
+        external
+        view
+        override
+
+        returns (bool)
+    {
         return winnerPosition[_participant] > 0;
     }
-
-    // ============ ADMIN FUNCTIONS ============
-
 
     // ============ ZK-SPECIFIC FUNCTIONS ============
 

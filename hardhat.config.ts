@@ -74,6 +74,12 @@ const config: HardhatUserConfig = {
             chainType: "generic",
             url: configVariable("HEDERA_RPC_URL"),
             accounts: [configVariable("HEDERA_PRIVATE_KEY")],
+        },
+        fhevm: {
+            type: "http",
+            chainType: "generic",
+            url: "http://localhost:8545", // fhEVM local node
+            accounts: ["0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"], // Hardhat default
         }
     },
     paths: {

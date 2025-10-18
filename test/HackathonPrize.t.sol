@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 import "forge-std/Test.sol";
 import "../contracts/Hackathon.sol";
 import "../contracts/HackathonFactory.sol";
+import "../contracts/VotingTypes.sol";
 
 contract HackathonPrizeTest is Test {
     Hackathon public hackathon;
@@ -56,7 +57,14 @@ contract HackathonPrizeTest is Test {
             0.01 ether, // stake amount
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether), // prize distribution [3, 1.5, 0.5] = 5 ether total
             1 days, // prize claim cooldown
-            1 days // judging duration
+            1 days, // judging duration
+            VotingConfig({
+                systemType: VotingSystemType.OPEN,
+                useQuadraticVoting: false,
+                creditsPerJudge: 0,
+                pointsPerJudge: 100,
+                maxWinners: 3
+            })
         );
 
         hackathon = Hackathon(hackathonAddress);

@@ -41,10 +41,10 @@ contract HackathonDelegationTest is Test {
 
         // Deploy implementation contract
         Hackathon implementation = new Hackathon();
-        
+
         // Deploy factory with implementation
         HackathonFactory factory = new HackathonFactory(address(implementation));
-        
+
         // Create hackathon through factory
         vm.prank(organizer);
         address hackathonAddress = factory.createHackathon{value: PRIZE_POOL}(
@@ -58,9 +58,16 @@ contract HackathonDelegationTest is Test {
             0.01 ether, // stake amount
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether), // prize distribution [3, 1.5, 0.5] = 5 ether total
             1 days, // prize claim cooldown
-            1 days // judging duration
+            1 days, // judging duration
+            VotingConfig({
+                systemType: VotingSystemType.OPEN,
+                useQuadraticVoting: false,
+                creditsPerJudge: 0,
+                pointsPerJudge: 100,
+                maxWinners: 3
+            })
         );
-        
+
         hackathon = Hackathon(hackathonAddress);
 
         // Add judges

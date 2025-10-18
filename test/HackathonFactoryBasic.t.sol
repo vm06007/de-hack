@@ -56,7 +56,14 @@ contract HackathonFactoryBasicTest is Test {
             0.01 ether, // stake amount
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether), // prize distribution [3, 1.5, 0.5] = 5 ether total
             1 days, // prize claim cooldown
-            1 days // judging duration
+            1 days, // judging duration
+            VotingConfig({
+                systemType: VotingSystemType.OPEN,
+                useQuadraticVoting: false,
+                creditsPerJudge: 0,
+                pointsPerJudge: 100,
+                maxWinners: 3
+            })
         );
 
         assertTrue(hackathonAddress != address(0));
@@ -97,7 +104,14 @@ contract HackathonFactoryBasicTest is Test {
             0.01 ether,
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether),
             1 days,
-            1 days // judging duration
+            1 days, // judging duration
+            VotingConfig({
+                systemType: VotingSystemType.OPEN,
+                useQuadraticVoting: false,
+                creditsPerJudge: 0,
+                pointsPerJudge: 100,
+                maxWinners: 3
+            })
         );
     }
 
@@ -115,7 +129,14 @@ contract HackathonFactoryBasicTest is Test {
             0.01 ether,
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether),
             1 days,
-            1 days // judging duration
+            1 days, // judging duration
+            VotingConfig({
+                systemType: VotingSystemType.OPEN,
+                useQuadraticVoting: false,
+                creditsPerJudge: 0,
+                pointsPerJudge: 100,
+                maxWinners: 3
+            })
         );
     }
 
@@ -133,7 +154,14 @@ contract HackathonFactoryBasicTest is Test {
             0.01 ether,
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether),
             1 days,
-            1 days // judging duration
+            1 days, // judging duration
+            VotingConfig({
+                systemType: VotingSystemType.OPEN,
+                useQuadraticVoting: false,
+                creditsPerJudge: 0,
+                pointsPerJudge: 100,
+                maxWinners: 3
+            })
         );
     }
 
@@ -151,7 +179,15 @@ contract HackathonFactoryBasicTest is Test {
             0.01 ether,
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether),
             8 days, // Exceeds 7 day maximum
-            1 days // judging duration
+            1 days, // judging duration
+            VotingConfig({
+                systemType: VotingSystemType.OPEN,
+                useQuadraticVoting: false,
+                creditsPerJudge: 0,
+                pointsPerJudge: 100,
+                maxWinners: 3
+            })
+
         );
     }
 
@@ -169,7 +205,14 @@ contract HackathonFactoryBasicTest is Test {
             0.01 ether,
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether),
             1 days,
-            1 days // judging duration
+            1 days, // judging duration
+            VotingConfig({
+                systemType: VotingSystemType.OPEN,
+                useQuadraticVoting: false,
+                creditsPerJudge: 0,
+                pointsPerJudge: 100,
+                maxWinners: 3
+            })
         );
 
         // Create second hackathon
@@ -185,7 +228,14 @@ contract HackathonFactoryBasicTest is Test {
             0.01 ether,
             _createPrizeDistribution(3 ether, 1.5 ether, 0.5 ether),
             1 days,
-            1 days // judging duration
+            1 days, // judging duration
+            VotingConfig({
+                systemType: VotingSystemType.OPEN,
+                useQuadraticVoting: false,
+                creditsPerJudge: 0,
+                pointsPerJudge: 100,
+                maxWinners: 3
+            })
         );
 
         assertEq(factory.getHackathonCount(), 2);

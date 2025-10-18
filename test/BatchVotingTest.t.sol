@@ -53,7 +53,8 @@ contract BatchVotingTest is Test {
         zkVoting.initialize(100, 3, judges);
 
         // Create QV wrapper for open voting
-        qvWrapper = new QVWrapper(address(openVoting), 1000); // 1000 credits per judge
+        qvWrapper = new QVWrapper();
+        qvWrapper.initialize(address(openVoting), 1000); // 1000 credits per judge
 
         // Open voting for all systems
         uint256 deadline = block.timestamp + 1 days;

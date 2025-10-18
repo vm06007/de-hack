@@ -31,6 +31,7 @@ contract HackathonFactory is JudgeCouncil {
     address public immutable openVotingImplementation;
     address public immutable RevealCommitVotingImplementation;
     address public immutable zkVotingImplementation;
+    address public immutable qvWrapperImplementation;
 
     event HackathonCreated(
         address indexed hackathonAddress,
@@ -74,6 +75,10 @@ contract HackathonFactory is JudgeCouncil {
 
         zkVotingImplementation = address(
             new ZKVotingSystem()
+        );
+
+        qvWrapperImplementation = address(
+            new QVWrapper()
         );
     }
 
@@ -144,10 +149,14 @@ contract HackathonFactory is JudgeCouncil {
         );
 
         // Clone the implementation contract
-        hackathonAddress = Clones.clone(implementation);
+        hackathonAddress = Clones.clone(
+            implementation
+        );
 
         // Initialize the cloned contract
-        Hackathon(hackathonAddress).initialize{value: msg.value}(
+        Hackathon(hackathonAddress).initialize{
+            value: msg.value
+        }(
             msg.sender, // organizer
             _name,
             _description,
@@ -164,7 +173,9 @@ contract HackathonFactory is JudgeCouncil {
         );
 
         // Store the hackathon address
-        uint256 organizerIndex = organizerHackathonCount[msg.sender];
+        uint256 organizerIndex = organizerHackathonCount[
+            msg.sender
+        ];
 
         totalHackathons++;
         organizerHackathonCount[msg.sender]++;
@@ -215,12 +226,17 @@ contract HackathonFactory is JudgeCouncil {
 
         // Wrap with quadratic voting if enabled
         if (_votingConfig.useQuadraticVoting) {
-            // For quadratic voting, we need to deploy a new QVWrapper since it has constructor parameters
-            // This is still more efficient than deploying the entire voting system
-            address qvWrapper = address(new QVWrapper(
+            // Clone QVWrapper for gas efficiency
+            address qvWrapper = Clones.clone(
+                qvWrapperImplementation
+            );
+
+            // Initialize the QVWrapper
+            QVWrapper(qvWrapper).initialize(
                 votingContract,
                 _votingConfig.creditsPerJudge
-            ));
+            );
+
             votingContract = qvWrapper;
         }
 

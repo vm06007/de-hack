@@ -148,8 +148,9 @@ contract QVWrapper is IVotingSystem {
 
     // ============ STATE VARIABLES ============
 
-    IVotingSystem public immutable baseVotingSystem;
-    uint256 public immutable creditsPerJudge;
+    IVotingSystem public baseVotingSystem;
+    uint256 public creditsPerJudge;
+    bool public initialized;
 
     // ============ EVENTS ============
 
@@ -160,11 +161,28 @@ contract QVWrapper is IVotingSystem {
         uint256 totalCreditsUsed
     );
 
-    // ============ CONSTRUCTOR ============
+    // ============ MODIFIERS ============
 
-    constructor(address _baseVotingSystem, uint256 _creditsPerJudge) {
+    modifier onlyInitialized() {
+        require(initialized, "Contract not initialized");
+        _;
+    }
+
+    // ============ INITIALIZATION ============
+
+    /**
+     * @dev Initialize the QVWrapper (for clone pattern)
+     * @param _baseVotingSystem Address of the base voting system
+     * @param _creditsPerJudge Number of credits per judge
+     */
+    function initialize(address _baseVotingSystem, uint256 _creditsPerJudge) external {
+        require(!initialized, "Already initialized");
+        require(_baseVotingSystem != address(0), "Invalid base voting system");
+        require(_creditsPerJudge > 0, "Credits per judge must be greater than 0");
+        
         baseVotingSystem = IVotingSystem(_baseVotingSystem);
         creditsPerJudge = _creditsPerJudge;
+        initialized = true;
     }
 
     // ============ CORE FUNCTIONS ============
@@ -177,7 +195,7 @@ contract QVWrapper is IVotingSystem {
     function submitVotes(
         address[] calldata _participants,
         uint256[] calldata _votes
-    ) external override {
+    ) external override onlyInitialized {
         require(_participants.length == _votes.length, "Arrays length mismatch");
         require(_participants.length > 0, "Must vote for at least one participant");
 
@@ -238,13 +256,13 @@ contract QVWrapper is IVotingSystem {
         // Base system should be initialized separately
     }
 
-    function addJudge(address _judge) external override {
+    function addJudge(address _judge) external override onlyInitialized {
         // QV wrapper doesn't manage judges directly
         // Judges are managed by the base voting system
         // This function is here for interface compliance
     }
 
-    function removeJudge(address _judge) external override {
+    function removeJudge(address _judge) external override onlyInitialized {
         baseVotingSystem.removeJudge(_judge);
     }
 

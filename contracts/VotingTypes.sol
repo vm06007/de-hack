@@ -15,7 +15,7 @@ enum VotingSystemType {
     OPEN,           // Transparent voting (current system)
     COMMIT_REVEAL,  // Hidden until reveal phase
     ZK_SNARK,       // Zero-knowledge proofs
-    FHE             // Fully homomorphic encryption
+    QUADRATIC       // Quadratic voting
 }
 
 // ============ STRUCTS ============
@@ -40,7 +40,7 @@ struct JudgeVote {
     uint256 nonce;           // For commit-reveal
     bytes32 commitment;      // For commit-reveal
     bytes zkProof;           // For ZK-SNARK
-    bytes encryptedData;     // For FHE
+    uint256[] quadraticCredits; // For quadratic voting
 }
 
 /**

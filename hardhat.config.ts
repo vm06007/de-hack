@@ -17,6 +17,11 @@ const config: HardhatUserConfig = {
                 runs: 1,
             },
             viaIR: true,
+            remappings: [
+                "forge-std/=node_modules/forge-std/src/",
+                "ds-test/=node_modules/ds-test/src/",
+                "@openzeppelin/=node_modules/@openzeppelin/"
+            ],
         },
     },
     verify: {

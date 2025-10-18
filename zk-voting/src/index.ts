@@ -4,7 +4,7 @@ import { poseidon } from 'circomlib';
 
 /**
  * ZK Voting System for DeHack Platform
- * 
+ *
  * This library provides:
  * 1. Vote commitment generation
  * 2. ZK proof generation for valid votes
@@ -46,7 +46,7 @@ export class ZKVotingClient {
   async generateVoteCommitment(voteData: VoteData): Promise<VoteCommitment> {
     const commitment = this.hashVoteData(voteData);
     const timestamp = Math.floor(Date.now() / 1000);
-    
+
     return {
       commitment,
       timestamp
@@ -89,7 +89,7 @@ export class ZKVotingClient {
 
     // Generate proof using the circuit
     const proof = await this.generateCircuitProof(circuitInputs);
-    
+
     return {
       proof: proof.proof,
       publicSignals: proof.publicSignals
@@ -106,7 +106,7 @@ export class ZKVotingClient {
     // 1. Load the compiled circuit
     // 2. Generate the witness
     // 3. Create the proof using snarkjs
-    
+
     // For now, we'll create a realistic proof structure
     const commitment = poseidon([
       inputs.judge,
@@ -166,7 +166,7 @@ export class ZKVotingClient {
     zkProof: ZKProof
   ): Promise<ethers.TransactionResponse> {
     const contractWithSigner = this.contract.connect(signer);
-    
+
     return await contractWithSigner.revealVote(
       voteData.participant,
       voteData.points,
@@ -280,12 +280,12 @@ export class ZKVotingExamples {
     const provider = new ethers.JsonRpcProvider('http://localhost:8545');
     const contractAddress = '0x...'; // Contract address
     const abi = []; // Contract ABI
-    
+
     const client = new ZKVotingClient(contractAddress, provider, abi);
-    
+
     // Judge wallet
     const judgeWallet = new ethers.Wallet('0x...', provider);
-    
+
     // Vote data
     const voteData: VoteData = {
       judge: judgeWallet.address,
@@ -293,36 +293,36 @@ export class ZKVotingExamples {
       points: 85,
       nonce: ZKVotingUtils.generateNonce()
     };
-    
+
     // Validate vote data
     if (!ZKVotingUtils.validateVoteData(voteData)) {
       throw new Error('Invalid vote data');
     }
-    
+
     // Generate commitment
     const commitment = await client.generateVoteCommitment(voteData);
     console.log('Vote commitment:', commitment.commitment);
-    
+
     // Commit vote
     const commitTx = await client.commitVote(judgeWallet, commitment.commitment);
     await commitTx.wait();
     console.log('Vote committed:', commitTx.hash);
-    
+
     // Wait for reveal phase...
-    
+
     // Generate ZK proof
     const zkProof = await client.generateZKProof(voteData);
     console.log('ZK proof generated');
-    
+
     // Reveal vote
     const revealTx = await client.revealVote(judgeWallet, voteData, zkProof);
     await revealTx.wait();
     console.log('Vote revealed:', revealTx.hash);
-    
+
     // Check results
     const stats = await client.getVotingStats();
     console.log('Voting stats:', stats);
-    
+
     const winners = await client.getWinners();
     console.log('Winners:', winners);
   }

@@ -2,7 +2,7 @@
 
 import { notFound } from 'next/navigation';
 import { useHackathon } from '@/src/hooks/useHackathons';
-import HackathonDetails from '@/components/HackathonDetails';
+import OrgDetailsPage from '@/templates/Organizations/OrgDetailsPage';
 
 interface PageProps {
     params: {
@@ -28,5 +28,5 @@ export default function HackathonPage({ params }: PageProps) {
         notFound();
     }
 
-    return <HackathonDetails hackathon={hackathon} />;
+    return <OrgDetailsPage />;
 }

@@ -4,15 +4,15 @@ import Image from "@/components/Image";
 const judges = [
     {
         id: 1,
-        name: "Vitalik Buterin",
+        name: "Vitalik Buterin!",
         avatar: "/images/vitalik.jpg",
-        role: "Ethereum Founder",
-        company: "Ethereum Foundation",
+        role: "Researcher",
+        company: "EF",
     },
     {
         id: 2,
         name: "Sandeep Nailwal",
-        avatar: "/images/sandeep.jpg",
+        avatar: "/images/sandeep.webp",
         role: "Co-Founder",
         company: "Polygon",
     },

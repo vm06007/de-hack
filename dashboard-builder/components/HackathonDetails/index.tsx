@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Hackathon } from '@/lib/api';
+import { apiClient } from '@/src/lib/api';
 
 interface HackathonDetailsProps {
     hackathon: Hackathon;
@@ -16,8 +17,8 @@ const HackathonDetails = ({ hackathon }: HackathonDetailsProps) => {
         const fetchApplications = async () => {
             try {
                 setLoading(true);
-                const response = await api.getHackathonApplications(hackathon.id);
-                setApplications(response.data);
+                const response = await apiClient.get(`/hackathons/${hackathon.id}/applications`);
+                setApplications(response.applications || []);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Failed to fetch applications');
             } finally {
@@ -181,6 +182,125 @@ const HackathonDetails = ({ hackathon }: HackathonDetailsProps) => {
                     </div>
                 </div>
             )}
+
+            {/* Prize Breakdown */}
+            <div className="bg-white rounded-lg shadow-sm border mb-8">
+                <div className="p-6 border-b">
+                    <h3 className="text-lg font-semibold">Prize Breakdown</h3>
+                    <p className="text-gray-500 text-sm">Total Prize Pool: ${parseFloat(hackathon.totalPrizePool).toLocaleString()}</p>
+                </div>
+                <div className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {/* 1st Place */}
+                        <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-4 rounded-lg border border-yellow-200">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center">
+                                    <span className="text-2xl mr-2">🥇</span>
+                                    <span className="font-semibold text-yellow-800">1st Place</span>
+                                </div>
+                                <div className="text-xl font-bold text-yellow-800">
+                                    ${(parseFloat(hackathon.totalPrizePool) * 0.5).toLocaleString()}
+                                </div>
+                            </div>
+                            <div className="text-sm text-yellow-700">50% of total prize pool</div>
+                        </div>
+
+                        {/* 2nd Place */}
+                        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-lg border border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center">
+                                    <span className="text-2xl mr-2">🥈</span>
+                                    <span className="font-semibold text-gray-800">2nd Place</span>
+                                </div>
+                                <div className="text-xl font-bold text-gray-800">
+                                    ${(parseFloat(hackathon.totalPrizePool) * 0.3).toLocaleString()}
+                                </div>
+                            </div>
+                            <div className="text-sm text-gray-700">30% of total prize pool</div>
+                        </div>
+
+                        {/* 3rd Place */}
+                        <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center">
+                                    <span className="text-2xl mr-2">🥉</span>
+                                    <span className="font-semibold text-orange-800">3rd Place</span>
+                                </div>
+                                <div className="text-xl font-bold text-orange-800">
+                                    ${(parseFloat(hackathon.totalPrizePool) * 0.2).toLocaleString()}
+                                </div>
+                            </div>
+                            <div className="text-sm text-orange-700">20% of total prize pool</div>
+                        </div>
+                    </div>
+
+                    {/* Additional Prizes */}
+                    <div className="mt-6">
+                        <h4 className="text-md font-semibold mb-3 text-gray-800">Additional Prizes & Categories</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-blue-800 font-medium">Best DeFi Innovation</span>
+                                    <span className="text-blue-800 font-bold">$5,000</span>
+                                </div>
+                            </div>
+                            <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-green-800 font-medium">Best UI/UX</span>
+                                    <span className="text-green-800 font-bold">$3,000</span>
+                                </div>
+                            </div>
+                            <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-purple-800 font-medium">Most Innovative</span>
+                                    <span className="text-purple-800 font-bold">$2,000</span>
+                                </div>
+                            </div>
+                            <div className="bg-pink-50 p-3 rounded-lg border border-pink-200">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-pink-800 font-medium">Community Choice</span>
+                                    <span className="text-pink-800 font-bold">$1,000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Judging Criteria */}
+            <div className="bg-white rounded-lg shadow-sm border mb-8">
+                <div className="p-6 border-b">
+                    <h3 className="text-lg font-semibold">Judging Criteria</h3>
+                </div>
+                <div className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="text-center">
+                            <div className="text-3xl mb-2">💡</div>
+                            <h4 className="font-semibold text-gray-800 mb-1">Innovation</h4>
+                            <p className="text-sm text-gray-600">25%</p>
+                            <p className="text-xs text-gray-500 mt-1">How creative and novel is the solution?</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl mb-2">⚡</div>
+                            <h4 className="font-semibold text-gray-800 mb-1">Technical Excellence</h4>
+                            <p className="text-sm text-gray-600">25%</p>
+                            <p className="text-xs text-gray-500 mt-1">Quality of code and architecture</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl mb-2">🎯</div>
+                            <h4 className="font-semibold text-gray-800 mb-1">Impact</h4>
+                            <p className="text-sm text-gray-600">25%</p>
+                            <p className="text-xs text-gray-500 mt-1">Potential real-world impact</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-3xl mb-2">🎨</div>
+                            <h4 className="font-semibold text-gray-800 mb-1">Design</h4>
+                            <p className="text-sm text-gray-600">25%</p>
+                            <p className="text-xs text-gray-500 mt-1">User experience and interface</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Applications */}
             <div className="bg-white rounded-lg shadow-sm border">

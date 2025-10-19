@@ -15,6 +15,8 @@ import PrizePool from "./PrizePool";
 import Sponsors from "./Sponsors";
 import Judges from "./Judges";
 import HackathonStats from "./HackathonStats";
+import ContractInfo from "./ContractInfo";
+import Highlights from "./Highlights";
 
 const OrgDetailsPage = () => {
     return (
@@ -66,6 +68,8 @@ const OrgDetailsPage = () => {
                     <Judges />
                     <HackathonStats />
                 </div>
+                <ContractInfo />
+                <Highlights />
                 {/* <Comments /> */}
                 <Populars />
             </div>

@@ -17,12 +17,6 @@ const Portfolio = () => {
                         value={github}
                         onChange={(e) => setGithub(e.target.value)}
                     />
-                    <Textarea
-                        label="Portfolio Description"
-                        placeholder="Describe your best projects, achievements, and what you're most proud of..."
-                        value={portfolio}
-                        onChange={(e) => setPortfolio(e.target.value)}
-                    />
                 </div>
             </div>
         </Card>

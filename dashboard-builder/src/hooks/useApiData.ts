@@ -35,7 +35,6 @@ export const useApiData = (endpoint: string, fallback: any[] = []) => {
 export const useHackathons = () => useApiData('/hackathons');
 export const useUsers = () => useApiData('/users');
 export const useOrganizations = () => useApiData('/organizations');
-export const useAnalytics = () => useApiData('/analytics/overview');
 export const useCountries = () => useApiData('/countries');
 export const useComments = () => useApiData('/comments');
 export const useMessages = () => useApiData('/messages');
@@ -49,6 +48,7 @@ export const useCharts = () => useApiData('/charts');
 export const useJudges = () => useApiData('/judges');
 export const useSponsors = () => useApiData('/sponsors');
 export const useProductActivity = () => useApiData('/product-activity');
+export const useHackathonActivity = () => useApiData('/hackathon-activity');
 export const usePricing = () => useApiData('/pricing');
 export const useIncome = () => useApiData('/income');
 export const usePayouts = () => useApiData('/payouts');

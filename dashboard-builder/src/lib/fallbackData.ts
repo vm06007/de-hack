@@ -2,7 +2,6 @@
 export const fallbackHackathons = [];
 export const fallbackUsers = [];
 export const fallbackOrganizations = [];
-export const fallbackAnalytics = { totalUsers: 0, totalHackathons: 0, totalApplications: 0, metrics: {} };
 export const fallbackCountries = [];
 export const fallbackFaqs = [];
 export const fallbackComments = [];

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import Tabs from "@/components/Tabs";
 import Select from "@/components/Select";
-import Spinner from "@/components/Spinner";
+// import Spinner from "@/components/Spinner";
 import Filters from "./Filters";
 import Creator from "./Creator";
 
@@ -69,7 +69,7 @@ const ShopPage = () => {
                         <Creator value={creator} key={creator.id} />
                     ))}
                 </div>
-                <Spinner className="mt-10 max-xl:mt-6" />
+                {/*<Spinner className="mt-10 max-xl:mt-6" />*/}
             </div>
         </Layout>
     );

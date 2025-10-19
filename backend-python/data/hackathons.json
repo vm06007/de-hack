@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "ETHGlobal Online 2025",
+    "description": "The biggest online Ethereum hackathon of the year",
+    "image": "/images/products/lg-1.png",
+    "category": "Online hackathon",
+    "status": "active",
+    "startDate": "2025-04-15T00:00:00Z",
+    "endDate": "2025-04-29T23:59:59Z",
+    "registrationDeadline": "2025-04-14T23:59:59Z",
+    "totalPrizePool": "100000.00",
+    "maxParticipants": 1000,
+    "currentParticipants": 847,
+    "requirements": [
+      "Ethereum knowledge",
+      "Web3 development experience"
+    ],
+    "tags": [
+      "Ethereum",
+      "DeFi",
+      "NFT",
+      "Web3"
+    ],
+    "isOnline": true,
+    "location": null,
+    "organizerId": 1,
+    "createdBy": 1,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-15T00:00:00Z"
+  },
+  {
+    "id": 2,
+    "title": "Unite DeFi 2025",
+    "description": "Building the future of decentralized finance",
+    "image": "/images/products/lg-2.png",
+    "category": "Online hackathon",
+    "status": "scheduled",
+    "startDate": "2025-05-15T00:00:00Z",
+    "endDate": "2025-05-29T23:59:59Z",
+    "registrationDeadline": "2025-05-14T23:59:59Z",
+    "totalPrizePool": "500000.00",
+    "maxParticipants": 500,
+    "currentParticipants": 0,
+    "requirements": [
+      "DeFi knowledge",
+      "Smart contract development"
+    ],
+    "tags": [
+      "DeFi",
+      "Yield Farming",
+      "AMM",
+      "Lending"
+    ],
+    "isOnline": true,
+    "location": null,
+    "organizerId": 2,
+    "createdBy": 1,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-15T00:00:00Z"
+  }
+]

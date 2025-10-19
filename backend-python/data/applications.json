@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "hackathonId": 1,
+    "hackerId": 1,
+    "status": "accepted",
+    "motivation": "I want to build innovative DeFi solutions",
+    "experience": "5 years of blockchain development",
+    "portfolio": {
+      "github": "https://github.com/alexchen_dev",
+      "projects": [
+        "DeFi Protocol",
+        "NFT Marketplace"
+      ],
+      "resume": "https://alexchen.dev/resume.pdf"
+    },
+    "appliedAt": "2025-04-01T10:00:00Z",
+    "reviewedAt": "2025-04-02T15:00:00Z",
+    "reviewedBy": 1,
+    "createdAt": "2025-04-01T10:00:00Z",
+    "updatedAt": "2025-04-02T15:00:00Z"
+  }
+]

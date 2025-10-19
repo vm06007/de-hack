@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "ETHGlobal",
+    "slug": "ethglobal",
+    "description": "The world's largest Ethereum hackathon series",
+    "logo": "/images/logos/ethglobal.png",
+    "website": "https://ethglobal.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/ETHGlobal",
+      "discord": "https://discord.gg/ethglobal"
+    },
+    "createdBy": 1,
+    "createdAt": "2020-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Token2049",
+    "slug": "token2049",
+    "description": "The premier crypto and Web3 conference",
+    "logo": "/images/logos/token2049.png",
+    "website": "https://token2049.com",
+    "socialLinks": {
+      "twitter": "https://twitter.com/Token2049",
+      "linkedin": "https://linkedin.com/company/token2049"
+    },
+    "createdBy": 1,
+    "createdAt": "2020-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  }
+]

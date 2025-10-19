@@ -1,19 +1,12 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Button from "@/components/Button";
-import Select from "@/components/Select";
 import Logo from "@/components/Logo";
 import Icon from "@/components/Icon";
 import User from "./User";
 // import Notifications from "./Notifications";
 // import Messages from "./Messages";
 import WalletConnect from "@/components/WalletConnect";
-
-const times = [
-    { id: 1, name: "Publish now" },
-    { id: 2, name: "Publish tomorrow" },
-    { id: 3, name: "Publish later" },
-];
 
 type HeaderProps = {
     className?: string;
@@ -30,10 +23,7 @@ const Header = ({
     hideSidebar,
     onToggleSidebar,
 }: HeaderProps) => {
-    const [time, setTime] = useState(times[0]);
-    const pathname = usePathname();
     const [hasOverflowHidden, setHasOverflowHidden] = useState(false);
-    const [visibleSearch, setVisibleSearch] = useState(false);
 
     const isHideCreateButton = false
         // pathname.includes("/hackers/hacker-list/") ||
@@ -121,14 +111,6 @@ const Header = ({
                             <WalletConnect className="max-md:hidden" />
                         </>
                     )}
-                    <Button
-                        className="!hidden max-lg:!flex max-md:!hidden"
-                        isWhite
-                        isCircle
-                        onClick={() => setVisibleSearch(true)}
-                    >
-                        <Icon name="search" />
-                    </Button>
                     {/*<Notifications />
                     <Messages />*/}
                     <User />
@@ -136,18 +118,11 @@ const Header = ({
                 {newProduct && (
                     <div className="flex items-center gap-3 max-md:gap-0 max-md:w-[calc(100%+0.75rem)] max-md:mt-3 max-md:-mx-1.5">
                         <Button
-                            className="max-md:w-[calc(50%-0.75rem)] max-md:mx-1.5"
-                            isWhite
-                        >
-                            Save draft
-                        </Button>
-                        <Select
-                            className="min-w-36 max-md:w-[calc(50%-0.75rem)] max-md:mx-1.5"
-                            value={time}
-                            onChange={setTime}
-                            options={times}
+                            className="min-w-36 max-md:w-full max-md:mx-1.5"
                             isBlack
-                        />
+                        >
+                            Deploy Now
+                        </Button>
                     </div>
                 )}
             </div>

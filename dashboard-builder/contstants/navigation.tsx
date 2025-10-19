@@ -13,12 +13,12 @@ export const navigation = [
                 href: "/products",
             },
             {
-                title: "Drafts",
+                title: "Active",
                 href: "/products/drafts",
                 counter: 2,
             },
             {
-                title: "Released",
+                title: "Concluded",
                 href: "/products/released",
             },
             {
@@ -29,23 +29,23 @@ export const navigation = [
         ],
     },
     {
-        title: "Participants",
+        title: "Hackers",
         icon: "profile",
-        list: [
-            {
-                title: "Overview",
-                href: "/customers",
-            },
-            {
-                title: "Customer list",
-                href: "/customers/customer-list",
-            },
-        ],
+        href: "/hackers",
     },
     {
-        title: "Shop",
+        title: "Organizations",
         icon: "wallet",
-        href: "/shop",
+        list: [
+            {
+                title: "ETHGlobal",
+                href: "/organizations/ethglobal",
+            },
+            {
+                title: "Token2049",
+                href: "/organizations/token2049",
+            },
+        ],
     },
     {
         title: "Income",
@@ -71,9 +71,9 @@ export const navigation = [
         ],
     },
     {
-        title: "Promote",
-        icon: "promote",
-        href: "/promote",
+        title: "Explore Creators",
+        icon: "grid",
+        href: "/explore-creators",
     },
 ];
 
@@ -91,7 +91,7 @@ export const navigationUser = [
     {
         title: "Analytics",
         icon: "chart",
-        href: "/customers",
+        href: "/hackers",
     },
     {
         title: "Affiliate center",

@@ -43,7 +43,7 @@ export interface ProductDraft {
     date: string;
 }
 
-export interface ProductReleased {
+export interface ProductConcluded {
     id: number;
     title: string;
     image: string;

@@ -37,7 +37,7 @@ const Header = ({
     const [visibleSearch, setVisibleSearch] = useState(false);
 
     const isHideCreateButton =
-        pathname.includes("/customers/customer-list/") ||
+        pathname.includes("/hackers/hacker-list/") ||
         pathname.includes("/income/refunds/") ||
         pathname.includes("/org/") ||
         pathname.includes("/notifications");

@@ -467,9 +467,9 @@ def get_transactions():
     transactions = load_data('transactions')
     return jsonify(transactions)
 
-# Customers API (alias for users)
-@app.route('/api/customers', methods=['GET'])
-def get_customers():
+# Hackers API (alias for users)
+@app.route('/api/hackers', methods=['GET'])
+def get_hackers():
     users = load_data('users')
     role = request.args.get('role')
     page = int(request.args.get('page', 1))

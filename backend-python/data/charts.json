@@ -65,8 +65,8 @@
     ]
   },
   {
-    "id": "customersOverviewChartData",
-    "name": "Customers Overview Chart",
+    "id": "hackersOverviewChartData",
+    "name": "Hackers Overview Chart",
     "data": [
       { "name": "Jan", "value": 400 },
       { "name": "Feb", "value": 300 },

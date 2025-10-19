@@ -14,7 +14,7 @@ export const navigation = [
             },
             {
                 title: "Active",
-                href: "/products/drafts",
+                href: "/products/active",
                 counter: 2,
             },
             {

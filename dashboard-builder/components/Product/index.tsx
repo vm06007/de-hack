@@ -15,7 +15,7 @@ type ProductProps = {
 const Product = ({ value }: ProductProps) => (
     <Link
         className="group relative flex items-center p-3 cursor-pointer"
-        href="/shop/details"
+        href="/org/details"
     >
         <div className="box-hover"></div>
         <div className="relative z-2 shrink-0">

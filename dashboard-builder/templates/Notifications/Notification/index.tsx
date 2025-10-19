@@ -41,7 +41,7 @@ const Notification = ({ value }: NotificationProps) => (
         </div>
         <Link
             className="relative z-2 shrink-0 w-12 h-12 mr-5 rounded-full overflow-hidden max-md:mr-4"
-            href="/shop"
+            href="/org"
         >
             <Image
                 className="size-12 opacity-100"
@@ -53,12 +53,12 @@ const Notification = ({ value }: NotificationProps) => (
         </Link>
         <div className="relative z-2 grow">
             <div className="text-body-2 text-t-secondary [&_span]:text-button [&_span]:text-t-primary max-md:pr-4">
-                <Link href="/shop">
+                <Link href="/org">
                     <span>@{value.login}</span>
                 </Link>
                 &nbsp;{value.action}&nbsp;
                 <span className="max-md:block max-md:mt-1.5">
-                    <Link href="/shop/details">{value.product}</Link>
+                    <Link href="/org/details">{value.product}</Link>
                     <span className="hidden ml-1 !text-caption !text-t-tertiary font-normal max-md:inline">
                         {value.time}
                     </span>

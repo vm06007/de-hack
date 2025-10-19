@@ -9,9 +9,11 @@ import OverviewSlider from "./OverviewSlider";
 import GetMoreCustomers from "./GetMoreCustomers";
 import Comments from "./Comments";
 
-import { popularHackathons } from "@/mocks/products";
+import { useHackathons } from "@/src/hooks/useApiData";
 
 const HomePage = () => {
+    const { data: hackathons, loading } = useHackathons();
+    
     return (
         <Layout title="Dashboard">
             <div className="flex max-lg:block">
@@ -24,7 +26,7 @@ const HomePage = () => {
                 <div className="col-right">
                     <PopularHackathons
                         title="Upcoming hackathons"
-                        items={popularHackathons}
+                        items={loading ? [] : hackathons}
                     />
                     <RefundRequests />
                 </div>

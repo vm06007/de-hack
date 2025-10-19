@@ -5,28 +5,52 @@ import Button from "@/components/Button";
 type CreatorProps = {
     value: {
         id: number;
-        login: string;
-        details: string;
-        avatar: string;
-        isOnline: boolean;
-        label: string;
-        tags: string[];
-        time: string;
-        shop: {
+        name?: string;
+        login?: string;
+        description?: string;
+        details?: string;
+        avatar?: string;
+        logo?: string;
+        isOnline?: boolean;
+        label?: string;
+        tags?: string[];
+        time?: string;
+        shop?: {
             id: number;
             image: string;
         }[];
-        socials: {
+        socials?: {
             icon: string;
             href: string;
         }[];
+        socialLinks?: {
+            discord?: string;
+            twitter?: string;
+            github?: string;
+        };
     };
 };
 
 const Creator = ({ value }: CreatorProps) => {
     const [visible, setVisible] = useState(false);
     const [activeId, setActiveId] = useState<number | null>(null);
-    console.log(activeId);
+    
+    // Handle different data structures and provide fallbacks
+    const displayName = value.name || value.login || 'Unknown';
+    const displayDescription = value.description || value.details || '';
+    const displayAvatar = value.avatar || value.logo || '/images/avatars/default.png';
+    const displayTags = value.tags || [];
+    const displayShop = value.shop || [];
+    const displaySocials = value.socials || [];
+    
+    // Convert socialLinks to socials format if needed
+    const socialLinks = value.socialLinks || {};
+    const convertedSocials = Object.entries(socialLinks).map(([platform, url]) => ({
+        icon: platform,
+        href: url
+    }));
+    
+    const allSocials = [...displaySocials, ...convertedSocials];
 
     return (
         <div
@@ -37,7 +61,7 @@ const Creator = ({ value }: CreatorProps) => {
                 <div className="relative z-2 shrink-0">
                     <Image
                         className="size-16 opacity-100 rounded-full overflow-hidden"
-                        src={value.avatar}
+                        src={displayAvatar}
                         width={64}
                         height={64}
                         alt="Avatar"
@@ -50,14 +74,14 @@ const Creator = ({ value }: CreatorProps) => {
                 <div className="grow pl-4 pr-82 max-lg:pr-34 max-md:pr-0">
                     <div className="max-md:flex max-md:flex-wrap max-md:items-center max-md:gap-3 max-md:mb-2">
                         <div className="text-h6 max-md:text-sub-title-1">
-                            @{value.login}
+                            @{displayName}
                         </div>
                         <div className="label label-green absolute top-0 right-0 transition-all group-hover:invisible group-hover:opacity-0 max-md:static">
                             Top #1 creator
                         </div>
                     </div>
                     <div className="text-t-secondary max-lg:text-body-2 max-md:text-caption">
-                        {value.details}
+                        {displayDescription}
                     </div>
                 </div>
                 <div
@@ -66,7 +90,7 @@ const Creator = ({ value }: CreatorProps) => {
                     }`}
                 >
                     <div className="flex gap-3 max-lg:hidden">
-                        {value.socials.map((social, index) => (
+                        {allSocials.map((social, index) => (
                             <Button
                                 icon={social.icon}
                                 key={index}
@@ -79,13 +103,13 @@ const Creator = ({ value }: CreatorProps) => {
                             />
                         ))}
                     </div>
-                    <Button as="link" href="/shop" isBlack>
+                    <Button as="link" href="/org" isBlack>
                         View shop
                     </Button>
                 </div>
             </div>
             <div className="flex gap-4 mt-8 max-md:gap-3 max-md:mt-5 max-md:-mx-4 max-md:overflow-x-auto max-md:scrollbar-none max-md:before:shrink-0 max-md:before:w-1 max-md:after:shrink-0 max-md:after:w-1">
-                {value.shop.map((item) => (
+                {displayShop.map((item) => (
                     <div
                         className="group/image relative flex-1 max-md:flex-auto max-md:shrink-0 max-md:w-45"
                         key={item.id}
@@ -105,7 +129,7 @@ const Creator = ({ value }: CreatorProps) => {
                                     : ""
                             }`}
                             as="link"
-                            href="/shop/details"
+                            href="/org/details"
                             icon="arrow"
                             isWhite
                             isCircle
@@ -116,7 +140,7 @@ const Creator = ({ value }: CreatorProps) => {
             <div className="mt-8 max-md:hidden">
                 <div className="flex items-center">
                     <div className="flex flex-wrap gap-2 mr-auto">
-                        {value.tags.map((tag) => (
+                        {displayTags.map((tag) => (
                             <div
                                 className="flex items-center h-6 px-3 bg-b-surface1 rounded-[6px] text-caption text-t-secondary dark:bg-b-highlight"
                                 key={tag}
@@ -126,7 +150,7 @@ const Creator = ({ value }: CreatorProps) => {
                         ))}
                     </div>
                     <div className="text-caption text-t-secondary">
-                        Average response time in {value.time}
+                        Average response time in {value.time || '24 hours'}
                     </div>
                 </div>
             </div>

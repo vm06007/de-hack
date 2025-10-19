@@ -42,7 +42,7 @@ const ShopItem = ({ className, value }: ShopItemProps) => {
                     <Button
                         className="-rotate-45"
                         as="link"
-                        href="/shop/details"
+                        href="/org/details"
                         icon="arrow"
                         isWhite
                         isCircle

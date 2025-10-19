@@ -23,7 +23,7 @@ const NavLink = ({ value, onClick }: NavLinkProps) => {
             case "Customer list":
                 return pathname.includes("/customers/customer-list/");
             case "Shop":
-                return pathname.includes("/shop/");
+                return pathname.includes("/org/");
             case "Refunds":
                 return pathname.includes("/income/refunds/");
             default:

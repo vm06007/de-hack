@@ -8,7 +8,7 @@ import Spinner from "@/components/Spinner";
 import Filters from "./Filters";
 import Creator from "./Creator";
 
-import { creators } from "@/mocks/creators";
+import { useOrganizations } from "@/src/hooks/useApiData";
 
 const types = [
     { id: 1, name: "All" },
@@ -25,6 +25,15 @@ const sortOptions = [
 const ShopPage = () => {
     const [type, setType] = useState(types[0]);
     const [sort, setSort] = useState(sortOptions[0]);
+    const { data: creators, loading, error } = useOrganizations();
+
+    if (loading) {
+        return <Layout hideSidebar><div className="p-5">Loading creators...</div></Layout>;
+    }
+
+    if (error) {
+        return <Layout hideSidebar><div className="p-5">Error loading creators: {error}</div></Layout>;
+    }
 
     return (
         <Layout hideSidebar>
@@ -56,7 +65,7 @@ const ShopPage = () => {
                     <Filters />
                 </div>
                 <div className="flex flex-col gap-6 max-md:gap-3">
-                    {creators.map((creator) => (
+                    {(Array.isArray(creators) ? creators : []).map((creator) => (
                         <Creator value={creator} key={creator.id} />
                     ))}
                 </div>

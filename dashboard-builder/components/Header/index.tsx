@@ -39,7 +39,7 @@ const Header = ({
     const isHideCreateButton =
         pathname.includes("/customers/customer-list/") ||
         pathname.includes("/income/refunds/") ||
-        pathname.includes("/shop/") ||
+        pathname.includes("/org/") ||
         pathname.includes("/notifications");
 
     useEffect(() => {

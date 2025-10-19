@@ -12,7 +12,7 @@ import Grid from "./Grid";
 import { ProductDraft } from "@/types/product";
 import { useSelection } from "@/hooks/useSelection";
 
-import { draftsHackathons } from "@/mocks/products";
+import { useHackathons } from "@/src/hooks/useApiData";
 
 const views = [
     { id: 1, name: "grid" },
@@ -22,21 +22,36 @@ const views = [
 const DraftsPage = () => {
     const [search, setSearch] = useState("");
     const [view, setView] = useState(views[1]);
+    const { data: hackathons, loading, error } = useHackathons();
+
+    // Filter for active hackathons
+    const activeHackathons = Array.isArray(hackathons)
+        ? hackathons.filter(h => h.status === 'active')
+        : [];
+
     const {
         selectedRows,
         selectAll,
         handleRowSelect,
         handleSelectAll,
         handleDeselect,
-    } = useSelection<ProductDraft>(draftsHackathons);
+    } = useSelection<ProductDraft>(activeHackathons);
+
+    if (loading) {
+        return <Layout title="Active Hackathons"><div className="p-5">Loading hackathons...</div></Layout>;
+    }
+
+    if (error) {
+        return <Layout title="Active Hackathons"><div className="p-5">Error loading hackathons: {error}</div></Layout>;
+    }
 
     return (
-        <Layout title="Drafts">
+        <Layout title="Active Hackathons">
             <div className="card">
                 {selectedRows.length === 0 ? (
                     <div className="flex items-center">
                         <div className="pl-5 text-h6 max-lg:pl-3 max-md:mr-auto">
-                            Hackathons
+                            Active Hackathons
                         </div>
                         <Search
                             className="w-70 ml-6 mr-auto max-md:hidden"
@@ -57,7 +72,7 @@ const DraftsPage = () => {
                 ) : (
                     <div className="flex items-center">
                         <div className="mr-6 pl-5 text-h6">
-                            {selectedRows.length} product
+                            {selectedRows.length} hackathon
                             {selectedRows.length !== 1 ? "s" : ""} selected
                         </div>
                         <Button
@@ -78,20 +93,20 @@ const DraftsPage = () => {
                     </div>
                 )}
                 {search !== "" ? (
-                    <NoFound title="No products found" />
+                    <NoFound title="No hackathons found" />
                 ) : (
                     <div className="p-1 pt-3 max-lg:px-0">
                         {view.id === 1 ? (
                             <Grid
                                 selectedRows={selectedRows}
                                 onRowSelect={handleRowSelect}
-                                items={draftsHackathons}
+                                items={activeHackathons}
                             />
                         ) : (
                             <List
                                 selectedRows={selectedRows}
                                 onRowSelect={handleRowSelect}
-                                items={draftsHackathons}
+                                items={activeHackathons}
                                 selectAll={selectAll}
                                 onSelectAll={handleSelectAll}
                             />

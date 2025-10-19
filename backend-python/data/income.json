@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Total Earnings",
+    "amount": "$12,450.00",
+    "percentage": 15.2,
+    "trend": "up",
+    "icon": "chart",
+    "color": "green"
+  },
+  {
+    "id": 2,
+    "title": "This Month",
+    "amount": "$3,250.00",
+    "percentage": 8.5,
+    "trend": "up",
+    "icon": "calendar",
+    "color": "blue"
+  },
+  {
+    "id": 3,
+    "title": "Pending",
+    "amount": "$1,890.00",
+    "percentage": 12.3,
+    "trend": "down",
+    "icon": "clock",
+    "color": "orange"
+  },
+  {
+    "id": 4,
+    "title": "Withdrawn",
+    "amount": "$7,310.00",
+    "percentage": 5.7,
+    "trend": "up",
+    "icon": "arrow-up",
+    "color": "purple"
+  }
+]

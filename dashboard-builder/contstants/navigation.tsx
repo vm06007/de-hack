@@ -94,7 +94,7 @@ export const navigationUser = [
     {
         title: "My hackathon",
         icon: "bag",
-        href: "/shop",
+        href: "/org",
     },
     {
         title: "Edit profile",
@@ -115,10 +115,5 @@ export const navigationUser = [
         title: "Explore organizers",
         icon: "grid",
         href: "/explore-creators",
-    },
-    {
-        title: "Upgrade to Pro",
-        icon: "star-fill",
-        href: "/upgrade-to-pro",
     },
 ];

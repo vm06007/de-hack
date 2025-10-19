@@ -38,7 +38,7 @@ const Notifications = ({}) => {
                             </div>
                             <Link
                                 className="relative z-2 shrink-0 w-12 h-12 rounded-full overflow-hidden"
-                                href="/shop"
+                                href="/org"
                             >
                                 <Image
                                     className="size-12 rounded-full opacity-100"
@@ -50,11 +50,11 @@ const Notifications = ({}) => {
                             </Link>
                             <div className="relative z-2 w-[calc(100%-3rem)] pl-4">
                                 <div className="truncate text-body-2 text-t-secondary [&_span]:text-t-primary">
-                                    <Link href="/shop">
+                                    <Link href="/org">
                                         <span>@{notification.login}</span>
                                     </Link>
                                     &nbsp;{notification.action}&nbsp;
-                                    <Link href="/shop/details">
+                                    <Link href="/org/details">
                                         <span>{notification.product}</span>
                                     </Link>
                                 </div>

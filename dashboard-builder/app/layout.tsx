@@ -45,7 +45,6 @@ export default function RootLayout({
             <head>
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <link rel="shortcut icon" href="/favicon.svg" />
-                <link rel="icon" href="/favicon.ico" sizes="any" />
                 {/* Description no longer than 155 characters */}
                 <meta
                     name="description"

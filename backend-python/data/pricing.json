@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Lite",
+    "percentage": 8,
+    "description": "of monthly income",
+    "features": [
+      "Up to 5 hackathons",
+      "Basic analytics",
+      "Email support",
+      "Standard templates"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Pro",
+    "percentage": 12,
+    "description": "of monthly income",
+    "features": [
+      "Unlimited hackathons",
+      "Advanced analytics",
+      "Priority support",
+      "Custom templates",
+      "Bulk messaging",
+      "API access",
+      "White-label options"
+    ]
+  }
+]

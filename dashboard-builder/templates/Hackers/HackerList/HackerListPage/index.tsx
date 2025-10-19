@@ -12,7 +12,7 @@ import List from "./List";
 import { Hacker } from "@/types/hacker";
 import { useSelection } from "@/hooks/useSelection";
 
-import { useUsers } from "@/hooks/useApiData";
+import { useUsers } from "@/src/hooks/useUsers";
 
 const views = [
     { id: 1, name: "All Hackers" },
@@ -23,13 +23,15 @@ const views = [
 const HackerListPage = () => {
     const [search, setSearch] = useState("");
     const [view, setView] = useState(views[0]);
+    const { data: hackers, loading, error } = useUsers();
+    
     const {
         selectedRows,
         selectAll,
         handleRowSelect,
         handleSelectAll,
         handleDeselect,
-    } = useSelection<Hacker>(hackers);
+    } = useSelection<Hacker>(hackers || []);
 
     return (
         <Layout title="Hacker List">
@@ -83,14 +85,18 @@ const HackerListPage = () => {
                         />
                     </div>
                 )}
-                {search !== "" ? (
+                {loading ? (
+                    <div className="p-5 text-center">Loading hackers...</div>
+                ) : error ? (
+                    <div className="p-5 text-center text-red-500">Error loading hackers: {error}</div>
+                ) : search !== "" ? (
                     <NoFound title="No hackers found" />
                 ) : (
                     <div className="p-1 pt-3 max-lg:px-0">
                         <List
                             selectedRows={selectedRows}
                             onRowSelect={handleRowSelect}
-                            items={hackers}
+                            items={hackers || []}
                             selectAll={selectAll}
                             onSelectAll={handleSelectAll}
                         />

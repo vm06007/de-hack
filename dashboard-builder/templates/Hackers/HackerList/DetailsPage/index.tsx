@@ -9,7 +9,7 @@ import Button from "@/components/Button";
 import Hacker from "./Hacker";
 import Details from "./Details";
 
-import { useUsers } from "@/hooks/useApiData";
+import { useUsers } from "@/src/hooks/useUsers";
 
 const HackerDetailsPage = () => {
     const [search, setSearch] = useState("");

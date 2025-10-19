@@ -11,6 +11,7 @@
         "@nomicfoundation/hardhat-verify": "^3.0.0-next.32",
         "@nomicfoundation/hardhat-viem": "^3.0.0-next.32",
         "@types/node": "^22.15.32",
+        "concurrently": "^8.2.2",
         "dotenv": "^16.5.1",
         "forge-std": "1.1.2",
         "hardhat": "^3.0.0-next.32",
@@ -18,12 +19,12 @@
         "viem": "^2.31.3"
     },
     "scripts": {
+        "dev": "concurrently \"bun run backend\" \"bun run frontend\"",
+        "backend": "cd backend-python && ./start.sh",
+        "frontend": "cd dashboard-builder && bun run dev",
         "compile": "hardhat compile",
         "test": "npx hardhat test",
-        "test:counter": "hardhat test test/Counter.t.sol",
-        "test:dehack": "hardhat test test/DeHackPlatform.t.sol",
-        "deploy:counter": "hardhat ignition deploy ignition/modules/Counter.ts",
-        "deploy:mainnet": "hardhat run scripts/deploy-and-verify.ts --network mainnet"
+        "deploy:counter": "hardhat ignition deploy ignition/modules/Counter.ts"
     },
     "dependencies": {
         "@openzeppelin/contracts": "^5.4.0",

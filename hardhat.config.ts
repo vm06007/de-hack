@@ -1,14 +1,16 @@
 import type { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-verify";
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
 import { configVariable } from "hardhat/config";
-import "@nomicfoundation/hardhat-verify";
+import hardhatVerify from "@nomicfoundation/hardhat-verify";
 import "@nomicfoundation/hardhat-node-test-runner";
 import "@nomicfoundation/hardhat-viem-assertions";
 import "@nomicfoundation/hardhat-ignition";
 
 const config: HardhatUserConfig = {
-    plugins: [hardhatToolboxViemPlugin],
+    plugins: [
+        hardhatToolboxViemPlugin,
+        hardhatVerify
+    ],
     solidity: {
         version: "0.8.28",
         settings: {

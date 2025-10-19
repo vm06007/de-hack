@@ -80,7 +80,7 @@ const Filters = ({}) => {
                 <div className="flex items-center justify-between mt-13 max-md:block max-md:mt-6">
                     <div className="flex items-center gap-4 max-md:w-full max-md:h-12 max-md:mb-3">
                         <div className="flex items-center max-md:mr-auto">
-                            <div className="text-button">Featured products</div>
+                            <div className="text-button">Featured hackathons</div>
                             <Tooltip
                                 className="ml-1.5"
                                 content="Maximum 100 characters. No HTML or emoji allowed"

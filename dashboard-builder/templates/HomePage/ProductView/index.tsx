@@ -11,7 +11,7 @@ import millify from "millify";
 import Card from "@/components/Card";
 import Percentage from "@/components/Percentage";
 
-import { homeProductViewChartData } from "@/mocks/charts";
+import { useCharts } from "@/src/hooks/useApiData";
 
 const durations = [
     { id: 1, name: "Last 7 days" },
@@ -21,6 +21,7 @@ const durations = [
 
 const ProductView = ({}) => {
     const [duration, setDuration] = useState(durations[0]);
+    const { data: chartData, loading, error } = useCharts();
 
     const CustomTooltip = ({ payload }: { payload: { value: number }[] }) => {
         if (payload && payload.length) {
@@ -37,19 +38,53 @@ const ProductView = ({}) => {
         return null;
     };
 
+    // Use product view chart data from API, fallback to empty array
+    const productViewData = chartData?.productView || chartData?.homeProductView || [];
+
     const getMinValues = useMemo(() => {
-        const sortedData = [...homeProductViewChartData].sort(
+        if (productViewData.length === 0) return [];
+        const sortedData = [...productViewData].sort(
             (a, b) => a.amt - b.amt
         );
         return [sortedData[0].amt, sortedData[1].amt];
-    }, []);
+    }, [productViewData]);
+
+    if (loading) {
+        return (
+            <Card title="Product view">
+                <div className="pt-6 px-5 pb-5 max-md:pt-5 max-lg:px-3 max-lg:pb-4">
+                    <div className="flex items-center justify-center h-74">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                            <p className="text-sm text-gray-500">Loading chart data...</p>
+                        </div>
+                    </div>
+                </div>
+            </Card>
+        );
+    }
+
+    if (error) {
+        return (
+            <Card title="Product view">
+                <div className="pt-6 px-5 pb-5 max-md:pt-5 max-lg:px-3 max-lg:pb-4">
+                    <div className="flex items-center justify-center h-74">
+                        <div className="text-center">
+                            <p className="text-sm text-red-500">Error loading chart data</p>
+                            <p className="text-xs text-gray-500 mt-1">{error}</p>
+                        </div>
+                    </div>
+                </div>
+            </Card>
+        );
+    }
 
     return (
         <Card
             title="Product view"
             selectValue={duration}
             selectOnChange={setDuration}
-            selectOptions={durations}
+            // selectOptions={durations}
         >
             <div className="pt-6 px-5 pb-5 max-md:pt-5 max-lg:px-3 max-lg:pb-4">
                 <div className="flex items-end max-md:block">
@@ -70,7 +105,7 @@ const ProductView = ({}) => {
                             <BarChart
                                 width={150}
                                 height={40}
-                                data={homeProductViewChartData}
+                                data={productViewData}
                                 margin={{
                                     top: 0,
                                     right: 0,
@@ -101,7 +136,7 @@ const ProductView = ({}) => {
                                     }}
                                     radius={6}
                                 >
-                                    {homeProductViewChartData.map(
+                                    {productViewData.map(
                                         (entry, index) => (
                                             <Cell
                                                 key={`cell-${index}`}

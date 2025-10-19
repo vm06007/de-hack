@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { api } from '@/lib/api';
 import { Hackathon } from '@/lib/api';
 
 interface HackathonDetailsProps {
@@ -29,22 +28,6 @@ const HackathonDetails = ({ hackathon }: HackathonDetailsProps) => {
         fetchApplications();
     }, [hackathon.id]);
 
-    // Track hackathon view
-    useEffect(() => {
-        const trackView = async () => {
-            try {
-                await api.trackHackathonAnalytics(hackathon.id, {
-                    metric: 'view',
-                    value: 1,
-                    metadata: { source: 'hackathon-details-page' }
-                });
-            } catch (err) {
-                console.error('Failed to track view:', err);
-            }
-        };
-
-        trackView();
-    }, [hackathon.id]);
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {

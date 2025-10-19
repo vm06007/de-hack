@@ -28,7 +28,11 @@ class ApiClient {
             return await response.json();
         } catch (error) {
             console.error(`API request failed for ${endpoint}:`, error);
-            // Return empty array for all endpoints to maintain consistency
+            // For single item endpoints, return null instead of empty array
+            if (endpoint.includes('/') && !endpoint.endsWith('s')) {
+                return null as T;
+            }
+            // Return empty array for all other endpoints to maintain consistency
             return [] as T;
         }
     }

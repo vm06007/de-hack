@@ -9,7 +9,7 @@ import DeleteItems from "@/components/DeleteItems";
 import NoFound from "@/components/NoFound";
 import List from "./List";
 import Grid from "./Grid";
-import { ProductDraft } from "@/types/product";
+import { HackathonDraft } from "@/types/hackathon";
 import { useSelection } from "@/hooks/useSelection";
 
 import { useHackathons } from "@/src/hooks/useApiData";
@@ -35,7 +35,7 @@ const DraftsPage = () => {
         handleRowSelect,
         handleSelectAll,
         handleDeselect,
-    } = useSelection<ProductDraft>(activeHackathons);
+    } = useSelection<HackathonDraft>(activeHackathons);
 
     if (loading) {
         return <Layout title="Active Hackathons"><div className="p-5">Loading hackathons...</div></Layout>;

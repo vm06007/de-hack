@@ -17,13 +17,13 @@ const tabs = [
         icon: "profile",
         label: "Hackers",
         value: "1,293",
-        percent: -36.8,
+        percent: 16.8,
     },
     {
         id: 2,
         icon: "wallet",
-        label: "Balance",
-        value: "256k",
+        label: "Protocol Balance",
+        value: "$9,500",
         percent: 36.8,
     },
 ];
@@ -37,7 +37,7 @@ const Overview = ({}) => {
             title="Overview"
             selectValue={duration}
             selectOnChange={setDuration}
-            selectOptions={durations}
+            // selectOptions={durations}
         >
             <div className="pt-1">
                 <div className="flex mb-4 p-1.5 border border-s-subtle rounded-4xl bg-b-depth2">

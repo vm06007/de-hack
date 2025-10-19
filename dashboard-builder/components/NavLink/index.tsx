@@ -18,17 +18,6 @@ const NavLink = ({ value, onClick }: NavLinkProps) => {
 
     const isActive = useMemo(() => {
         if (pathname === value.href) return true;
-
-        switch (value.title) {
-            case "Customer list":
-                return pathname.includes("/hackers/hacker-list/");
-            case "Shop":
-                return pathname.includes("/org/");
-            case "Refunds":
-                return pathname.includes("/income/refunds/");
-            default:
-                return false;
-        }
     }, [pathname, value.href, value.title]);
 
     return (

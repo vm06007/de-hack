@@ -1,5 +1,7 @@
+"use client";
+
 import { notFound } from 'next/navigation';
-import { useHackathon } from '@/hooks/useHackathons';
+import { useHackathon } from '@/src/hooks/useHackathons';
 import HackathonDetails from '@/components/HackathonDetails';
 
 interface PageProps {

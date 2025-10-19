@@ -2,7 +2,6 @@
 
 import Layout from "@/components/Layout";
 import PopularHackathons from "@/components/PopularHackathons";
-import RefundRequests from "@/components/RefundRequests";
 import Overview from "./Overview";
 // import ProductView from "./ProductView";
 import TransactionsOverview from "./TransactionsOverview";
@@ -28,7 +27,6 @@ const HomePage = () => {
                         title="Upcoming hackathons"
                         items={loading ? [] : hackathons}
                     />
-                    <RefundRequests />
                 </div>
             </div>
         </Layout>

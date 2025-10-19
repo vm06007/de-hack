@@ -79,7 +79,7 @@ export default function RootLayout({
                 <meta property="og:type" content="Article" />
                 <meta
                     property="og:url"
-                    content="https://dehack.vc/dehack/products/core-20--dashboard-builder"
+                    content="https://dehack.vc/dehack/hackathons/core-20--dashboard-builder"
                 />
                 <meta
                     property="og:image"
@@ -101,7 +101,7 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:url"
-                    content="https://dehack.vc/dehack/products/core-20--dashboard-builder"
+                    content="https://dehack.vc/dehack/hackathons/core-20--dashboard-builder"
                 />
                 <meta
                     property="og:image"
@@ -118,7 +118,7 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:url"
-                    content="https://dehack.vc/dehack/products/core-20--dashboard-builder"
+                    content="https://dehack.vc/dehack/hackathons/core-20--dashboard-builder"
                 />
                 <meta
                     property="og:image"

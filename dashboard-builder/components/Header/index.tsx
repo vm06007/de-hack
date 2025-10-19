@@ -4,7 +4,6 @@ import Button from "@/components/Button";
 import Select from "@/components/Select";
 import Logo from "@/components/Logo";
 import Icon from "@/components/Icon";
-import SearchGlobal from "./SearchGlobal";
 import User from "./User";
 // import Notifications from "./Notifications";
 // import Messages from "./Messages";
@@ -36,11 +35,9 @@ const Header = ({
     const [hasOverflowHidden, setHasOverflowHidden] = useState(false);
     const [visibleSearch, setVisibleSearch] = useState(false);
 
-    const isHideCreateButton =
-        pathname.includes("/hackers/hacker-list/") ||
-        pathname.includes("/income/refunds/") ||
-        pathname.includes("/org/") ||
-        pathname.includes("/notifications");
+    const isHideCreateButton = false
+        // pathname.includes("/hackers/hacker-list/") ||
+        // pathname.includes("/notifications");
 
     useEffect(() => {
         const observer = new MutationObserver((mutations) => {
@@ -111,18 +108,11 @@ const Header = ({
                 >
                     {!newProduct && (
                         <>
-                            <SearchGlobal
-                                className={`max-md:hidden ${
-                                    hideSidebar ? "mr-auto" : ""
-                                }`}
-                                onClose={() => setVisibleSearch(false)}
-                                visible={visibleSearch}
-                            />
                             {!isHideCreateButton && (
                                 <Button
                                     className="max-md:hidden"
                                     isBlack
-                                    href="/products/new"
+                                    href="/hackathons/new"
                                     as="link"
                                 >
                                     Create Hackathon

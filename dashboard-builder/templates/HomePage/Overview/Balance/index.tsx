@@ -9,10 +9,11 @@ import {
 } from "recharts";
 import millify from "millify";
 import { NumericFormat } from "react-number-format";
-
-import { homeBalanceChartData } from "@/mocks/charts";
+import { useCharts } from "@/src/hooks/useApiData";
 
 const Balance = ({}) => {
+    const { data: chartData, loading, error } = useCharts();
+
     const formatterYAxis = (value: number) => {
         if (value === 0) {
             return "$0";
@@ -45,6 +46,35 @@ const Balance = ({}) => {
         return null;
     };
 
+    if (loading) {
+        return (
+            <div className="pt-3 px-3 pb-1">
+                <div className="h-79 max-xl:h-63.5 flex items-center justify-center">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                        <p className="text-sm text-gray-500">Loading chart data...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="pt-3 px-3 pb-1">
+                <div className="h-79 max-xl:h-63.5 flex items-center justify-center">
+                    <div className="text-center">
+                        <p className="text-sm text-red-500">Error loading chart data</p>
+                        <p className="text-xs text-gray-500 mt-1">{error}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Use balance chart data from API, fallback to empty array
+    const balanceData = chartData?.balance || chartData?.homeBalance || [];
+
     return (
         <div className="pt-3 px-3 pb-1">
             <div className="h-79 max-xl:h-63.5">
@@ -52,7 +82,7 @@ const Balance = ({}) => {
                     <AreaChart
                         width={730}
                         height={250}
-                        data={homeBalanceChartData}
+                        data={balanceData}
                         margin={{ top: 8, right: 7, left: 0, bottom: 0 }}
                     >
                         <defs>

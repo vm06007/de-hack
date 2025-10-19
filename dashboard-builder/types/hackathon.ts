@@ -1,4 +1,4 @@
-export interface ProductMarket {
+export interface HackathonMarket {
     id: number;
     title: string;
     image: string;
@@ -19,7 +19,7 @@ export interface ProductMarket {
     };
 }
 
-export interface ProductStatistics {
+export interface HackathonStatistics {
     id: number;
     title: string;
     image: string;
@@ -33,7 +33,7 @@ export interface ProductStatistics {
     }[];
 }
 
-export interface ProductDraft {
+export interface HackathonDraft {
     id: number;
     title: string;
     image: string;
@@ -43,7 +43,7 @@ export interface ProductDraft {
     date: string;
 }
 
-export interface ProductConcluded {
+export interface HackathonConcluded {
     id: number;
     title: string;
     image: string;

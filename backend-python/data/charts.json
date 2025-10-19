@@ -26,8 +26,8 @@
     ]
   },
   {
-    "id": "productsProductViewChartData",
-    "name": "Products Product View Chart",
+    "id": "hackathonsHackathonViewChartData",
+    "name": "Hackathons Hackathon View Chart",
     "data": [
       { "name": "Jan", "value": 1200 },
       { "name": "Feb", "value": 1900 },

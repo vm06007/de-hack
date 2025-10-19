@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import ThemeButton from "@/components/ThemeButton";
 type LayoutProps = {
     title?: string;
     children: React.ReactNode;
@@ -76,9 +75,6 @@ const Layout = ({ title, children, newProduct, hideSidebar }: LayoutProps) => {
                     {children}
                 </div>
             </div>
-            {hideSidebar && (
-                <ThemeButton className="fixed left-5 bottom-5 z-10 max-lg:hidden" />
-            )}
         </div>
     );
 };

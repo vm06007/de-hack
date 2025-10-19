@@ -43,22 +43,25 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
+                <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+                <link rel="shortcut icon" href="/favicon.svg" />
+                <link rel="icon" href="/favicon.ico" sizes="any" />
                 {/* Description no longer than 155 characters */}
                 <meta
                     name="description"
-                    content="Core 2.0 – Dashboard Builder"
+                    content="DeHack - Decentralized Hackathon Space"
                 />
                 {/* Product Name */}
                 <meta
                     name="product-name"
-                    content="Core 2.0 – Dashboard Builder"
+                    content="DeHack - Decentralized Hackathon Space"
                 />
                 {/* Twitter Card data */}
                 <meta name="twitter:card" content="summary" />
                 <meta name="twitter:site" content="@dehack" />
                 <meta
                     name="twitter:title"
-                    content="Core 2.0 – Dashboard Builder"
+                    content="DeHack - Decentralized Hackathon Space"
                 />
                 <meta
                     name="twitter:description"
@@ -72,7 +75,7 @@ export default function RootLayout({
                 {/* Open Graph data for Facebook */}
                 <meta
                     property="og:title"
-                    content="Core 2.0 – Dashboard Builder"
+                    content="DeHack - Decentralized Hackathon Space"
                 />
                 <meta property="og:type" content="Article" />
                 <meta
@@ -89,13 +92,13 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:site_name"
-                    content="Core 2.0 – Dashboard Builder"
+                    content="DeHack - Decentralized Hackathon Space"
                 />
                 <meta property="fb:admins" content="132951670226590" />
                 {/* Open Graph data for LinkedIn */}
                 <meta
                     property="og:title"
-                    content="Core 2.0 – Dashboard Builder"
+                    content="DeHack - Decentralized Hackathon Space"
                 />
                 <meta
                     property="og:url"
@@ -112,7 +115,7 @@ export default function RootLayout({
                 {/* Open Graph data for Pinterest */}
                 <meta
                     property="og:title"
-                    content="Core 2.0 – Dashboard Builder"
+                    content="DeHack - Decentralized Hackathon Space"
                 />
                 <meta
                     property="og:url"

@@ -10,7 +10,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
             activeChain={Ethereum}
             clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID || "your-client-id"}
         >
-            <ThemeProvider disableTransitionOnChange>{children}</ThemeProvider>
+            <ThemeProvider defaultTheme="dark" disableTransitionOnChange>{children}</ThemeProvider>
         </ThirdwebProvider>
     );
 };

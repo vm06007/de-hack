@@ -57,9 +57,6 @@ const Sidebar = ({
         </RemoveScroll>
         <div className="mt-auto pt-6 max-md:pt-4">
             {/* <Button className="mb-3" icon="chat-think" isWhite isCircle /> */}
-            <ThemeButton
-                className={`${hideSidebar ? "hidden max-lg:block" : ""}`}
-            />
         </div>
     </div>
 );

@@ -230,6 +230,223 @@ def init_sample_data():
             }
         ]
         save_data("analytics", analytics)
+    
+    # Time slots data
+    if not os.path.exists(os.path.join(DATA_DIR, "timeSlots.json")):
+        timeSlots = [
+            {
+                "id": 1,
+                "time": "12:00 am",
+                "days": {"Mo": 1, "Tu": 2, "We": 1, "Th": 0, "Fr": 2, "Sa": 1, "Su": 2}
+            },
+            {
+                "id": 2,
+                "time": "",
+                "days": {"Mo": 2, "Tu": 0, "We": 2, "Th": 1, "Fr": 2, "Sa": 0, "Su": 1}
+            },
+            {
+                "id": 3,
+                "time": "",
+                "days": {"Mo": 0, "Tu": 1, "We": 1, "Th": 1, "Fr": 0, "Sa": 0, "Su": 0}
+            },
+            {
+                "id": 4,
+                "time": "4:00 am",
+                "days": {"Mo": 1, "Tu": 0, "We": 2, "Th": 1, "Fr": 2, "Sa": 0, "Su": 2}
+            },
+            {
+                "id": 5,
+                "time": "",
+                "days": {"Mo": 1, "Tu": 2, "We": 1, "Th": 0, "Fr": 1, "Sa": 1, "Su": 2}
+            }
+        ]
+        save_data("timeSlots", timeSlots)
+    
+    # Countries data
+    if not os.path.exists(os.path.join(DATA_DIR, "countries.json")):
+        countries = [
+            {
+                "id": 1,
+                "name": "United States",
+                "flag": "/images/flags/us.svg",
+                "percentage": 65.5
+            },
+            {
+                "id": 2,
+                "name": "Sweden",
+                "flag": "/images/flags/se.svg",
+                "percentage": 57.5
+            },
+            {
+                "id": 3,
+                "name": "Canada",
+                "flag": "/images/flags/ca.svg",
+                "percentage": 45.2
+            },
+            {
+                "id": 4,
+                "name": "UK",
+                "flag": "/images/flags/uk.svg",
+                "percentage": 33.2
+            },
+            {
+                "id": 5,
+                "name": "Germany",
+                "flag": "/images/flags/de.svg",
+                "percentage": 25.8
+            }
+        ]
+        save_data("countries", countries)
+    
+    # FAQs data
+    if not os.path.exists(os.path.join(DATA_DIR, "faqs.json")):
+        faqs = [
+            {
+                "id": 1,
+                "name": "General",
+                "items": [
+                    {
+                        "id": 1,
+                        "title": "What's the difference between Lite and Pro plans?",
+                        "content": "The Pro plan offers more advanced features including unlimited product uploads and promotion posts, analytics tools, and bulk messaging capabilities, while charging 12% of monthly income versus 8% for Lite."
+                    },
+                    {
+                        "id": 2,
+                        "title": "Why is the Pro plan 'Recommended'?",
+                        "content": "The Pro plan offers more advanced features including unlimited product uploads and promotion posts, analytics tools, and bulk messaging capabilities, while charging 12% of monthly income versus 8% for Lite."
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "name": "Pricing & Fees",
+                "items": [
+                    {
+                        "id": 1,
+                        "title": "How is the monthly income percentage calculated?",
+                        "content": "The Pro plan offers more advanced features including unlimited product uploads and promotion posts, analytics tools, and bulk messaging capabilities, while charging 12% of monthly income versus 8% for Lite."
+                    }
+                ]
+            }
+        ]
+        save_data("faqs", faqs)
+    
+    # Comments data
+    if not os.path.exists(os.path.join(DATA_DIR, "comments.json")):
+        comments = [
+            {
+                "id": 1,
+                "author": "Alex Chen",
+                "avatar": "/images/avatars/1.png",
+                "content": "Great hackathon! Looking forward to participating.",
+                "timestamp": "2024-01-15T10:30:00Z",
+                "likes": 12,
+                "replies": [
+                    {
+                        "id": 1,
+                        "author": "Sarah Kim",
+                        "avatar": "/images/avatars/2.png",
+                        "content": "Same here! The prizes look amazing.",
+                        "timestamp": "2024-01-15T11:00:00Z",
+                        "likes": 5
+                    }
+                ]
+            }
+        ]
+        save_data("comments", comments)
+    
+    # Messages data
+    if not os.path.exists(os.path.join(DATA_DIR, "messages.json")):
+        messages = [
+            {
+                "id": 1,
+                "sender": "Alex Chen",
+                "avatar": "/images/avatars/1.png",
+                "content": "Hey! Are you participating in the ETHGlobal hackathon?",
+                "timestamp": "2024-01-15T14:30:00Z",
+                "unread": False
+            },
+            {
+                "id": 2,
+                "sender": "Sarah Kim",
+                "avatar": "/images/avatars/2.png",
+                "content": "Yes! I'm really excited about it. The prize pool is huge!",
+                "timestamp": "2024-01-15T14:35:00Z",
+                "unread": True
+            }
+        ]
+        save_data("messages", messages)
+    
+    # Notifications data
+    if not os.path.exists(os.path.join(DATA_DIR, "notifications.json")):
+        notifications = [
+            {
+                "id": 1,
+                "type": "hackathon",
+                "title": "New Hackathon Available",
+                "content": "ETHGlobal Online 2025 is now open for registration!",
+                "timestamp": "2024-01-15T09:00:00Z",
+                "unread": True
+            },
+            {
+                "id": 2,
+                "type": "application",
+                "title": "Application Status Update",
+                "content": "Your application to Unite DeFi 2025 has been accepted!",
+                "timestamp": "2024-01-14T16:30:00Z",
+                "unread": False
+            }
+        ]
+        save_data("notifications", notifications)
+    
+    # Compatibility data
+    if not os.path.exists(os.path.join(DATA_DIR, "compatibility.json")):
+        compatibility = [
+            {
+                "id": 1,
+                "browser": "Chrome",
+                "version": "90+",
+                "supported": True,
+                "notes": "Fully supported"
+            },
+            {
+                "id": 2,
+                "browser": "Firefox",
+                "version": "88+",
+                "supported": True,
+                "notes": "Fully supported"
+            },
+            {
+                "id": 3,
+                "browser": "Safari",
+                "version": "14+",
+                "supported": True,
+                "notes": "Fully supported"
+            },
+            {
+                "id": 4,
+                "browser": "Edge",
+                "version": "90+",
+                "supported": True,
+                "notes": "Fully supported"
+            }
+        ]
+        save_data("compatibility", compatibility)
+    
+    # Affiliate center data
+    if not os.path.exists(os.path.join(DATA_DIR, "affiliateCenter.json")):
+        affiliateCenter = [
+            {
+                "id": 1,
+                "title": "Referral Program",
+                "description": "Earn 10% commission for every successful referral",
+                "commission": 10,
+                "totalEarnings": 1250.50,
+                "referrals": 15,
+                "status": "active"
+            }
+        ]
+        save_data("affiliateCenter", affiliateCenter)
 
 # API Routes
 
@@ -436,6 +653,114 @@ def track_analytics():
     save_data('analytics', analytics)
     
     return jsonify(new_analytics), 201
+
+# Additional API endpoints for new data
+
+# Time slots API
+@app.route('/api/time-slots', methods=['GET'])
+def get_time_slots():
+    time_slots = load_data('timeSlots')
+    return jsonify(time_slots)
+
+# Countries API
+@app.route('/api/countries', methods=['GET'])
+def get_countries():
+    countries = load_data('countries')
+    return jsonify(countries)
+
+# FAQs API
+@app.route('/api/faqs', methods=['GET'])
+def get_faqs():
+    faqs = load_data('faqs')
+    return jsonify(faqs)
+
+# Comments API
+@app.route('/api/comments', methods=['GET'])
+def get_comments():
+    comments = load_data('comments')
+    return jsonify(comments)
+
+@app.route('/api/comments', methods=['POST'])
+def create_comment():
+    data = request.get_json()
+    comments = load_data('comments')
+    
+    new_comment = {
+        "id": get_next_id(comments),
+        "author": data.get('author'),
+        "avatar": data.get('avatar'),
+        "content": data.get('content'),
+        "timestamp": datetime.now().isoformat(),
+        "likes": 0,
+        "replies": []
+    }
+    
+    comments.append(new_comment)
+    save_data('comments', comments)
+    
+    return jsonify(new_comment), 201
+
+# Messages API
+@app.route('/api/messages', methods=['GET'])
+def get_messages():
+    messages = load_data('messages')
+    return jsonify(messages)
+
+@app.route('/api/messages', methods=['POST'])
+def create_message():
+    data = request.get_json()
+    messages = load_data('messages')
+    
+    new_message = {
+        "id": get_next_id(messages),
+        "sender": data.get('sender'),
+        "avatar": data.get('avatar'),
+        "content": data.get('content'),
+        "timestamp": datetime.now().isoformat(),
+        "unread": True
+    }
+    
+    messages.append(new_message)
+    save_data('messages', messages)
+    
+    return jsonify(new_message), 201
+
+# Notifications API
+@app.route('/api/notifications', methods=['GET'])
+def get_notifications():
+    notifications = load_data('notifications')
+    return jsonify(notifications)
+
+@app.route('/api/notifications', methods=['POST'])
+def create_notification():
+    data = request.get_json()
+    notifications = load_data('notifications')
+    
+    new_notification = {
+        "id": get_next_id(notifications),
+        "type": data.get('type'),
+        "title": data.get('title'),
+        "content": data.get('content'),
+        "timestamp": datetime.now().isoformat(),
+        "unread": True
+    }
+    
+    notifications.append(new_notification)
+    save_data('notifications', notifications)
+    
+    return jsonify(new_notification), 201
+
+# Compatibility API
+@app.route('/api/compatibility', methods=['GET'])
+def get_compatibility():
+    compatibility = load_data('compatibility')
+    return jsonify(compatibility)
+
+# Affiliate Center API
+@app.route('/api/affiliate-center', methods=['GET'])
+def get_affiliate_center():
+    affiliate_center = load_data('affiliateCenter')
+    return jsonify(affiliate_center)
 
 if __name__ == '__main__':
     # Initialize sample data

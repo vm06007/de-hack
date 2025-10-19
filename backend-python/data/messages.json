@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "sender": "Alex Chen",
+    "avatar": "/images/avatars/1.png",
+    "content": "Hey! Are you participating in the ETHGlobal hackathon?",
+    "timestamp": "2024-01-15T14:30:00Z",
+    "unread": false
+  },
+  {
+    "id": 2,
+    "sender": "Sarah Kim",
+    "avatar": "/images/avatars/2.png",
+    "content": "Yes! I'm really excited about it. The prize pool is huge!",
+    "timestamp": "2024-01-15T14:35:00Z",
+    "unread": true
+  }
+]

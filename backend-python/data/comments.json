@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "author": "Alex Chen",
+    "avatar": "/images/avatars/1.png",
+    "content": "Great hackathon! Looking forward to participating.",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "likes": 12,
+    "replies": [
+      {
+        "id": 1,
+        "author": "Sarah Kim",
+        "avatar": "/images/avatars/2.png",
+        "content": "Same here! The prizes look amazing.",
+        "timestamp": "2024-01-15T11:00:00Z",
+        "likes": 5
+      }
+    ]
+  }
+]

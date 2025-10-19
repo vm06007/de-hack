@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "browser": "Chrome",
+    "version": "90+",
+    "supported": true,
+    "notes": "Fully supported"
+  },
+  {
+    "id": 2,
+    "browser": "Firefox",
+    "version": "88+",
+    "supported": true,
+    "notes": "Fully supported"
+  },
+  {
+    "id": 3,
+    "browser": "Safari",
+    "version": "14+",
+    "supported": true,
+    "notes": "Fully supported"
+  },
+  {
+    "id": 4,
+    "browser": "Edge",
+    "version": "90+",
+    "supported": true,
+    "notes": "Fully supported"
+  }
+]

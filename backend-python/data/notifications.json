@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "type": "hackathon",
+    "title": "New Hackathon Available",
+    "content": "ETHGlobal Online 2025 is now open for registration!",
+    "timestamp": "2024-01-15T09:00:00Z",
+    "unread": true
+  },
+  {
+    "id": 2,
+    "type": "application",
+    "title": "Application Status Update",
+    "content": "Your application to Unite DeFi 2025 has been accepted!",
+    "timestamp": "2024-01-14T16:30:00Z",
+    "unread": false
+  }
+]

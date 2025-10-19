@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "title": "Referral Program",
+    "description": "Earn 10% commission for every successful referral",
+    "commission": 10,
+    "totalEarnings": 1250.5,
+    "referrals": 15,
+    "status": "active"
+  }
+]

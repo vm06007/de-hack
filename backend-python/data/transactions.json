@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "title": "DeFi Protocol Template",
+    "category": "Hackathon",
+    "type": "sale",
+    "date": "2024-01-15",
+    "orderId": "ORD-001",
+    "price": 2500,
+    "amount": 2500.00,
+    "image": "/images/products/1.png"
+  },
+  {
+    "id": 2,
+    "title": "NFT Marketplace Kit",
+    "category": "Hackathon",
+    "type": "sale",
+    "date": "2024-01-14",
+    "orderId": "ORD-002",
+    "price": 1800,
+    "amount": 1800.00,
+    "image": "/images/products/2.png"
+  },
+  {
+    "id": 3,
+    "title": "Smart Contract Audit",
+    "category": "Service",
+    "type": "refund",
+    "date": "2024-01-13",
+    "orderId": "ORD-003",
+    "price": 1200,
+    "amount": -1200.00,
+    "image": "/images/products/3.png"
+  },
+  {
+    "id": 4,
+    "title": "Web3 Development Course",
+    "category": "Education",
+    "type": "sale",
+    "date": "2024-01-12",
+    "orderId": "ORD-004",
+    "price": 950,
+    "amount": 950.00,
+    "image": "/images/products/4.png"
+  },
+  {
+    "id": 5,
+    "title": "Blockchain Consulting",
+    "category": "Service",
+    "type": "sale",
+    "date": "2024-01-11",
+    "orderId": "ORD-005",
+    "price": 3200,
+    "amount": 3200.00,
+    "image": "/images/products/5.png"
+  }
+]

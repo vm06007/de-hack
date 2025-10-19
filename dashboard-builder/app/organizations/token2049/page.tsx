@@ -1,5 +1,5 @@
-import ShopPage from "@/templates/Shop/ShopPage";
+import OrgPage from "@/templates/Organizations/OrgPage";
 
 export default function Page() {
-    return <ShopPage />;
+    return <OrgPage />;
 }

@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "title": "Total payouts",
+    "icon": "chart",
+    "tooltip": "Total amount paid out to date",
+    "price": 13200.00,
+    "counter": null
+  },
+  {
+    "id": 2,
+    "title": "This month",
+    "icon": "calendar",
+    "tooltip": "Payouts processed this month",
+    "price": 2500.00,
+    "counter": null
+  },
+  {
+    "id": 3,
+    "title": "Pending",
+    "icon": "clock",
+    "tooltip": "Payouts currently being processed",
+    "price": 1800.00,
+    "counter": null
+  },
+  {
+    "id": 4,
+    "title": "Future payouts",
+    "icon": "arrow-up",
+    "tooltip": "Scheduled future payouts",
+    "price": 3200.00,
+    "counter": null
+  }
+]

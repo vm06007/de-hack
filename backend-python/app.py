@@ -46,7 +46,7 @@ def init_sample_data():
         "users", "organizations", "hackathons", "applications", "analytics",
         "timeSlots", "countries", "faqs", "comments", "messages", 
         "notifications", "compatibility", "affiliateCenter", "slider",
-        "charts", "judges", "sponsors", "productActivity", "pricing", "income"
+        "charts", "judges", "sponsors", "productActivity", "pricing", "income", "payouts", "payoutStatistics", "statementStatistics", "transactions"
     ]
     
     for filename in required_files:
@@ -442,6 +442,30 @@ def get_pricing():
 def get_income():
     income = load_data('income')
     return jsonify(income)
+
+# Payouts API
+@app.route('/api/payouts', methods=['GET'])
+def get_payouts():
+    payouts = load_data('payouts')
+    return jsonify(payouts)
+
+# Payout Statistics API
+@app.route('/api/payout-statistics', methods=['GET'])
+def get_payout_statistics():
+    statistics = load_data('payoutStatistics')
+    return jsonify(statistics)
+
+# Statement Statistics API
+@app.route('/api/statement-statistics', methods=['GET'])
+def get_statement_statistics():
+    statistics = load_data('statementStatistics')
+    return jsonify(statistics)
+
+# Transactions API
+@app.route('/api/transactions', methods=['GET'])
+def get_transactions():
+    transactions = load_data('transactions')
+    return jsonify(transactions)
 
 # Customers API (alias for users)
 @app.route('/api/customers', methods=['GET'])

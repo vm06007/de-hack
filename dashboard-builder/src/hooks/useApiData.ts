@@ -51,3 +51,7 @@ export const useSponsors = () => useApiData('/sponsors');
 export const useProductActivity = () => useApiData('/product-activity');
 export const usePricing = () => useApiData('/pricing');
 export const useIncome = () => useApiData('/income');
+export const usePayouts = () => useApiData('/payouts');
+export const usePayoutStatistics = () => useApiData('/payout-statistics');
+export const useStatementStatistics = () => useApiData('/statement-statistics');
+export const useTransactions = () => useApiData('/transactions');

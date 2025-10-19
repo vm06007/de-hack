@@ -1,7 +1,7 @@
-import ShopDetailsPage from "@/templates/Shop/ShopDetailsPage";
+import OrgDetailsPage from "@/templates/Organizations/OrgDetailsPage";
 
-const ShopDetails = () => {
-    return <ShopDetailsPage />;
+const OrgDetails = () => {
+    return <OrgDetailsPage />;
 };
 
-export default ShopDetails;
+export default OrgDetails;

@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "date": "2024-01-15",
+    "status": "completed",
+    "method": "stripe",
+    "transactionId": "txn_1234567890",
+    "amount": 2500.00,
+    "fees": 75.00,
+    "net": 2425.00
+  },
+  {
+    "id": 2,
+    "date": "2024-01-10",
+    "status": "in progress",
+    "method": "paypal",
+    "transactionId": "txn_0987654321",
+    "amount": 1800.00,
+    "fees": 54.00,
+    "net": 1746.00
+  },
+  {
+    "id": 3,
+    "date": "2024-01-05",
+    "status": "completed",
+    "method": "stripe",
+    "transactionId": "txn_1122334455",
+    "amount": 3200.00,
+    "fees": 96.00,
+    "net": 3104.00
+  },
+  {
+    "id": 4,
+    "date": "2023-12-28",
+    "status": "completed",
+    "method": "paypal",
+    "transactionId": "txn_5566778899",
+    "amount": 1500.00,
+    "fees": 45.00,
+    "net": 1455.00
+  },
+  {
+    "id": 5,
+    "date": "2023-12-20",
+    "status": "completed",
+    "method": "stripe",
+    "transactionId": "txn_9988776655",
+    "amount": 4200.00,
+    "fees": 126.00,
+    "net": 4074.00
+  }
+]

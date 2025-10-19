@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { apiClient } from '@/lib/api';
+import { apiClient } from '../lib/api';
 
 // Generic hook for API data
 export const useApiData = (endpoint: string, fallback: any[] = []) => {
@@ -12,7 +12,9 @@ export const useApiData = (endpoint: string, fallback: any[] = []) => {
             try {
                 setLoading(true);
                 const result = await apiClient.get(endpoint);
-                setData(result);
+                // Handle both direct arrays and wrapped responses
+                const data = Array.isArray(result) ? result : (result?.data || []);
+                setData(data);
                 setError(null);
             } catch (err) {
                 console.error(`Failed to fetch ${endpoint}:`, err);
@@ -42,3 +44,8 @@ export const useNotifications = () => useApiData('/notifications');
 export const useCompatibility = () => useApiData('/compatibility');
 export const useTimeSlots = () => useApiData('/time-slots');
 export const useAffiliateCenter = () => useApiData('/affiliate-center');
+export const useSlider = () => useApiData('/slider');
+export const useOverview = () => useApiData('/overview');
+export const useCharts = () => useApiData('/charts');
+export const useJudges = () => useApiData('/judges');
+export const useSponsors = () => useApiData('/sponsors');

@@ -1,0 +1,108 @@
+[
+  {
+    "id": "homeBalanceChartData",
+    "name": "Home Balance Chart",
+    "data": [
+      { "name": "Jan", "value": 2400 },
+      { "name": "Feb", "value": 1398 },
+      { "name": "Mar", "value": 9800 },
+      { "name": "Apr", "value": 3908 },
+      { "name": "May", "value": 4800 },
+      { "name": "Jun", "value": 3800 },
+      { "name": "Jul", "value": 4300 }
+    ]
+  },
+  {
+    "id": "homeProductViewChartData",
+    "name": "Home Product View Chart",
+    "data": [
+      { "name": "Jan", "value": 400 },
+      { "name": "Feb", "value": 300 },
+      { "name": "Mar", "value": 200 },
+      { "name": "Apr", "value": 278 },
+      { "name": "May", "value": 189 },
+      { "name": "Jun", "value": 239 },
+      { "name": "Jul", "value": 349 }
+    ]
+  },
+  {
+    "id": "productsProductViewChartData",
+    "name": "Products Product View Chart",
+    "data": [
+      { "name": "Jan", "value": 1200 },
+      { "name": "Feb", "value": 1900 },
+      { "name": "Mar", "value": 3000 },
+      { "name": "Apr", "value": 2780 },
+      { "name": "May", "value": 1890 },
+      { "name": "Jun", "value": 2390 },
+      { "name": "Jul", "value": 3490 }
+    ]
+  },
+  {
+    "id": "performanceChartData",
+    "name": "Performance Chart",
+    "data": [
+      { "name": "Jan", "value": 65 },
+      { "name": "Feb", "value": 59 },
+      { "name": "Mar", "value": 80 },
+      { "name": "Apr", "value": 81 },
+      { "name": "May", "value": 56 },
+      { "name": "Jun", "value": 55 },
+      { "name": "Jul", "value": 40 }
+    ]
+  },
+  {
+    "id": "recentEarningsChartData",
+    "name": "Recent Earnings Chart",
+    "data": [
+      { "name": "Jan", "value": 4000 },
+      { "name": "Feb", "value": 3000 },
+      { "name": "Mar", "value": 2000 },
+      { "name": "Apr", "value": 2780 },
+      { "name": "May", "value": 1890 },
+      { "name": "Jun", "value": 2390 },
+      { "name": "Jul", "value": 3490 }
+    ]
+  },
+  {
+    "id": "customersOverviewChartData",
+    "name": "Customers Overview Chart",
+    "data": [
+      { "name": "Jan", "value": 400 },
+      { "name": "Feb", "value": 300 },
+      { "name": "Mar", "value": 200 },
+      { "name": "Apr", "value": 278 },
+      { "name": "May", "value": 189 },
+      { "name": "Jun", "value": 239 },
+      { "name": "Jul", "value": 349 }
+    ]
+  },
+  {
+    "id": "devicesChartData",
+    "name": "Devices Chart",
+    "data": [
+      { "name": "Desktop", "value": 400 },
+      { "name": "Mobile", "value": 300 },
+      { "name": "Tablet", "value": 200 }
+    ]
+  },
+  {
+    "id": "devicesGenderData",
+    "name": "Devices Gender Data",
+    "data": [
+      { "name": "Male", "value": 400 },
+      { "name": "Female", "value": 300 },
+      { "name": "Other", "value": 200 }
+    ]
+  },
+  {
+    "id": "trafficСhannelChartData",
+    "name": "Traffic Channel Chart",
+    "data": [
+      { "name": "Direct", "value": 400 },
+      { "name": "Social", "value": 300 },
+      { "name": "Email", "value": 200 },
+      { "name": "Referral", "value": 100 }
+    ]
+  }
+]

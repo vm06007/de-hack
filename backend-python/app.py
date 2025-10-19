@@ -872,6 +872,48 @@ def get_overview():
     active_hackathons = [h for h in hackathons if h.get('status') == 'active']
     return jsonify(active_hackathons)
 
+# Charts API
+@app.route('/api/charts', methods=['GET'])
+def get_charts():
+    charts = load_data('charts')
+    return jsonify(charts)
+
+@app.route('/api/charts/<chart_id>', methods=['GET'])
+def get_chart(chart_id):
+    charts = load_data('charts')
+    chart = next((c for c in charts if c.get('id') == chart_id), None)
+    if not chart:
+        return jsonify({"error": "Chart not found"}), 404
+    return jsonify(chart)
+
+# Judges API
+@app.route('/api/judges', methods=['GET'])
+def get_judges():
+    judges = load_data('judges')
+    return jsonify(judges)
+
+@app.route('/api/judges/<int:judge_id>', methods=['GET'])
+def get_judge(judge_id):
+    judges = load_data('judges')
+    judge = next((j for j in judges if j['id'] == judge_id), None)
+    if not judge:
+        return jsonify({"error": "Judge not found"}), 404
+    return jsonify(judge)
+
+# Sponsors API
+@app.route('/api/sponsors', methods=['GET'])
+def get_sponsors():
+    sponsors = load_data('sponsors')
+    return jsonify(sponsors)
+
+@app.route('/api/sponsors/<int:sponsor_id>', methods=['GET'])
+def get_sponsor(sponsor_id):
+    sponsors = load_data('sponsors')
+    sponsor = next((s for s in sponsors if s['id'] == sponsor_id), None)
+    if not sponsor:
+        return jsonify({"error": "Sponsor not found"}), 404
+    return jsonify(sponsor)
+
 # Customers API (alias for users)
 @app.route('/api/customers', methods=['GET'])
 def get_customers():

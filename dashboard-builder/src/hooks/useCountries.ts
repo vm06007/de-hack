@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '../lib/api';
 
-export const useHackathons = () => {
+export const useCountries = () => {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -10,11 +10,11 @@ export const useHackathons = () => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const result = await apiClient.get('/hackathons');
-                setData(result.data || result);
+                const result = await apiClient.get('/countries');
+                setData(result);
                 setError(null);
             } catch (err) {
-                console.error('Failed to fetch hackathons:', err);
+                console.error('Failed to fetch countries:', err);
                 setError(err instanceof Error ? err.message : 'Unknown error');
                 setData([]);
             } finally {

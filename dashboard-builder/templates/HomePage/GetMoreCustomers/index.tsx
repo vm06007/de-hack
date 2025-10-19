@@ -24,7 +24,7 @@ const GetMoreHackers = ({}) => {
     return (
         <Card className="hidden" title="Get more hackers">
             <div className="hidden mb-6 px-5 text-body-2 text-t-secondary max-lg:px-3">
-                Fifty percent of new hackers explore products because the
+                Fifty percent of new hackers explore hackathons because the
                 author shares their work on social media. <br></br>Start earning
                 now! 🔥
             </div>

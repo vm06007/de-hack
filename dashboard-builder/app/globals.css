@@ -360,6 +360,10 @@
     .custom-datepicker .react-datepicker {
         @apply relative z-3 p-4 rounded-3xl bg-b-surface1 font-inter;
     }
+    .custom-datepicker .react-datepicker__day-names {
+        display: none !important;
+    }
+
     .custom-datepicker .react-datepicker__day-names,
     .custom-datepicker .react-datepicker__week {
         @apply flex justify-center;

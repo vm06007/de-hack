@@ -55,16 +55,16 @@ export default function RootLayout({
                 />
                 {/* Twitter Card data */}
                 <meta name="twitter:card" content="summary" />
-                <meta name="twitter:site" content="@ui8" />
+                <meta name="twitter:site" content="@dehack" />
                 <meta
                     name="twitter:title"
                     content="Core 2.0 – Dashboard Builder"
                 />
                 <meta
                     name="twitter:description"
-                    content="Minimal & Ready-to-Build Dashboard UI Design Kit + Code 🔥"
+                    content="Decentralized Hackathon Platform 🔥"
                 />
-                <meta name="twitter:creator" content="@ui8" />
+                <meta name="twitter:creator" content="@dehack" />
                 <meta
                     name="twitter:image"
                     content="%PUBLIC_URL%/twitter-card.png"
@@ -77,7 +77,7 @@ export default function RootLayout({
                 <meta property="og:type" content="Article" />
                 <meta
                     property="og:url"
-                    content="https://dehack.vc/ui8/products/core-20--dashboard-builder"
+                    content="https://dehack.vc/dehack/products/core-20--dashboard-builder"
                 />
                 <meta
                     property="og:image"
@@ -85,7 +85,7 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:description"
-                    content="Minimal & Ready-to-Build Dashboard UI Design Kit + Code 🔥"
+                    content="Decentralized Hackathon Platform 🔥"
                 />
                 <meta
                     property="og:site_name"
@@ -99,7 +99,7 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:url"
-                    content="https://dehack.vc/ui8/products/core-20--dashboard-builder"
+                    content="https://dehack.vc/dehack/products/core-20--dashboard-builder"
                 />
                 <meta
                     property="og:image"
@@ -107,7 +107,7 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:description"
-                    content="Minimal & Ready-to-Build Dashboard UI Design Kit + Code 🔥"
+                    content="Decentralized Hackathon Platform 🔥"
                 />
                 {/* Open Graph data for Pinterest */}
                 <meta
@@ -116,7 +116,7 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:url"
-                    content="https://dehack.vc/ui8/products/core-20--dashboard-builder"
+                    content="https://dehack.vc/dehack/products/core-20--dashboard-builder"
                 />
                 <meta
                     property="og:image"
@@ -124,7 +124,7 @@ export default function RootLayout({
                 />
                 <meta
                     property="og:description"
-                    content="Minimal & Ready-to-Build Dashboard UI Design Kit + Code 🔥"
+                    content="Decentralized Hackathon Platform 🔥"
                 />
             </head>
             <body

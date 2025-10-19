@@ -73,7 +73,7 @@ const Balance = ({}) => {
     }
 
     // Use balance chart data from API, fallback to empty array
-    const balanceData = chartData?.balance || chartData?.homeBalance || [];
+    const balanceData = chartData?.find((chart: any) => chart.id === 'homeBalanceChartData')?.data || [];
 
     return (
         <div className="pt-3 px-3 pb-1">

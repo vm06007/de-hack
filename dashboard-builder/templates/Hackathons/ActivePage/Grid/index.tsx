@@ -1,11 +1,11 @@
-import GridProduct from "@/components/GridProduct";
+import GridHackathon from "@/components/GridHackathon";
 import Icon from "@/components/Icon";
 import DeleteItems from "@/components/DeleteItems";
-import ScheduleHackathon from "@/components/ScheduleProduct";
-import { ProductDraft } from "@/types/product";
+import ScheduleHackathon from "@/components/ScheduleHackathon";
+import { HackathonDraft } from "@/types/hackathon";
 
 type GridProps = {
-    items: ProductDraft[];
+    items: HackathonDraft[];
     selectedRows: number[];
     onRowSelect: (id: number) => void;
 };
@@ -14,7 +14,7 @@ const Grid = ({ selectedRows, onRowSelect, items }: GridProps) => {
     return (
         <div className="flex flex-wrap max-md:-mt-3">
             {items.map((item) => (
-                <GridProduct
+                <GridHackathon
                     title={item.title}
                     image={item.image}
                     price={item.price}
@@ -41,7 +41,7 @@ const Grid = ({ selectedRows, onRowSelect, items }: GridProps) => {
                         <Icon className="fill-t-secondary" name="clock" />
                         {item.date}
                     </div>
-                </GridProduct>
+                </GridHackathon>
             ))}
         </div>
     );

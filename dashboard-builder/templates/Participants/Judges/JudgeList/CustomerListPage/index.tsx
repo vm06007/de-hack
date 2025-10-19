@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import Layout from "@/components/Layout";
-import Search from "@/components/Search";
 import Tabs from "@/components/Tabs";
 import Button from "@/components/Button";
 import DeleteItems from "@/components/DeleteItems";
-import NoFound from "@/components/NoFound";
 import Dropdown from "@/components/Dropdown";
 import List from "./List";
 import { Judge } from "@/types/judge";
@@ -40,12 +38,12 @@ const JudgeListPage = () => {
                         <div className="pl-5 text-h6 max-lg:pl-3 max-md:mr-auto">
                             Judges
                         </div>
-                        <Search
-                            className="w-70 ml-6 mr-auto max-md:hidden"
+                        <input
+                            type="text"
+                            className="w-70 ml-6 mr-auto max-md:hidden px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by name or expertise"
-                            isGray
                         />
                         {search === "" && (
                             <>
@@ -85,7 +83,9 @@ const JudgeListPage = () => {
                     </div>
                 )}
                 {search !== "" ? (
-                    <NoFound title="No judges found" />
+                    <div className="text-center py-8">
+                        <p className="text-gray-500">No judges found</p>
+                    </div>
                 ) : (
                     <div className="p-1 pt-3 max-lg:px-0">
                         <List

@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import Layout from "@/components/Layout";
-import Search from "@/components/Search";
-import Tabs from "@/components/Tabs";
+    import Tabs from "@/components/Tabs";
 import Button from "@/components/Button";
 import DeleteItems from "@/components/DeleteItems";
-import NoFound from "@/components/NoFound";
 import Dropdown from "@/components/Dropdown";
 import List from "./List";
 import { Hacker } from "@/types/hacker";
@@ -24,7 +22,7 @@ const HackerListPage = () => {
     const [search, setSearch] = useState("");
     const [view, setView] = useState(views[0]);
     const { data: hackers, loading, error } = useUsers();
-    
+
     const {
         selectedRows,
         selectAll,
@@ -41,29 +39,6 @@ const HackerListPage = () => {
                         <div className="pl-5 text-h6 max-lg:pl-3 max-md:mr-auto">
                             Hackers
                         </div>
-                        <Search
-                            className="w-70 ml-6 mr-auto max-md:hidden"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search by name or username"
-                            isGray
-                        />
-                        {search === "" && (
-                            <>
-                                <Tabs
-                                    className="max-md:hidden"
-                                    items={views}
-                                    value={view}
-                                    setValue={setView}
-                                />
-                                <Dropdown
-                                    className="hidden max-md:block"
-                                    items={views}
-                                    value={view}
-                                    setValue={setView}
-                                />
-                            </>
-                        )}
                     </div>
                 ) : (
                     <div className="flex items-center">
@@ -90,7 +65,9 @@ const HackerListPage = () => {
                 ) : error ? (
                     <div className="p-5 text-center text-red-500">Error loading hackers: {error}</div>
                 ) : search !== "" ? (
-                    <NoFound title="No hackers found" />
+                    <div className="text-center py-8">
+                        <p className="text-gray-500">No hackers found</p>
+                    </div>
                 ) : (
                     <div className="p-1 pt-3 max-lg:px-0">
                         <List

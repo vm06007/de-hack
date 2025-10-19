@@ -2,16 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
-import Search from "@/components/Search";
-import Tabs from "@/components/Tabs";
+// import Tabs from "@/components/Tabs";
 import Button from "@/components/Button";
 import DeleteItems from "@/components/DeleteItems";
-import NoFound from "@/components/NoFound";
-import Dropdown from "@/components/Dropdown";
+// import Dropdown from "@/components/Dropdown";
 import List from "./List";
 import { Hacker } from "@/types/hacker";
 import { useSelection } from "@/hooks/useSelection";
-import { useUsers, useTopHackers } from "@/src/hooks/useUsers";
+import { useUsers } from "@/src/hooks/useUsers";
 
 const views = [
     { id: 1, name: "All Hackers" },
@@ -22,18 +20,14 @@ const views = [
 const HackerListPage = () => {
     const [search, setSearch] = useState("");
     const [view, setView] = useState(views[0]);
-    const [page, setPage] = useState(1);
-    const [limit] = useState(10);
 
     // Use API hooks instead of mock data
-    const { users: allUsers, loading: allUsersLoading, error: allUsersError, pagination } = useUsers({
-        role: 'hacker',
-        page,
-        limit,
-        search: search || undefined,
-    });
+    const { data: allUsers, loading: allUsersLoading, error: allUsersError } = useUsers();
 
-    const { hackers: topHackers, loading: topHackersLoading, error: topHackersError } = useTopHackers(10);
+    // For now, use all users for top hackers (you can implement proper top hackers logic later)
+    const topHackers = allUsers?.slice(0, 10) || [];
+    const topHackersLoading = allUsersLoading;
+    const topHackersError = allUsersError;
 
     // Determine which data to use based on view
     const getCurrentData = () => {
@@ -75,21 +69,6 @@ const HackerListPage = () => {
         handleDeselect,
     } = useSelection<Hacker>(hackers || []);
 
-    // Handle search with debouncing
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (search !== "") {
-                setPage(1); // Reset to first page when searching
-            }
-        }, 500);
-
-        return () => clearTimeout(timeoutId);
-    }, [search]);
-
-    // Handle pagination
-    const handlePageChange = (newPage: number) => {
-        setPage(newPage);
-    };
 
     if (loading) {
         return (
@@ -106,23 +85,6 @@ const HackerListPage = () => {
         );
     }
 
-    if (error) {
-        return (
-            <Layout title="Hacker List">
-                <div className="card">
-                    <div className="flex items-center justify-center min-h-96">
-                        <div className="text-center">
-                            <p className="text-red-500 mb-4">Error loading hackers: {error}</p>
-                            <Button onClick={() => window.location.reload()}>
-                                Retry
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </Layout>
-        );
-    }
-
     return (
         <Layout title="Hacker List">
             <div className="card">
@@ -131,29 +93,13 @@ const HackerListPage = () => {
                         <div className="pl-5 text-h6 max-lg:pl-3 max-md:mr-auto">
                             Hackers
                         </div>
-                        <Search
-                            className="w-70 ml-6 mr-auto max-md:hidden"
+                        <input
+                            type="text"
+                            className="w-70 ml-6 mr-auto max-md:hidden px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by name or username"
-                            isGray
                         />
-                        {search === "" && (
-                            <>
-                                <Tabs
-                                    className="max-md:hidden"
-                                    items={views}
-                                    value={view}
-                                    setValue={setView}
-                                />
-                                <Dropdown
-                                    className="hidden max-md:block"
-                                    items={views}
-                                    value={view}
-                                    setValue={setView}
-                                />
-                            </>
-                        )}
                     </div>
                 ) : (
                     <div className="flex items-center">
@@ -175,42 +121,17 @@ const HackerListPage = () => {
                         />
                     </div>
                 )}
-                {search !== "" && (!hackers || hackers.length === 0) ? (
-                    <NoFound title="No hackers found" />
-                ) : (
-                    <div className="p-1 pt-3 max-lg:px-0">
-                        <List
-                            selectedRows={selectedRows}
-                            onRowSelect={handleRowSelect}
-                            items={hackers || []}
-                            selectAll={selectAll}
-                            onSelectAll={handleSelectAll}
-                        />
-                        
-                        {/* Pagination */}
-                        {pagination && pagination.pages > 1 && (
-                            <div className="flex items-center justify-center mt-6 space-x-2">
-                                <Button
-                                    isStroke
-                                    onClick={() => handlePageChange(page - 1)}
-                                    disabled={page <= 1}
-                                >
-                                    Previous
-                                </Button>
-                                <span className="text-sm text-gray-500">
-                                    Page {page} of {pagination.pages}
-                                </span>
-                                <Button
-                                    isStroke
-                                    onClick={() => handlePageChange(page + 1)}
-                                    disabled={page >= pagination.pages}
-                                >
-                                    Next
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                )}
+
+                <div className="p-1 pt-3 max-lg:px-0">
+                    <List
+                        selectedRows={selectedRows}
+                        onRowSelect={handleRowSelect}
+                        items={hackers || []}
+                        selectAll={selectAll}
+                        onSelectAll={handleSelectAll}
+                    />
+
+                </div>
             </div>
         </Layout>
     );

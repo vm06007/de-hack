@@ -9,10 +9,6 @@ export const navigation = [
         icon: "product-think",
         list: [
             {
-                title: "Overview",
-                href: "/hackathons",
-            },
-            {
                 title: "Active",
                 href: "/hackathons/active",
                 counter: 2,
@@ -69,22 +65,17 @@ export const navigation = [
 
 export const navigationUser = [
     {
-        title: "My hackathon",
+        title: "Hackathon",
         icon: "bag",
         href: "/org",
     },
     {
-        title: "Edit profile",
+        title: "Settings",
         icon: "edit-profile",
         href: "/settings",
     },
     {
-        title: "Affiliate center",
-        icon: "chain-think",
-        href: "/affiliate-center",
-    },
-    {
-        title: "Explore organizers",
+        title: "Explore Page",
         icon: "grid",
         href: "/explore-page",
     },

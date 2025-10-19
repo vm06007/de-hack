@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMedia } from "react-use";
 import Layout from "@/components/Layout";
-import Search from "@/components/Search";
 import Button from "@/components/Button";
 import Hacker from "./Hacker";
 import Details from "./Details";
@@ -24,6 +23,8 @@ const HackerDetailsPage = () => {
     const [activeHacker, setActiveHacker] = useState<number | null>(
         isMobile ? null : 2
     );
+
+    const { data: hackers = [] } = useUsers();
 
     if (!mounted) return null;
 
@@ -45,13 +46,6 @@ const HackerDetailsPage = () => {
                                 isStroke
                                 isCircle
                                 onClick={() => router.back()}
-                            />
-                            <Search
-                                className="max-md:grow"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Search by name or username"
-                                isGray
                             />
                         </div>
                         {search === "" ? (

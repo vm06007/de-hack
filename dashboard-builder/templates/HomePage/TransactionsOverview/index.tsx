@@ -54,7 +54,7 @@ const TransactionsOverview = () => {
     // Transform transaction data to match the slider format
     const transformedTransactions = (Array.isArray(transactions) ? transactions : []).map((transaction) => {
         const type = transactionTypes[transaction.type as keyof typeof transactionTypes] || transactionTypes.hacker_application;
-        
+
         return {
             id: transaction.id,
             title: transaction.title || type.label,

@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import Layout from "@/components/Layout";
-import Search from "@/components/Search";
 import Tabs from "@/components/Tabs";
 import Button from "@/components/Button";
 import DeleteItems from "@/components/DeleteItems";
-import NoFound from "@/components/NoFound";
 import List from "./List";
 import Grid from "./Grid";
 import { HackathonDraft } from "@/types/hackathon";
@@ -53,21 +51,6 @@ const DraftsPage = () => {
                         <div className="pl-5 text-h6 max-lg:pl-3 max-md:mr-auto">
                             Active Hackathons
                         </div>
-                        <Search
-                            className="w-70 ml-6 mr-auto max-md:hidden"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search hackathon"
-                            isGray
-                        />
-                        {search === "" && (
-                            <Tabs
-                                items={views}
-                                value={view}
-                                setValue={setView}
-                                isOnlyIcon
-                            />
-                        )}
                     </div>
                 ) : (
                     <div className="flex items-center">
@@ -92,27 +75,23 @@ const DraftsPage = () => {
                         </Button>
                     </div>
                 )}
-                {search !== "" ? (
-                    <NoFound title="No hackathons found" />
-                ) : (
-                    <div className="p-1 pt-3 max-lg:px-0">
-                        {view.id === 1 ? (
-                            <Grid
-                                selectedRows={selectedRows}
-                                onRowSelect={handleRowSelect}
-                                items={activeHackathons}
-                            />
-                        ) : (
-                            <List
-                                selectedRows={selectedRows}
-                                onRowSelect={handleRowSelect}
-                                items={activeHackathons}
-                                selectAll={selectAll}
-                                onSelectAll={handleSelectAll}
-                            />
-                        )}
-                    </div>
-                )}
+                <div className="p-1 pt-3 max-lg:px-0">
+                    {view.id === 1 ? (
+                        <Grid
+                            selectedRows={selectedRows}
+                            onRowSelect={handleRowSelect}
+                            items={activeHackathons}
+                        />
+                    ) : (
+                        <List
+                            selectedRows={selectedRows}
+                            onRowSelect={handleRowSelect}
+                            items={activeHackathons}
+                            selectAll={selectAll}
+                            onSelectAll={handleSelectAll}
+                        />
+                    )}
+                </div>
             </div>
         </Layout>
     );

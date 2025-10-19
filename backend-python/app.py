@@ -44,16 +44,16 @@ def init_sample_data():
     """Initialize data files with empty arrays if they don't exist"""
     required_files = [
         "users", "organizations", "hackathons", "applications", "analytics",
-        "timeSlots", "countries", "faqs", "comments", "messages", 
+        "timeSlots", "countries", "faqs", "comments", "messages",
         "notifications", "compatibility", "affiliateCenter", "slider",
         "charts", "judges", "sponsors", "productActivity", "pricing", "income", "payouts", "payoutStatistics", "statementStatistics", "transactions"
     ]
-    
+
     for filename in required_files:
         filepath = os.path.join(DATA_DIR, f"{filename}.json")
         if not os.path.exists(filepath):
             save_data(filename, [])
-    
+
 
 # API Routes
 
@@ -75,7 +75,7 @@ def get_hackathons():
     is_online = request.args.get('isOnline')
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 10))
-    
+
     # Filter hackathons
     filtered_hackathons = hackathons
     if status:
@@ -85,12 +85,12 @@ def get_hackathons():
     if is_online is not None:
         is_online_bool = is_online.lower() == 'true'
         filtered_hackathons = [h for h in filtered_hackathons if h['isOnline'] == is_online_bool]
-    
+
     # Pagination
     start = (page - 1) * limit
     end = start + limit
     paginated_hackathons = filtered_hackathons[start:end]
-    
+
     return jsonify({
         "data": paginated_hackathons,
         "pagination": {
@@ -105,17 +105,17 @@ def get_hackathons():
 def get_hackathon(hackathon_id):
     hackathons = load_data('hackathons')
     hackathon = next((h for h in hackathons if h['id'] == hackathon_id), None)
-    
+
     if not hackathon:
         return jsonify({"error": "Hackathon not found"}), 404
-    
+
     # Get applications for this hackathon
     applications = load_data('applications')
     hackathon_applications = [a for a in applications if a['hackathonId'] == hackathon_id]
-    
+
     hackathon['applicationsCount'] = len(hackathon_applications)
     hackathon['applications'] = hackathon_applications
-    
+
     return jsonify(hackathon)
 
 # Users API
@@ -126,19 +126,19 @@ def get_users():
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 10))
     search = request.args.get('search')
-    
+
     # Filter users
     filtered_users = users
     if role:
         filtered_users = [u for u in filtered_users if u['role'] == role]
     if search:
         filtered_users = [u for u in filtered_users if search.lower() in u['name'].lower() or search.lower() in u['username'].lower()]
-    
+
     # Pagination
     start = (page - 1) * limit
     end = start + limit
     paginated_users = filtered_users[start:end]
-    
+
     return jsonify({
         "data": paginated_users,
         "pagination": {
@@ -153,15 +153,15 @@ def get_users():
 def get_user(user_id):
     users = load_data('users')
     user = next((u for u in users if u['id'] == user_id), None)
-    
+
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     # Get user's applications
     applications = load_data('applications')
     user_applications = [a for a in applications if a['hackerId'] == user_id]
     user['applications'] = user_applications
-    
+
     return jsonify(user)
 
 @app.route('/api/users/top/hackers', methods=['GET'])
@@ -169,10 +169,10 @@ def get_top_hackers():
     users = load_data('users')
     hackers = [u for u in users if u['role'] == 'hacker']
     limit = int(request.args.get('limit', 10))
-    
+
     # Sort by total earnings
     top_hackers = sorted(hackers, key=lambda x: x['totalEarnings'], reverse=True)[:limit]
-    
+
     return jsonify(top_hackers)
 
 # Organizations API
@@ -182,17 +182,17 @@ def get_organizations():
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 10))
     search = request.args.get('search')
-    
+
     # Filter organizations
     filtered_organizations = organizations
     if search:
         filtered_organizations = [o for o in filtered_organizations if search.lower() in o['name'].lower()]
-    
+
     # Pagination
     start = (page - 1) * limit
     end = start + limit
     paginated_organizations = filtered_organizations[start:end]
-    
+
     return jsonify({
         "data": paginated_organizations,
         "pagination": {
@@ -207,15 +207,15 @@ def get_organizations():
 def get_organization(org_id):
     organizations = load_data('organizations')
     organization = next((o for o in organizations if o['id'] == org_id), None)
-    
+
     if not organization:
         return jsonify({"error": "Organization not found"}), 404
-    
+
     # Get organization's hackathons
     hackathons = load_data('hackathons')
     org_hackathons = [h for h in hackathons if h['organizerId'] == org_id]
     organization['hackathons'] = org_hackathons
-    
+
     return jsonify(organization)
 
 # Analytics API
@@ -225,7 +225,7 @@ def get_analytics_overview():
     hackathons = load_data('hackathons')
     applications = load_data('applications')
     analytics = load_data('analytics')
-    
+
     # Aggregate analytics by metric
     metrics = {}
     for item in analytics:
@@ -233,7 +233,7 @@ def get_analytics_overview():
         if metric not in metrics:
             metrics[metric] = 0
         metrics[metric] += item['value']
-    
+
     return jsonify({
         "totalUsers": len(users),
         "totalHackathons": len(hackathons),
@@ -245,7 +245,7 @@ def get_analytics_overview():
 def track_analytics():
     data = request.get_json()
     analytics = load_data('analytics')
-    
+
     new_analytics = {
         "id": get_next_id(analytics),
         "entityType": data.get('entityType'),
@@ -255,10 +255,10 @@ def track_analytics():
         "metadata": data.get('metadata', {}),
         "createdAt": datetime.now().isoformat()
     }
-    
+
     analytics.append(new_analytics)
     save_data('analytics', analytics)
-    
+
     return jsonify(new_analytics), 201
 
 # Additional API endpoints for new data
@@ -291,7 +291,7 @@ def get_comments():
 def create_comment():
     data = request.get_json()
     comments = load_data('comments')
-    
+
     new_comment = {
         "id": get_next_id(comments),
         "author": data.get('author'),
@@ -301,10 +301,10 @@ def create_comment():
         "likes": 0,
         "replies": []
     }
-    
+
     comments.append(new_comment)
     save_data('comments', comments)
-    
+
     return jsonify(new_comment), 201
 
 # Messages API
@@ -317,7 +317,7 @@ def get_messages():
 def create_message():
     data = request.get_json()
     messages = load_data('messages')
-    
+
     new_message = {
         "id": get_next_id(messages),
         "sender": data.get('sender'),
@@ -326,10 +326,10 @@ def create_message():
         "timestamp": datetime.now().isoformat(),
         "unread": True
     }
-    
+
     messages.append(new_message)
     save_data('messages', messages)
-    
+
     return jsonify(new_message), 201
 
 # Notifications API
@@ -342,7 +342,7 @@ def get_notifications():
 def create_notification():
     data = request.get_json()
     notifications = load_data('notifications')
-    
+
     new_notification = {
         "id": get_next_id(notifications),
         "type": data.get('type'),
@@ -351,10 +351,10 @@ def create_notification():
         "timestamp": datetime.now().isoformat(),
         "unread": True
     }
-    
+
     notifications.append(new_notification)
     save_data('notifications', notifications)
-    
+
     return jsonify(new_notification), 201
 
 # Compatibility API
@@ -362,12 +362,6 @@ def create_notification():
 def get_compatibility():
     compatibility = load_data('compatibility')
     return jsonify(compatibility)
-
-    # Affiliate Center API
-    @app.route('/api/affiliate-center', methods=['GET'])
-    def get_affiliate_center():
-        affiliate_center = load_data('affiliateCenter')
-        return jsonify(affiliate_center)
 
 # Slider API
 @app.route('/api/slider', methods=['GET'])
@@ -475,19 +469,19 @@ def get_hackers():
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 10))
     search = request.args.get('search')
-    
+
     # Filter users
     filtered_users = users
     if role:
         filtered_users = [u for u in filtered_users if u['role'] == role]
     if search:
         filtered_users = [u for u in filtered_users if search.lower() in u['name'].lower() or search.lower() in u['username'].lower()]
-    
+
     # Pagination
     start = (page - 1) * limit
     end = start + limit
     paginated_users = filtered_users[start:end]
-    
+
     return jsonify({
         "data": paginated_users,
         "pagination": {
@@ -502,10 +496,10 @@ def get_hackers():
 if __name__ == '__main__':
     # Initialize sample data
     init_sample_data()
-    
-    print("🚀 Starting DeHack Python Backend...")
-    print("📊 Sample data initialized")
-    print("🌐 API available at: http://localhost:5000")
-    print("📖 API docs: http://localhost:5000/api/hackathons")
-    
+
+    print("Starting DeHack Python Backend...")
+    print("Sample data initialized")
+    print("API available at: http://localhost:5000")
+    print("API docs: http://localhost:5000/api/hackathons")
+
     app.run(debug=True, host='0.0.0.0', port=5000)

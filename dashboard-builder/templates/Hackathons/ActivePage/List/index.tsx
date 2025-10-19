@@ -1,15 +1,15 @@
 import Table from "@/components/Table";
 import TableRow from "@/components/TableRow";
-import TableProductCell from "@/components/TableProductCell";
+import TableHackathonCell from "@/components/TableHackathonCell";
 import Icon from "@/components/Icon";
 import DeleteItems from "@/components/DeleteItems";
-import ScheduleHackathon from "@/components/ScheduleProduct";
-import { ProductDraft } from "@/types/product";
+import ScheduleHackathon from "@/components/ScheduleHackathon";
+import { HackathonDraft } from "@/types/hackathon";
 
 const tableHead = ["Hackathon", "Category", "Prize Pool", "Last edited"];
 
 type ListProps = {
-    items: ProductDraft[];
+    items: HackathonDraft[];
     selectedRows: number[];
     onRowSelect: (id: number) => void;
     selectAll: boolean;
@@ -39,7 +39,7 @@ const List = ({
                     onRowSelect={() => onRowSelect(item.id)}
                     key={item.id}
                 >
-                    <TableProductCell
+                    <TableHackathonCell
                         title={item.title}
                         details={item.details}
                         image={item.image}
@@ -64,7 +64,7 @@ const List = ({
                             image={item.image}
                             price={item.price}
                         />
-                    </TableProductCell>
+                    </TableHackathonCell>
                     <td className="max-md:hidden">
                         <div className="inline-flex items-center gap-2">
                             <Icon

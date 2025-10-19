@@ -3,7 +3,6 @@
 import Layout from "@/components/Layout";
 import PopularHackathons from "@/components/PopularHackathons";
 import Overview from "./Overview";
-// import ProductView from "./ProductView";
 import TransactionsOverview from "./TransactionsOverview";
 import GetMoreHackers from "./GetMoreHackers";
 // import Comments from "./Comments";
@@ -18,7 +17,6 @@ const HomePage = () => {
             <div className="flex max-lg:block">
                 <div className="col-left">
                     <Overview />
-                    {/*<ProductView />*/}
                     <TransactionsOverview />
                     <GetMoreHackers />
                 </div>

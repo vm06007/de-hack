@@ -11,8 +11,7 @@ import Dropdown from "@/components/Dropdown";
 import List from "./List";
 import { Sponsor } from "@/types/sponsor";
 import { useSelection } from "@/hooks/useSelection";
-
-import { sponsors } from "@/mocks/sponsors";
+import { useSponsors } from "@/src/hooks/useSponsors";
 
 const views = [
     { id: 1, name: "All Sponsors" },
@@ -23,6 +22,7 @@ const views = [
 const SponsorListPage = () => {
     const [search, setSearch] = useState("");
     const [view, setView] = useState(views[0]);
+    const { data: sponsors, loading, error } = useSponsors();
     const {
         selectedRows,
         selectAll,
@@ -30,6 +30,14 @@ const SponsorListPage = () => {
         handleSelectAll,
         handleDeselect,
     } = useSelection<Sponsor>(sponsors);
+
+    if (loading) {
+        return <Layout title="Sponsor List"><div className="card"><div>Loading sponsors...</div></div></Layout>;
+    }
+
+    if (error) {
+        return <Layout title="Sponsor List"><div className="card"><div>Error loading sponsors: {error}</div></div></Layout>;
+    }
 
     return (
         <Layout title="Sponsor List">

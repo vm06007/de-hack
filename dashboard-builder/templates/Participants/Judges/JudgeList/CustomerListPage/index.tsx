@@ -12,7 +12,7 @@ import List from "./List";
 import { Judge } from "@/types/judge";
 import { useSelection } from "@/hooks/useSelection";
 
-import { judges } from "@/mocks/judges";
+import { useUsers } from "@/src/hooks/useApiData";
 
 const views = [
     { id: 1, name: "All Judges" },
@@ -23,6 +23,7 @@ const views = [
 const JudgeListPage = () => {
     const [search, setSearch] = useState("");
     const [view, setView] = useState(views[0]);
+    const { data: judges, loading, error } = useUsers();
     const {
         selectedRows,
         selectAll,

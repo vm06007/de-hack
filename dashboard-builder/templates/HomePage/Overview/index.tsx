@@ -15,7 +15,7 @@ const tabs = [
     {
         id: 1,
         icon: "profile",
-        label: "Customers",
+        label: "Hackers",
         value: "1,293",
         percent: -36.8,
     },

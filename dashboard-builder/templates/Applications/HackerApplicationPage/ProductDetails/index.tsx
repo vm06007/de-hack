@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Card from "@/components/Card";
 import Field from "@/components/Field";
-import Textarea from "@/components/Textarea";
 import Select from "@/components/Select";
 import { SelectOption } from "@/types/select";
 
@@ -26,11 +25,12 @@ const ProductDetails = () => {
                     onChange={(e) => setTitle(e.target.value)}
                     required
                 />
-                <Textarea
+                <Field
                     label="Why do you want to participate in this hackathon?"
                     placeholder="Describe your motivation and what you hope to achieve..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
+                    textarea
                     required
                 />
                 <Select

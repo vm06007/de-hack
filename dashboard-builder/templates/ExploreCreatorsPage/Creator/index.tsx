@@ -34,7 +34,7 @@ type CreatorProps = {
 const Creator = ({ value }: CreatorProps) => {
     const [visible, setVisible] = useState(false);
     const [activeId, setActiveId] = useState<number | null>(null);
-    
+
     // Handle different data structures and provide fallbacks
     const displayName = value.name || value.login || 'Unknown';
     const displayDescription = value.description || value.details || '';
@@ -42,14 +42,14 @@ const Creator = ({ value }: CreatorProps) => {
     const displayTags = value.tags || [];
     const displayShop = value.shop || [];
     const displaySocials = value.socials || [];
-    
+
     // Convert socialLinks to socials format if needed
     const socialLinks = value.socialLinks || {};
     const convertedSocials = Object.entries(socialLinks).map(([platform, url]) => ({
         icon: platform,
         href: url
     }));
-    
+
     const allSocials = [...displaySocials, ...convertedSocials];
 
     return (
@@ -104,7 +104,7 @@ const Creator = ({ value }: CreatorProps) => {
                         ))}
                     </div>
                     <Button as="link" href="/org" isBlack>
-                        View shop
+                        View Organization
                     </Button>
                 </div>
             </div>

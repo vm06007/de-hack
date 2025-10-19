@@ -12,7 +12,7 @@ import List from "./List";
 import { Hacker } from "@/types/hacker";
 import { useSelection } from "@/hooks/useSelection";
 
-import { useUsers } from "@/hooks/useApiData";
+import { useUsers } from "@/src/hooks/useApiData";
 
 const views = [
     { id: 1, name: "All Hackers" },
@@ -23,13 +23,22 @@ const views = [
 const HackerListPage = () => {
     const [search, setSearch] = useState("");
     const [view, setView] = useState(views[0]);
+    const { data: hackers, loading, error } = useUsers();
     const {
         selectedRows,
         selectAll,
         handleRowSelect,
         handleSelectAll,
         handleDeselect,
-    } = useSelection<Hacker>(hackers);
+    } = useSelection<Hacker>(hackers || []);
+
+    if (loading) {
+        return <Layout title="Hacker List"><div className="p-5">Loading hackers...</div></Layout>;
+    }
+
+    if (error) {
+        return <Layout title="Hacker List"><div className="p-5">Error loading hackers: {error}</div></Layout>;
+    }
 
     return (
         <Layout title="Hacker List">
@@ -90,7 +99,7 @@ const HackerListPage = () => {
                         <List
                             selectedRows={selectedRows}
                             onRowSelect={handleRowSelect}
-                            items={hackers}
+                            items={Array.isArray(hackers) ? hackers : []}
                             selectAll={selectAll}
                             onSelectAll={handleSelectAll}
                         />

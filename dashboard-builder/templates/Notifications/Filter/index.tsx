@@ -21,7 +21,7 @@ const INITIAL_CHECKBOXES: CheckboxItem[] = [
 const Filter = () => {
     const [checkboxes, setCheckboxes] =
         useState<CheckboxItem[]>(INITIAL_CHECKBOXES);
-    const [onlyCustomers, setOnlyCustomers] = useState(true);
+    const [onlyHackers, setOnlyHackers] = useState(true);
 
     const handleChange = (id: number) => {
         setCheckboxes((prev) =>
@@ -76,8 +76,8 @@ const Filter = () => {
                     />
                 </div>
                 <Switch
-                    checked={onlyCustomers}
-                    onChange={() => setOnlyCustomers(!onlyCustomers)}
+                    checked={onlyHackers}
+                    onChange={() => setOnlyHackers(!onlyHackers)}
                 />
             </div>
         </>

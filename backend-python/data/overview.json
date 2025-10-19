@@ -1,0 +1,138 @@
+[
+  {
+    "id": 1,
+    "title": "Total Revenue",
+    "icon": "chart",
+    "tooltip": "Total revenue generated from all hackathons",
+    "counter": "125,430",
+    "percentage": 12.5,
+    "dataChart": [
+      {
+        "name": "Jan",
+        "amt": 10000
+      },
+      {
+        "name": "Feb",
+        "amt": 12000
+      },
+      {
+        "name": "Mar",
+        "amt": 15000
+      },
+      {
+        "name": "Apr",
+        "amt": 18000
+      },
+      {
+        "name": "May",
+        "amt": 22000
+      },
+      {
+        "name": "Jun",
+        "amt": 25000
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Active Hackathons",
+    "icon": "hackathon",
+    "tooltip": "Number of currently active hackathons",
+    "counter": "8",
+    "percentage": 8.2,
+    "dataChart": [
+      {
+        "name": "Jan",
+        "amt": 3
+      },
+      {
+        "name": "Feb",
+        "amt": 4
+      },
+      {
+        "name": "Mar",
+        "amt": 5
+      },
+      {
+        "name": "Apr",
+        "amt": 6
+      },
+      {
+        "name": "May",
+        "amt": 7
+      },
+      {
+        "name": "Jun",
+        "amt": 8
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Participants",
+    "icon": "users",
+    "tooltip": "Total number of participants across all hackathons",
+    "counter": "2,847",
+    "percentage": 15.3,
+    "dataChart": [
+      {
+        "name": "Jan",
+        "amt": 1200
+      },
+      {
+        "name": "Feb",
+        "amt": 1400
+      },
+      {
+        "name": "Mar",
+        "amt": 1600
+      },
+      {
+        "name": "Apr",
+        "amt": 1800
+      },
+      {
+        "name": "May",
+        "amt": 2200
+      },
+      {
+        "name": "Jun",
+        "amt": 2847
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Prize Pool",
+    "icon": "prize",
+    "tooltip": "Total prize money available across all hackathons",
+    "counter": "$450,000",
+    "percentage": 22.1,
+    "dataChart": [
+      {
+        "name": "Jan",
+        "amt": 50000
+      },
+      {
+        "name": "Feb",
+        "amt": 75000
+      },
+      {
+        "name": "Mar",
+        "amt": 100000
+      },
+      {
+        "name": "Apr",
+        "amt": 150000
+      },
+      {
+        "name": "May",
+        "amt": 200000
+      },
+      {
+        "name": "Jun",
+        "amt": 450000
+      }
+    ]
+  }
+]

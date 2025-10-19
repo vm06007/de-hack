@@ -138,17 +138,61 @@ def init_sample_data():
         hackathons = [
             {
                 "id": 1,
+                "title": "DeFi Protocol Template",
+                "description": "Build innovative DeFi protocols and smart contracts",
+                "image": "/images/products/1.png",
+                "category": "DeFi",
+                "status": "active",
+                "startDate": "2025-01-15T00:00:00Z",
+                "endDate": "2025-01-29T23:59:59Z",
+                "registrationDeadline": "2025-01-14T23:59:59Z",
+                "totalPrizePool": "50000.00",
+                "maxParticipants": 500,
+                "currentParticipants": 234,
+                "requirements": ["Solidity", "Web3 development", "DeFi knowledge"],
+                "tags": ["DeFi", "Smart Contracts", "Protocol"],
+                "isOnline": True,
+                "location": None,
+                "organizerId": 1,
+                "createdBy": 1,
+                "createdAt": "2024-01-01T00:00:00Z",
+                "updatedAt": "2024-01-15T00:00:00Z"
+            },
+            {
+                "id": 2,
+                "title": "NFT Marketplace Kit",
+                "description": "Create the next generation NFT marketplace",
+                "image": "/images/products/2.png",
+                "category": "NFT",
+                "status": "active",
+                "startDate": "2025-01-20T00:00:00Z",
+                "endDate": "2025-02-03T23:59:59Z",
+                "registrationDeadline": "2025-01-19T23:59:59Z",
+                "totalPrizePool": "30000.00",
+                "maxParticipants": 300,
+                "currentParticipants": 156,
+                "requirements": ["NFT development", "Marketplace design", "Web3 UX"],
+                "tags": ["NFT", "Marketplace", "Trading"],
+                "isOnline": True,
+                "location": None,
+                "organizerId": 2,
+                "createdBy": 1,
+                "createdAt": "2024-01-01T00:00:00Z",
+                "updatedAt": "2024-01-15T00:00:00Z"
+            },
+            {
+                "id": 3,
                 "title": "ETHGlobal Online 2025",
                 "description": "The biggest online Ethereum hackathon of the year",
                 "image": "/images/products/lg-1.png",
                 "category": "Online hackathon",
-                "status": "active",
+                "status": "scheduled",
                 "startDate": "2025-04-15T00:00:00Z",
                 "endDate": "2025-04-29T23:59:59Z",
                 "registrationDeadline": "2025-04-14T23:59:59Z",
                 "totalPrizePool": "100000.00",
                 "maxParticipants": 1000,
-                "currentParticipants": 847,
+                "currentParticipants": 0,
                 "requirements": ["Ethereum knowledge", "Web3 development experience"],
                 "tags": ["Ethereum", "DeFi", "NFT", "Web3"],
                 "isOnline": True,
@@ -159,7 +203,7 @@ def init_sample_data():
                 "updatedAt": "2024-01-15T00:00:00Z"
             },
             {
-                "id": 2,
+                "id": 4,
                 "title": "Unite DeFi 2025",
                 "description": "Building the future of decentralized finance",
                 "image": "/images/products/lg-2.png",
@@ -447,6 +491,58 @@ def init_sample_data():
             }
         ]
         save_data("affiliateCenter", affiliateCenter)
+    
+    # Slider data
+    if not os.path.exists(os.path.join(DATA_DIR, "slider.json")):
+        slider = [
+            {
+                "id": 1,
+                "title": "New Hackathon",
+                "icon": "/images/icons/hackathon.svg",
+                "backgroundImage": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                "avatar": "/images/avatars/1.png",
+                "time": "2 hours ago",
+                "status": "new"
+            },
+            {
+                "id": 2,
+                "title": "Voting System",
+                "icon": "/images/icons/voting.svg",
+                "backgroundImage": "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                "avatar": "/images/avatars/2.png",
+                "time": "4 hours ago",
+                "status": "active"
+            },
+            {
+                "id": 3,
+                "title": "Prize Pool",
+                "icon": "/images/icons/prize.svg",
+                "backgroundImage": "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+                "avatar": "/images/avatars/3.png",
+                "time": "6 hours ago",
+                "status": "new"
+            },
+            {
+                "id": 4,
+                "title": "Smart Contracts",
+                "icon": "/images/icons/contract.svg",
+                "backgroundImage": "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+                "avatar": "/images/avatars/4.png",
+                "time": "8 hours ago",
+                "status": "active"
+            },
+            {
+                "id": 5,
+                "title": "DeFi Protocol",
+                "icon": "/images/icons/defi.svg",
+                "backgroundImage": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+                "avatar": "/images/avatars/5.png",
+                "time": "10 hours ago",
+                "status": "new"
+            }
+        ]
+        save_data("slider", slider)
+    
 
 # API Routes
 
@@ -756,11 +852,84 @@ def get_compatibility():
     compatibility = load_data('compatibility')
     return jsonify(compatibility)
 
-# Affiliate Center API
-@app.route('/api/affiliate-center', methods=['GET'])
-def get_affiliate_center():
-    affiliate_center = load_data('affiliateCenter')
-    return jsonify(affiliate_center)
+    # Affiliate Center API
+    @app.route('/api/affiliate-center', methods=['GET'])
+    def get_affiliate_center():
+        affiliate_center = load_data('affiliateCenter')
+        return jsonify(affiliate_center)
+
+# Slider API
+@app.route('/api/slider', methods=['GET'])
+def get_slider():
+    slider_data = load_data('slider')
+    return jsonify(slider_data)
+
+# Overview API - Returns active hackathons for overview page
+@app.route('/api/overview', methods=['GET'])
+def get_overview():
+    hackathons = load_data('hackathons')
+    # Filter for active hackathons
+    active_hackathons = [h for h in hackathons if h.get('status') == 'active']
+    return jsonify(active_hackathons)
+
+# Customers API (alias for users)
+@app.route('/api/customers', methods=['GET'])
+def get_customers():
+    users = load_data('users')
+    role = request.args.get('role')
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 10))
+    search = request.args.get('search')
+    
+    # Filter users
+    filtered_users = users
+    if role:
+        filtered_users = [u for u in filtered_users if u['role'] == role]
+    if search:
+        filtered_users = [u for u in filtered_users if search.lower() in u['name'].lower() or search.lower() in u['username'].lower()]
+    
+    # Pagination
+    start = (page - 1) * limit
+    end = start + limit
+    paginated_users = filtered_users[start:end]
+    
+    return jsonify({
+        "data": paginated_users,
+        "pagination": {
+            "page": page,
+            "limit": limit,
+            "total": len(filtered_users),
+            "pages": (len(filtered_users) + limit - 1) // limit
+        }
+    })
+
+# Sponsors API (alias for organizations)
+@app.route('/api/sponsors', methods=['GET'])
+def get_sponsors():
+    organizations = load_data('organizations')
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 10))
+    search = request.args.get('search')
+    
+    # Filter organizations
+    filtered_organizations = organizations
+    if search:
+        filtered_organizations = [o for o in filtered_organizations if search.lower() in o['name'].lower()]
+    
+    # Pagination
+    start = (page - 1) * limit
+    end = start + limit
+    paginated_organizations = filtered_organizations[start:end]
+    
+    return jsonify({
+        "data": paginated_organizations,
+        "pagination": {
+            "page": page,
+            "limit": limit,
+            "total": len(filtered_organizations),
+            "pages": (len(filtered_organizations) + limit - 1) // limit
+        }
+    })
 
 if __name__ == '__main__':
     # Initialize sample data

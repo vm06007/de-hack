@@ -3,7 +3,7 @@ import Icon from "@/components/Icon";
 import Image from "@/components/Image";
 import Percentage from "@/components/Percentage";
 
-import { useUsers } from "@/hooks/useApiData";
+import { useUsers } from "@/hooks/useUsers";
 
 type NewHackersProps = {
     className?: string;

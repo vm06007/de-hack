@@ -4,11 +4,19 @@ import Button from "@/components/Button";
 import Icon from "@/components/Icon";
 import Modal from "@/components/Modal";
 import Image from "@/components/Image";
-
-import { newNotifications } from "@/mocks/notifications";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const Notifications = ({}) => {
     const [isOpen, setIsOpen] = useState(false);
+    const { data: notifications, loading, error } = useNotifications();
+
+    if (loading) {
+        return (
+            <Button isWhite isCircle>
+                <Icon name="bell" />
+            </Button>
+        );
+    }
 
     return (
         <>
@@ -20,7 +28,7 @@ const Notifications = ({}) => {
                     Notifications
                 </div>
                 <div className="h-[calc(100svh-5rem)] px-5 pb-5 overflow-y-auto max-md:h-[calc(100svh-4.5rem)] max-md:px-4">
-                    {newNotifications.map((notification) => (
+                    {notifications.map((notification) => (
                         <div
                             className="group relative flex items-center p-5"
                             key={notification.id}

@@ -4,8 +4,7 @@ import Search from "@/components/Search";
 import Product from "@/components/Product";
 import Icon from "@/components/Icon";
 import Image from "@/components/Image";
-
-import { bestMatch } from "@/mocks/products";
+import { useHackathons, useUsers } from "@/src/hooks/useApiData";
 
 export const suggestions = [
     {
@@ -31,6 +30,10 @@ type SearchGlobalProps = {
 const SearchGlobal = ({ className, onClose, visible }: SearchGlobalProps) => {
     const [search, setSearch] = useState("");
     const visibleResult = search !== "";
+    
+    // Fetch data from API
+    const { data: hackathons, loading: hackathonsLoading } = useHackathons();
+    const { data: users, loading: usersLoading } = useUsers();
 
     const ref = useRef(null);
     useClickAway(ref, () => {
@@ -73,9 +76,13 @@ const SearchGlobal = ({ className, onClose, visible }: SearchGlobalProps) => {
                             Hackathons
                         </div>
                         <div className="">
-                            {bestMatch.map((product) => (
-                                <Product value={product} key={product.id} />
-                            ))}
+                            {hackathonsLoading ? (
+                                <div className="p-3 text-center text-t-secondary">Loading hackathons...</div>
+                            ) : (
+                                hackathons.slice(0, 3).map((hackathon) => (
+                                    <Product value={hackathon} key={hackathon.id} />
+                                ))
+                            )}
                         </div>
                     </div>
                     <div className="">
@@ -83,37 +90,41 @@ const SearchGlobal = ({ className, onClose, visible }: SearchGlobalProps) => {
                             Judges
                         </div>
                         <div className="">
-                            {suggestions.map((suggestion) => (
-                                <div
-                                    className="group relative flex items-center p-3 cursor-pointer"
-                                    key={suggestion.id}
-                                >
-                                    <div className="box-hover"></div>
-                                    <div className="relative z-2 shrink-0">
-                                        <Image
-                                            className="size-16 rounded-full opacity-100"
-                                            src={suggestion.avatar}
-                                            width={64}
-                                            height={64}
-                                            alt=""
-                                        />
-                                    </div>
-                                    <div className="relative z-2 grow px-5 max-md:pl-3">
-                                        <div className="text-sub-title-1">
-                                            {suggestion.username}
+                            {usersLoading ? (
+                                <div className="p-3 text-center text-t-secondary">Loading users...</div>
+                            ) : (
+                                users.slice(0, 2).map((user) => (
+                                    <div
+                                        className="group relative flex items-center p-3 cursor-pointer"
+                                        key={user.id}
+                                    >
+                                        <div className="box-hover"></div>
+                                        <div className="relative z-2 shrink-0">
+                                            <Image
+                                                className="size-16 rounded-full opacity-100"
+                                                src={user.avatar || "/images/avatars/1.png"}
+                                                width={64}
+                                                height={64}
+                                                alt=""
+                                            />
                                         </div>
-                                        <div className="mt-1 text-caption text-t-secondary">
-                                            {suggestion.position}
+                                        <div className="relative z-2 grow px-5 max-md:pl-3">
+                                            <div className="text-sub-title-1">
+                                                {user.name}
+                                            </div>
+                                            <div className="mt-1 text-caption text-t-secondary">
+                                                {user.role || "Participant"}
+                                            </div>
+                                        </div>
+                                        <div className="relative z-2 shrink-0 flex items-center justify-center w-12 h-12 rounded-full border border-s-stroke2 transition-colors group-hover:border-s-highlight">
+                                            <Icon
+                                                className="fill-t-secondary transition-colors group-hover:fill-t-primary"
+                                                name="arrow"
+                                            />
                                         </div>
                                     </div>
-                                    <div className="relative z-2 shrink-0 flex items-center justify-center w-12 h-12 rounded-full border border-s-stroke2 transition-colors group-hover:border-s-highlight">
-                                        <Icon
-                                            className="fill-t-secondary transition-colors group-hover:fill-t-primary"
-                                            name="arrow"
-                                        />
-                                    </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>

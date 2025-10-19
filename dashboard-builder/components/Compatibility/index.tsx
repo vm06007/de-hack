@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Tooltip from "@/components/Tooltip";
 import Image from "@/components/Image";
-import { apiClient } from "@/lib/api";
+import { useCompatibility } from "@/src/hooks/useCompatibility";
 
 type CompatibilityProps = {
     classItemName?: string;
@@ -9,30 +9,7 @@ type CompatibilityProps = {
 
 const Compatibility = ({ classItemName }: CompatibilityProps) => {
     const [activeIds, setActiveIds] = useState<number[]>([]);
-    const [compatibility, setCompatibility] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchCompatibility = async () => {
-            try {
-                const data = await apiClient.get('/compatibility');
-                setCompatibility(data);
-            } catch (error) {
-                console.error('Failed to fetch compatibility data:', error);
-                // Fallback data in case API fails
-                setCompatibility([
-                    { id: 1, browser: "Chrome", version: "90+", supported: true, notes: "Fully supported", image: "/images/browsers/chrome.svg", title: "Chrome" },
-                    { id: 2, browser: "Firefox", version: "88+", supported: true, notes: "Fully supported", image: "/images/browsers/firefox.svg", title: "Firefox" },
-                    { id: 3, browser: "Safari", version: "14+", supported: true, notes: "Fully supported", image: "/images/browsers/safari.svg", title: "Safari" },
-                    { id: 4, browser: "Edge", version: "90+", supported: true, notes: "Fully supported", image: "/images/browsers/edge.svg", title: "Edge" }
-                ]);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCompatibility();
-    }, []);
+    const { data: compatibility, loading, error } = useCompatibility();
 
     const handleClick = (id: number) => {
         setActiveIds((prev) =>
@@ -44,6 +21,10 @@ const Compatibility = ({ classItemName }: CompatibilityProps) => {
 
     if (loading) {
         return <div>Loading compatibility data...</div>;
+    }
+
+    if (error) {
+        return <div>Error loading compatibility data: {error}</div>;
     }
 
     return (

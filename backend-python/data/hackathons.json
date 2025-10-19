@@ -1,17 +1,77 @@
 [
   {
     "id": 1,
+    "title": "DeFi Protocol Template",
+    "description": "Build innovative DeFi protocols and smart contracts",
+    "image": "/images/products/1.png",
+    "category": "DeFi",
+    "status": "active",
+    "startDate": "2025-01-15T00:00:00Z",
+    "endDate": "2025-01-29T23:59:59Z",
+    "registrationDeadline": "2025-01-14T23:59:59Z",
+    "totalPrizePool": "50000.00",
+    "maxParticipants": 500,
+    "currentParticipants": 234,
+    "requirements": [
+      "Solidity",
+      "Web3 development",
+      "DeFi knowledge"
+    ],
+    "tags": [
+      "DeFi",
+      "Smart Contracts",
+      "Protocol"
+    ],
+    "isOnline": true,
+    "location": null,
+    "organizerId": 1,
+    "createdBy": 1,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-15T00:00:00Z"
+  },
+  {
+    "id": 2,
+    "title": "NFT Marketplace Kit",
+    "description": "Create the next generation NFT marketplace",
+    "image": "/images/products/2.png",
+    "category": "NFT",
+    "status": "active",
+    "startDate": "2025-01-20T00:00:00Z",
+    "endDate": "2025-02-03T23:59:59Z",
+    "registrationDeadline": "2025-01-19T23:59:59Z",
+    "totalPrizePool": "30000.00",
+    "maxParticipants": 300,
+    "currentParticipants": 156,
+    "requirements": [
+      "NFT development",
+      "Marketplace design",
+      "Web3 UX"
+    ],
+    "tags": [
+      "NFT",
+      "Marketplace",
+      "Trading"
+    ],
+    "isOnline": true,
+    "location": null,
+    "organizerId": 2,
+    "createdBy": 1,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-15T00:00:00Z"
+  },
+  {
+    "id": 3,
     "title": "ETHGlobal Online 2025",
     "description": "The biggest online Ethereum hackathon of the year",
     "image": "/images/products/lg-1.png",
     "category": "Online hackathon",
-    "status": "active",
+    "status": "scheduled",
     "startDate": "2025-04-15T00:00:00Z",
     "endDate": "2025-04-29T23:59:59Z",
     "registrationDeadline": "2025-04-14T23:59:59Z",
     "totalPrizePool": "100000.00",
     "maxParticipants": 1000,
-    "currentParticipants": 847,
+    "currentParticipants": 0,
     "requirements": [
       "Ethereum knowledge",
       "Web3 development experience"
@@ -30,7 +90,7 @@
     "updatedAt": "2024-01-15T00:00:00Z"
   },
   {
-    "id": 2,
+    "id": 4,
     "title": "Unite DeFi 2025",
     "description": "Building the future of decentralized finance",
     "image": "/images/products/lg-2.png",

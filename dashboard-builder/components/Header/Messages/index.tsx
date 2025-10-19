@@ -4,10 +4,11 @@ import Icon from "@/components/Icon";
 import Modal from "@/components/Modal";
 import Image from "@/components/Image";
 
-import { messages } from "@/mocks/messages";
+import { useMessages } from "@/src/hooks/useMessages";
 
 const Messages = ({}) => {
     const [isOpen, setIsOpen] = useState(false);
+    const { data: messages, loading, error } = useMessages();
 
     return (
         <>
@@ -19,7 +20,12 @@ const Messages = ({}) => {
                     Messages
                 </div>
                 <div className="flex flex-col gap-1 h-[calc(100svh-5rem)] px-5 pb-5 overflow-y-auto max-md:h-[calc(100svh-4.5rem)] max-md:px-6">
-                    {messages.map((message) => (
+                    {loading ? (
+                        <div className="p-5 text-center text-t-secondary">Loading messages...</div>
+                    ) : error ? (
+                        <div className="p-5 text-center text-t-secondary">Error loading messages: {error}</div>
+                    ) : (
+                        messages.map((message) => (
                         <div
                             className="group relative flex items-center px-5 py-3 max-md:px-3"
                             key={message.id}
@@ -57,7 +63,8 @@ const Messages = ({}) => {
                                 </div>
                             </div>
                         </div>
-                    ))}
+                        ))
+                    )}
                 </div>
                 <Button
                     className="!absolute left-1/2 bottom-5 z-3 -translate-x-1/2"

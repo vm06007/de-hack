@@ -2,15 +2,25 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import Image from "@/components/Image";
 import Percentage from "@/components/Percentage";
-
-import { customersData } from "@/mocks/dashboard";
+import { useCustomers } from "@/src/hooks/useCustomers";
 
 type NewCustomersProps = {
     className?: string;
     percentage?: number;
 };
 
-const NewCustomers = ({ className, percentage }: NewCustomersProps) => (
+const NewCustomers = ({ className, percentage }: NewCustomersProps) => {
+    const { data: customersData, loading, error } = useCustomers();
+
+    if (loading) {
+        return <div className={className || ""}>Loading customers...</div>;
+    }
+
+    if (error) {
+        return <div className={className || ""}>Error loading customers: {error}</div>;
+    }
+
+    return (
     <div className={`${className || ""}`}>
         <div className="mb-6">
             <div
@@ -69,6 +79,7 @@ const NewCustomers = ({ className, percentage }: NewCustomersProps) => (
             </div>
         </div>
     </div>
-);
+    );
+};
 
 export default NewCustomers;

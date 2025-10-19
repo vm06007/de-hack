@@ -146,3 +146,4 @@ dashboard-builder/yarn.lock
 dashboard-builder/bun.lockb
 /intro
 /dashboard-builder/public/images
+/backend-python/__pycache__

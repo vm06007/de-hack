@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "title": "New Hackathon",
+    "icon": "/images/icons/hackathon.svg",
+    "backgroundImage": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "avatar": "/images/avatars/1.png",
+    "time": "2 hours ago",
+    "status": "new"
+  },
+  {
+    "id": 2,
+    "title": "Voting System",
+    "icon": "/images/icons/voting.svg",
+    "backgroundImage": "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    "avatar": "/images/avatars/2.png",
+    "time": "4 hours ago",
+    "status": "active"
+  },
+  {
+    "id": 3,
+    "title": "Prize Pool",
+    "icon": "/images/icons/prize.svg",
+    "backgroundImage": "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    "avatar": "/images/avatars/3.png",
+    "time": "6 hours ago",
+    "status": "new"
+  },
+  {
+    "id": 4,
+    "title": "Smart Contracts",
+    "icon": "/images/icons/contract.svg",
+    "backgroundImage": "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    "avatar": "/images/avatars/4.png",
+    "time": "8 hours ago",
+    "status": "active"
+  },
+  {
+    "id": 5,
+    "title": "DeFi Protocol",
+    "icon": "/images/icons/defi.svg",
+    "backgroundImage": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    "avatar": "/images/avatars/5.png",
+    "time": "10 hours ago",
+    "status": "new"
+  }
+]

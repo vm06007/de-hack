@@ -21,18 +21,18 @@ type DropdownProps = {
 const Dropdown = ({ value }: DropdownProps) => {
     const pathname = usePathname();
     const isActive = value.list?.some((item) => pathname.includes(item.href));
-    const isActiveNewProduct =
-        pathname === "/products/new" && value.title === "Hackathons";
+    const isActiveNewHackathon =
+        pathname === "/hackathons/new" && value.title === "Hackathons";
     const [height, setHeight] = useState<number | "auto">(
         isActive ? "auto" : 0
     );
 
     return (
         <div className="relative">
-            {pathname !== "/products/new" && value.title === "Hackathons" && (
+            {pathname !== "/hackathons/new" && value.title === "Hackathons" && (
                 <Link
                     className="hidden absolute top-2.75 right-12 z-2 w-6 h-6 border border-t-secondary justify-center items-center rounded-full max-md:flex"
-                    href="/products/new"
+                    href="/hackathons/new"
                 >
                     <Icon className="fill-t-primary !size-4" name="plus" />
                 </Link>
@@ -40,10 +40,10 @@ const Dropdown = ({ value }: DropdownProps) => {
             <button
                 className={`group relative flex items-center gap-3 w-full h-12 px-3 text-button transition-colors hover:text-t-primary ${
                     height === 0 ? "text-t-secondary" : "text-t-primary"
-                } ${isActiveNewProduct ? "!text-t-primary" : ""}`}
+                } ${isActiveNewHackathon ? "!text-t-primary" : ""}`}
                 onClick={() => setHeight(height === 0 ? "auto" : 0)}
             >
-                {isActiveNewProduct && (
+                {isActiveNewHackathon && (
                     <div className="absolute inset-0 gradient-menu rounded-xl shadow-depth-menu">
                         <div className="absolute inset-0.25 bg-b-pop rounded-[0.6875rem]"></div>
                     </div>
@@ -51,7 +51,7 @@ const Dropdown = ({ value }: DropdownProps) => {
                 <Icon
                     className={`relative z-2 transition-colors group-hover:fill-t-primary ${
                         height === 0 ? "fill-t-secondary" : "fill-t-primary"
-                    } ${isActiveNewProduct ? "!fill-t-primary" : ""}`}
+                    } ${isActiveNewHackathon ? "!fill-t-primary" : ""}`}
                     name={value.icon}
                 />
                 <div className="relative z-2">{value.title}</div>
@@ -60,7 +60,7 @@ const Dropdown = ({ value }: DropdownProps) => {
                         height === 0
                             ? "fill-t-secondary"
                             : "fill-t-primary rotate-180"
-                    } ${isActiveNewProduct ? "!text-t-primary" : ""}`}
+                    } ${isActiveNewHackathon ? "!text-t-primary" : ""}`}
                     name="chevron"
                 />
             </button>

@@ -29,7 +29,7 @@ const NewCustomers = ({ className, percentage }: NewCustomersProps) => {
                 }`}
             >
                 <div className="text-[1.125rem] font-medium tracking-[-0.01em]">
-                    857 new hackers today!
+                    2 new hackathons today!
                 </div>
                 {percentage && (
                     <Percentage className="max-md:hidden" value={percentage} />

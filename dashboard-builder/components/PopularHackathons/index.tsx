@@ -1,5 +1,5 @@
 import Card from "@/components/Card";
-import Product from "@/components/Product";
+import Hackathon from "@/components/Hackathon";
 import Button from "@/components/Button";
 
 interface PopularHackathonsProps {
@@ -17,12 +17,12 @@ const PopularHackathons = ({ title, items }: PopularHackathonsProps) => {
     return (
         <Card classHead="!pl-3" title={title}>
             <div className="flex flex-col gap-1">
-                {items.map((product) => (
-                    <Product value={product} key={product.id} />
+                {items.map((hackathon) => (
+                    <Hackathon value={hackathon} key={hackathon.id} />
                 ))}
             </div>
             <div className="pt-6 px-3 pb-3">
-                <Button className="w-full" href="/products" as="link" isStroke>
+                <Button className="w-full" href="/hackathons" as="link" isStroke>
                     All hackathons
                 </Button>
             </div>

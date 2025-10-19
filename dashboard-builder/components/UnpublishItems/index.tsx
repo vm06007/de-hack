@@ -4,7 +4,7 @@ import Modal from "@/components/Modal";
 import Image from "@/components/Image";
 import Button from "@/components/Button";
 
-import { concludedHackathons } from "@/mocks/products";
+import { useHackathons } from "@/src/hooks/useApiData";
 
 type UnpublishItemsProps = {
     items?: number[];
@@ -20,6 +20,12 @@ const UnpublishItems = ({
     isLargeButton,
 }: UnpublishItemsProps) => {
     const [open, setOpen] = useState(false);
+    
+    // Fetch hackathons data from API
+    const { data: hackathons } = useHackathons();
+    
+    // Filter for concluded hackathons
+    const concludedHackathons = hackathons.filter(hackathon => hackathon.status === 'concluded');
 
     return (
         <>
@@ -64,12 +70,12 @@ const UnpublishItems = ({
                 </div>
                 <div className="mb-4 text-h4 max-md:text-h5">
                     Unpublish{" "}
-                    {items.length > 1 ? `${items.length} products` : "product"}!
+                    {items.length > 1 ? `${items.length} hackathons` : "hackathon"}!
                 </div>
                 <div className="mb-8 text-body-2 font-medium text-t-tertiary">
                     You’re unpublishing{" "}
-                    {items.length > 1 ? `${items.length} products` : "product"}.
-                    The selected product{items.length > 1 ? "s" : ""} will be
+                    {items.length > 1 ? `${items.length} hackathons` : "hackathon"}.
+                    The selected hackathon{items.length > 1 ? "s" : ""} will be
                     removed from your shop, and this action can be undone at any
                     time.
                 </div>

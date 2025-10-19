@@ -45,7 +45,7 @@ const DeleteItems = ({
                 <div className="mb-8 text-body-2 font-medium text-t-tertiary">
                     {content ||
                         `This will definitely delete ${
-                            counter > 1 ? `${counter} products` : "this product"
+                            counter > 1 ? `${counter} hackathons` : "this hackathon"
                         }, and all data will be removed. This action cannot be undone.`}
                 </div>
                 <div className="flex justify-end gap-3 mt-8">

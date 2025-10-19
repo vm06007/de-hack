@@ -10,20 +10,20 @@ export const navigation = [
         list: [
             {
                 title: "Overview",
-                href: "/products",
+                href: "/hackathons",
             },
             {
                 title: "Active",
-                href: "/products/active",
+                href: "/hackathons/active",
                 counter: 2,
             },
             {
                 title: "Concluded",
-                href: "/products/concluded",
+                href: "/hackathons/concluded",
             },
             {
                 title: "Scheduled",
-                href: "/products/scheduled",
+                href: "/hackathons/scheduled",
                 counter: 8,
             },
         ],
@@ -61,32 +61,9 @@ export const navigation = [
         ],
     },
     {
-        title: "Income",
-        icon: "income",
-        list: [
-            {
-                title: "Earning",
-                href: "/income/earning",
-            },
-            {
-                title: "Refunds",
-                href: "/income/refunds",
-                counter: 3,
-            },
-            {
-                title: "Payouts",
-                href: "/income/payouts",
-            },
-            {
-                title: "Statements",
-                href: "/income/statements",
-            },
-        ],
-    },
-    {
-        title: "Explore Creators",
+        title: "Explore Page",
         icon: "grid",
-        href: "/explore-creators",
+        href: "/explore-page",
     },
 ];
 
@@ -102,11 +79,6 @@ export const navigationUser = [
         href: "/settings",
     },
     {
-        title: "Analytics",
-        icon: "chart",
-        href: "/hackers",
-    },
-    {
         title: "Affiliate center",
         icon: "chain-think",
         href: "/affiliate-center",
@@ -114,6 +86,6 @@ export const navigationUser = [
     {
         title: "Explore organizers",
         icon: "grid",
-        href: "/explore-creators",
+        href: "/explore-page",
     },
 ];

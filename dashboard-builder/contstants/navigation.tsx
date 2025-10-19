@@ -29,9 +29,22 @@ export const navigation = [
         ],
     },
     {
-        title: "Hackers",
+        title: "Participants",
         icon: "profile",
-        href: "/hackers",
+        list: [
+            {
+                title: "Hackers",
+                href: "/participants/hackers",
+            },
+            {
+                title: "Sponsors",
+                href: "/participants/sponsors",
+            },
+            {
+                title: "Judges",
+                href: "/participants/judges",
+            },
+        ],
     },
     {
         title: "Organizations",

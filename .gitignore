@@ -145,3 +145,4 @@ cache/*
 dashboard-builder/yarn.lock
 dashboard-builder/bun.lockb
 /intro
+/dashboard-builder/public/images

@@ -5,20 +5,15 @@ import Layout from "@/components/Layout";
 import Image from "@/components/Image";
 import Tabs from "@/components/Tabs";
 import Select from "@/components/Select";
-import Filters from "@/components/Filters";
 import ShopItem from "@/components/ShopItem";
-import Follower from "@/components/Follower";
-import Spinner from "@/components/Spinner";
+// import Spinner from "@/components/Spinner";
 import Profile from "./Profile";
 
 import { useHackathons } from "@/src/hooks/useHackathons";
-import { useAnalytics } from "@/src/hooks/useAnalytics";
-import { shopItems, followers, followings } from "@/mocks/shop";
 
 const types = [
-    { id: 1, name: "Hackathons" },
-    { id: 2, name: "Followers" },
-    { id: 3, name: "Followings" },
+    { id: 1, name: "Online Hackathons" },
+    { id: 2, name: "In Person Hackathons" },
 ];
 
 const sortOptions = [
@@ -30,6 +25,9 @@ const sortOptions = [
 const OrgPage = () => {
     const [type, setType] = useState(types[0]);
     const [sort, setSort] = useState(sortOptions[0]);
+
+    // Get hackathons data
+    const { data: hackathons, loading, error } = useHackathons();
 
     return (
         <Layout hideSidebar>
@@ -60,48 +58,44 @@ const OrgPage = () => {
                         onChange={setSort}
                         options={sortOptions}
                     />
-                    <Filters />
                 </div>
                 {type.id === 1 && (
                     <>
                         <div className="flex flex-wrap mt-4 -mx-3 max-md:flex-col max-md:gap-3 max-md:m-0 max-md:mt-5">
-                            {shopItems.map((item) => (
-                                <ShopItem
-                                    className="w-[calc(33.333%-1.5rem)] mt-6 mx-3 max-lg:w-[calc(50%-1.5rem)] max-md:w-full max-md:m-0"
-                                    value={item}
-                                    key={item.id}
-                                />
-                            ))}
+                            {loading ? (
+                                <div className="w-full text-center py-8">Loading online hackathons...</div>
+                            ) : error ? (
+                                <div className="w-full text-center py-8">Error loading hackathons: {error}</div>
+                            ) : (
+                                (Array.isArray(hackathons) ? hackathons.filter(h => h.type === 'online') : []).map((hackathon) => (
+                                    <ShopItem
+                                        className="w-[calc(33.333%-1.5rem)] mt-6 mx-3 max-lg:w-[calc(50%-1.5rem)] max-md:w-full max-md:m-0"
+                                        value={hackathon}
+                                        key={hackathon.id}
+                                    />
+                                ))
+                            )}
                         </div>
-                        <Spinner className="mt-10 mb-12 max-lg:my-7 max-md:mt-5 max-md:mb-0" />
+                        {/*<Spinner className="mt-10 mb-12 max-lg:my-7 max-md:mt-5 max-md:mb-0" />*/}
                     </>
                 )}
                 {type.id === 2 && (
                     <>
-                        <div className="flex flex-wrap mt-4 -mx-3 max-md:m-0 max-md:mt-5 max-md:gap-3">
-                            {followers.map((follower) => (
-                                <Follower
-                                    className="w-[calc(25%-1.5rem)] mt-6 mx-3 max-lg:w-[calc(33.333%-1.5rem)] max-md:w-full max-md:m-0"
-                                    value={follower}
-                                    key={follower.id}
-                                />
-                            ))}
+                        <div className="flex flex-wrap mt-4 -mx-3 max-md:flex-col max-md:gap-3 max-md:m-0 max-md:mt-5">
+                            {loading ? (
+                                <div className="w-full text-center py-8">Loading in-person hackathons...</div>
+                            ) : error ? (
+                                <div className="w-full text-center py-8">Error loading hackathons: {error}</div>
+                            ) : (
+                                (Array.isArray(hackathons) ? hackathons.filter(h => h.type === 'in-person') : []).map((hackathon) => (
+                                    <ShopItem
+                                        className="w-[calc(33.333%-1.5rem)] mt-6 mx-3 max-lg:w-[calc(50%-1.5rem)] max-md:w-full max-md:m-0"
+                                        value={hackathon}
+                                        key={hackathon.id}
+                                    />
+                                ))
+                            )}
                         </div>
-                        <Spinner className="mt-10 mb-12 max-lg:my-7 max-md:mt-5 max-md:mb-0" />
-                    </>
-                )}
-                {type.id === 3 && (
-                    <>
-                        <div className="flex flex-wrap mt-4 -mx-3 max-md:m-0 max-md:mt-5 max-md:gap-3">
-                            {followings.map((following) => (
-                                <Follower
-                                    className="w-[calc(25%-1.5rem)] mt-6 mx-3 max-lg:w-[calc(33.333%-1.5rem)] max-md:w-full max-md:m-0"
-                                    value={following}
-                                    key={following.id}
-                                />
-                            ))}
-                        </div>
-                        <Spinner className="mt-10 mb-12 max-lg:my-7 max-md:mt-5 max-md:mb-0" />
                     </>
                 )}
             </div>

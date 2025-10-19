@@ -31,7 +31,7 @@ const Profile = ({}) => (
             <div className="mr-auto">
                 <div className="text-h4">ETHGlobal</div>
                 <div className="mt-1 text-sub-title-1 text-t-secondary">
-                    Dream Big. Think Different. Do Great!
+                    Global Standard for Blockchain Hackathons
                 </div>
             </div>
             <div className="flex gap-3 mr-3 max-lg:hidden">
@@ -47,14 +47,6 @@ const Profile = ({}) => (
                     />
                 ))}
             </div>
-            <Button
-                className="max-md:hidden"
-                isBlack
-                as="link"
-                href="/settings"
-            >
-                Edit profile
-            </Button>
         </div>
     </div>
 );

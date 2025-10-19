@@ -1,57 +1,138 @@
 [
   {
     "id": 1,
-    "title": "DeFi Protocol Template",
-    "category": "Hackathon",
-    "type": "sale",
-    "date": "2024-01-15",
-    "orderId": "ORD-001",
-    "price": 2500,
-    "amount": 2500.00,
-    "image": "/images/products/1.png"
+    "title": "Applied to DeFi Hackathon",
+    "type": "hacker_application",
+    "status": "pending",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "user": {
+      "id": 1,
+      "name": "Alice Johnson",
+      "avatar": "/images/avatars/avatar-1.jpg"
+    },
+    "hackathon": {
+      "id": 1,
+      "name": "DeFi Innovation Challenge",
+      "prize": "$50,000"
+    }
   },
   {
     "id": 2,
-    "title": "NFT Marketplace Kit",
-    "category": "Hackathon",
-    "type": "sale",
-    "date": "2024-01-14",
-    "orderId": "ORD-002",
-    "price": 1800,
-    "amount": 1800.00,
-    "image": "/images/products/2.png"
+    "title": "Voted on Smart Contract Project",
+    "type": "judge_voting",
+    "status": "completed",
+    "timestamp": "2024-01-15T09:15:00Z",
+    "user": {
+      "id": 2,
+      "name": "Bob Smith",
+      "avatar": "/images/avatars/avatar-2.jpg"
+    },
+    "hackathon": {
+      "id": 1,
+      "name": "DeFi Innovation Challenge",
+      "prize": "$50,000"
+    }
   },
   {
     "id": 3,
-    "title": "Smart Contract Audit",
-    "category": "Service",
-    "type": "refund",
-    "date": "2024-01-13",
-    "orderId": "ORD-003",
-    "price": 1200,
-    "amount": -1200.00,
-    "image": "/images/products/3.png"
+    "title": "Created Web3 Hackathon",
+    "type": "organizer_creation",
+    "status": "active",
+    "timestamp": "2024-01-15T08:45:00Z",
+    "user": {
+      "id": 3,
+      "name": "Carol Davis",
+      "avatar": "/images/avatars/avatar-3.jpg"
+    },
+    "hackathon": {
+      "id": 2,
+      "name": "Web3 Future Builders",
+      "prize": "$75,000"
+    }
   },
   {
     "id": 4,
-    "title": "Web3 Development Course",
-    "category": "Education",
-    "type": "sale",
-    "date": "2024-01-12",
-    "orderId": "ORD-004",
-    "price": 950,
-    "amount": 950.00,
-    "image": "/images/products/4.png"
+    "title": "Joined as Sponsor",
+    "type": "sponsor_joining",
+    "status": "confirmed",
+    "timestamp": "2024-01-15T07:20:00Z",
+    "user": {
+      "id": 4,
+      "name": "David Wilson",
+      "avatar": "/images/avatars/avatar-4.jpg"
+    },
+    "hackathon": {
+      "id": 1,
+      "name": "DeFi Innovation Challenge",
+      "prize": "$50,000"
+    }
   },
   {
     "id": 5,
-    "title": "Blockchain Consulting",
-    "category": "Service",
-    "type": "sale",
-    "date": "2024-01-11",
-    "orderId": "ORD-005",
-    "price": 3200,
-    "amount": 3200.00,
-    "image": "/images/products/5.png"
+    "title": "Applied to AI Hackathon",
+    "type": "hacker_application",
+    "status": "approved",
+    "timestamp": "2024-01-14T16:30:00Z",
+    "user": {
+      "id": 5,
+      "name": "Eva Brown",
+      "avatar": "/images/avatars/avatar-5.jpg"
+    },
+    "hackathon": {
+      "id": 3,
+      "name": "AI Revolution Hackathon",
+      "prize": "$100,000"
+    }
+  },
+  {
+    "id": 6,
+    "title": "Voted on NFT Project",
+    "type": "judge_voting",
+    "status": "completed",
+    "timestamp": "2024-01-14T14:15:00Z",
+    "user": {
+      "id": 6,
+      "name": "Frank Miller",
+      "avatar": "/images/avatars/avatar-6.jpg"
+    },
+    "hackathon": {
+      "id": 2,
+      "name": "Web3 Future Builders",
+      "prize": "$75,000"
+    }
+  },
+  {
+    "id": 7,
+    "title": "Created Blockchain Hackathon",
+    "type": "organizer_creation",
+    "status": "active",
+    "timestamp": "2024-01-14T12:00:00Z",
+    "user": {
+      "id": 7,
+      "name": "Grace Lee",
+      "avatar": "/images/avatars/avatar-7.jpg"
+    },
+    "hackathon": {
+      "id": 4,
+      "name": "Blockchain Builders",
+      "prize": "$30,000"
+    }
+  },
+  {
+    "id": 8,
+    "title": "Joined as Gold Sponsor",
+    "type": "sponsor_joining",
+    "status": "confirmed",
+    "timestamp": "2024-01-14T10:45:00Z",
+    "user": {
+      "id": 8,
+      "name": "Henry Taylor",
+      "avatar": "/images/avatars/avatar-8.jpg"
+    },
+    "hackathon": {
+      "id": 3,
+      "name": "AI Revolution Hackathon",
+      "prize": "$100,000"
+    }
   }
 ]

@@ -110,21 +110,15 @@ const List = ({
                                                     : ""
                                             }`}
                                         >
-                                            <button className="action">
-                                                <Icon name="chat" />
-                                                Message
-                                            </button>
-                                            <Link
+                                            <a
                                                 className="action"
-                                                href="/participants/sponsors/sponsor-list/details"
+                                                href={item.companyWebsite}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
                                             >
                                                 <Icon name="arrow-up-right" />
                                                 Detail
-                                            </Link>
-                                            <button className="action">
-                                                <Icon name="star" />
-                                                Follow
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

@@ -4,24 +4,24 @@ import Layout from "@/components/Layout";
 import PopularHackathons from "@/components/PopularHackathons";
 import RefundRequests from "@/components/RefundRequests";
 import Overview from "./Overview";
-import ProductView from "./ProductView";
-import OverviewSlider from "./OverviewSlider";
-import GetMoreCustomers from "./GetMoreCustomers";
-import Comments from "./Comments";
+// import ProductView from "./ProductView";
+import TransactionsOverview from "./TransactionsOverview";
+import GetMoreHackers from "./GetMoreHackers";
+// import Comments from "./Comments";
 
 import { useHackathons } from "@/src/hooks/useApiData";
 
 const HomePage = () => {
     const { data: hackathons, loading } = useHackathons();
-    
+
     return (
         <Layout title="Dashboard">
             <div className="flex max-lg:block">
                 <div className="col-left">
                     <Overview />
-                    <ProductView />
-                    <OverviewSlider />
-                    <GetMoreCustomers />
+                    {/*<ProductView />*/}
+                    <TransactionsOverview />
+                    <GetMoreHackers />
                 </div>
                 <div className="col-right">
                     <PopularHackathons

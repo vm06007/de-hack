@@ -6,34 +6,82 @@ import { Swiper as SwiperType } from "swiper";
 import Card from "@/components/Card";
 import Image from "@/components/Image";
 import Button from "@/components/Button";
+import Icon from "@/components/Icon";
 
-import { useOverview } from "@/src/hooks/useOverview";
+import { useTransactions } from "@/src/hooks/useApiData";
 
 import "swiper/css";
 import "swiper/css/navigation";
 
-const OverviewSlider = ({}) => {
+// Transaction type definitions
+const transactionTypes = {
+    hacker_application: {
+        icon: "profile",
+        label: "Hacker Application",
+        color: "bg-blue-500",
+        statusColor: "label-blue"
+    },
+    judge_voting: {
+        icon: "star",
+        label: "Judge Voting",
+        color: "bg-purple-500",
+        statusColor: "label-purple"
+    },
+    organizer_creation: {
+        icon: "plus",
+        label: "Hackathon Created",
+        color: "bg-green-500",
+        statusColor: "label-green"
+    },
+    sponsor_joining: {
+        icon: "wallet",
+        label: "Sponsor Joined",
+        color: "bg-orange-500",
+        statusColor: "label-orange"
+    }
+};
+
+const TransactionsOverview = () => {
     const [isFirstSlide, setIsFirstSlide] = useState(true);
     const [isLastSlide, setIsLastSlide] = useState(false);
-    const { data: sliderData, loading, error } = useOverview();
+    const { data: transactions, loading, error } = useTransactions();
 
     const handleSlideChange = (swiper: SwiperType) => {
         setIsFirstSlide(swiper.isBeginning);
         setIsLastSlide(swiper.progress >= 0.99);
     };
 
+    // Transform transaction data to match the slider format
+    const transformedTransactions = (Array.isArray(transactions) ? transactions : []).map((transaction) => {
+        const type = transactionTypes[transaction.type as keyof typeof transactionTypes] || transactionTypes.hacker_application;
+        
+        return {
+            id: transaction.id,
+            title: transaction.title || type.label,
+            icon: type.icon,
+            backgroundImage: `linear-gradient(135deg, ${type.color}, ${type.color}CC)`,
+            avatar: transaction.user?.avatar || "/images/avatars/avatar-1.jpg",
+            time: transaction.timestamp ? new Date(transaction.timestamp).toLocaleString() : "Just now",
+            status: transaction.status || "active",
+            statusColor: type.statusColor,
+            type: transaction.type,
+            hackathon: transaction.hackathon,
+            user: transaction.user
+        };
+    });
+
     if (loading) {
-        return <Card title="Overview"><div className="p-5">Loading overview data...</div></Card>;
+        return <Card title="Latest Transactions"><div className="p-5">Loading transactions...</div></Card>;
     }
 
     if (error) {
-        return <Card title="Overview"><div className="p-5">Error loading overview data: {error}</div></Card>;
+        return <Card title="Latest Transactions"><div className="p-5">Error loading transactions: {error}</div></Card>;
     }
 
     return (
         <Card
             className="overflow-hidden"
-            title="Overview"
+            title="Latest Transactions"
             headContent={
                 <div className="flex items-center gap-1">
                     <Button
@@ -69,52 +117,50 @@ const OverviewSlider = ({}) => {
                     onProgress={handleSlideChange}
                     className="mySwiper !overflow-visible"
                 >
-                    {(Array.isArray(sliderData) ? sliderData : []).map((item) => (
-                        <SwiperSlide className="!w-51.5" key={item.id}>
+                    {transformedTransactions.map((transaction) => (
+                        <SwiperSlide className="!w-51.5" key={transaction.id}>
                             <Link
                                 className="!flex flex-col !h-59 p-4.5 border border-s-stroke2 rounded-3xl bg-b-highlight transition-all hover:bg-b-surface2 hover:shadow-depth"
-                                href="/org/details"
+                                href={`/transactions/${transaction.id}`}
                             >
                                 <div
                                     className="flex justify-center items-center w-16 h-16 mb-auto rounded-full"
                                     style={{
-                                        background: item.backgroundImage,
+                                        background: transaction.backgroundImage,
                                     }}
                                 >
-                                    <Image
-                                        className="size-6 opacity-100"
-                                        src={item.icon}
-                                        width={24}
-                                        height={24}
-                                        alt=""
+                                    <Icon
+                                        className="size-6 opacity-100 fill-white"
+                                        name={transaction.icon}
                                     />
                                 </div>
                                 <div className="mb-2 text-sub-title-1">
-                                    {item.title}
+                                    {transaction.title}
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className="">
                                         <Image
                                             className="size-5 opacity-100 rounded-full"
-                                            src={item.avatar}
+                                            src={transaction.avatar}
                                             width={20}
                                             height={20}
                                             alt=""
                                         />
                                     </div>
                                     <div className="mr-auto text-caption text-t-tertiary">
-                                        {item.time}
+                                        {transaction.time}
                                     </div>
                                     <div
-                                        className={`inline-flex items-center h-5 px-1.5 rounded border text-caption leading-none capitalize ${
-                                            item.status === "new"
-                                                ? "label-green"
-                                                : "label-red"
-                                        }`}
+                                        className={`inline-flex items-center h-5 px-1.5 rounded border text-caption leading-none capitalize ${transaction.statusColor}`}
                                     >
-                                        {item.status}
+                                        {transaction.status}
                                     </div>
                                 </div>
+                                {transaction.hackathon && (
+                                    <div className="mt-2 text-caption text-t-tertiary">
+                                        {transaction.hackathon.name}
+                                    </div>
+                                )}
                             </Link>
                         </SwiperSlide>
                     ))}
@@ -124,4 +170,4 @@ const OverviewSlider = ({}) => {
     );
 };
 
-export default OverviewSlider;
+export default TransactionsOverview;

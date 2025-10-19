@@ -4,7 +4,7 @@ import Modal from "@/components/Modal";
 import Image from "@/components/Image";
 import Button from "@/components/Button";
 
-import { releasedHackathons } from "@/mocks/products";
+import { concludedHackathons } from "@/mocks/products";
 
 type UnpublishItemsProps = {
     items?: number[];
@@ -45,7 +45,7 @@ const UnpublishItems = ({
                             />
                         </div>
                     ) : (
-                        releasedHackathons
+                        concludedHackathons
                             .filter((product) => items.includes(product.id))
                             .map((product) => (
                                 <div

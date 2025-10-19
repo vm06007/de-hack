@@ -6,8 +6,8 @@ import Logo from "@/components/Logo";
 import Icon from "@/components/Icon";
 import SearchGlobal from "./SearchGlobal";
 import User from "./User";
-import Notifications from "./Notifications";
-import Messages from "./Messages";
+// import Notifications from "./Notifications";
+// import Messages from "./Messages";
 import WalletConnect from "@/components/WalletConnect";
 
 const times = [
@@ -139,8 +139,8 @@ const Header = ({
                     >
                         <Icon name="search" />
                     </Button>
-                    <Notifications />
-                    <Messages />
+                    {/*<Notifications />
+                    <Messages />*/}
                     <User />
                 </div>
                 {newProduct && (

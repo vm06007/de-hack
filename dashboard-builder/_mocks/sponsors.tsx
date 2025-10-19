@@ -1,0 +1,178 @@
+export const sponsors = [
+    {
+        id: 1,
+        name: "Sarah Chen",
+        company: "Ethereum Foundation",
+        email: "sarah@ethereum.org",
+        avatar: "/images/avatars/1.png",
+        totalContributions: 500000,
+        hackathonsSponsored: 15,
+        successRate: 85.2,
+        categories: ["DeFi", "Infrastructure", "Privacy"],
+        location: "Zurich, Switzerland",
+        joinDate: "2020-03-15",
+        lastActive: "2024-01-15",
+        reputation: 4.9,
+        totalPrizeMoney: 500000,
+        favoriteCategories: ["DeFi", "Infrastructure", "Privacy"],
+        socialLinks: {
+            website: "https://ethereum.org",
+            twitter: "https://twitter.com/ethereum",
+            linkedin: "https://linkedin.com/company/ethereum-foundation"
+        }
+    },
+    {
+        id: 2,
+        name: "Michael Rodriguez",
+        company: "Polygon",
+        email: "michael@polygon.technology",
+        avatar: "/images/avatars/2.png",
+        totalContributions: 350000,
+        hackathonsSponsored: 12,
+        successRate: 78.5,
+        categories: ["Scaling", "DeFi", "Gaming"],
+        location: "Mumbai, India",
+        joinDate: "2021-06-20",
+        lastActive: "2024-01-14",
+        reputation: 4.8,
+        totalPrizeMoney: 350000,
+        favoriteCategories: ["Scaling", "DeFi", "Gaming"],
+        socialLinks: {
+            website: "https://polygon.technology",
+            twitter: "https://twitter.com/0xPolygon",
+            linkedin: "https://linkedin.com/company/polygon"
+        }
+    },
+    {
+        id: 3,
+        name: "Lisa Wang",
+        company: "Chainlink",
+        email: "lisa@chain.link",
+        avatar: "/images/avatars/3.png",
+        totalContributions: 280000,
+        hackathonsSponsored: 18,
+        successRate: 82.1,
+        categories: ["Oracle", "DeFi", "Infrastructure"],
+        location: "San Francisco, CA",
+        joinDate: "2019-11-08",
+        lastActive: "2024-01-13",
+        reputation: 4.9,
+        totalPrizeMoney: 280000,
+        favoriteCategories: ["Oracle", "DeFi", "Infrastructure"],
+        socialLinks: {
+            website: "https://chain.link",
+            twitter: "https://twitter.com/chainlink",
+            linkedin: "https://linkedin.com/company/chainlink"
+        }
+    },
+    {
+        id: 4,
+        name: "David Kim",
+        company: "Uniswap Labs",
+        email: "david@uniswap.org",
+        avatar: "/images/avatars/4.png",
+        totalContributions: 420000,
+        hackathonsSponsored: 20,
+        successRate: 88.3,
+        categories: ["DeFi", "AMM", "DEX"],
+        location: "New York, NY",
+        joinDate: "2020-09-22",
+        lastActive: "2024-01-12",
+        reputation: 4.8,
+        totalPrizeMoney: 420000,
+        favoriteCategories: ["DeFi", "AMM", "DEX"],
+        socialLinks: {
+            website: "https://uniswap.org",
+            twitter: "https://twitter.com/Uniswap",
+            linkedin: "https://linkedin.com/company/uniswap"
+        }
+    },
+    {
+        id: 5,
+        name: "Maria Garcia",
+        company: "Aave",
+        email: "maria@aave.com",
+        avatar: "/images/avatars/5.png",
+        totalContributions: 320000,
+        hackathonsSponsored: 14,
+        successRate: 75.6,
+        categories: ["DeFi", "Lending", "Governance"],
+        location: "London, UK",
+        joinDate: "2021-02-14",
+        lastActive: "2024-01-11",
+        reputation: 4.7,
+        totalPrizeMoney: 320000,
+        favoriteCategories: ["DeFi", "Lending", "Governance"],
+        socialLinks: {
+            website: "https://aave.com",
+            twitter: "https://twitter.com/AaveAave",
+            linkedin: "https://linkedin.com/company/aave"
+        }
+    },
+    {
+        id: 6,
+        name: "James Wilson",
+        company: "OpenSea",
+        email: "james@opensea.io",
+        avatar: "/images/avatars/6.png",
+        totalContributions: 180000,
+        hackathonsSponsored: 8,
+        successRate: 71.4,
+        categories: ["NFT", "Marketplace", "Gaming"],
+        location: "San Francisco, CA",
+        joinDate: "2022-01-20",
+        lastActive: "2024-01-10",
+        reputation: 4.6,
+        totalPrizeMoney: 180000,
+        favoriteCategories: ["NFT", "Marketplace", "Gaming"],
+        socialLinks: {
+            website: "https://opensea.io",
+            twitter: "https://twitter.com/opensea",
+            linkedin: "https://linkedin.com/company/opensea"
+        }
+    },
+    {
+        id: 7,
+        name: "Ahmed Hassan",
+        company: "Binance",
+        email: "ahmed@binance.com",
+        avatar: "/images/avatars/7.png",
+        totalContributions: 600000,
+        hackathonsSponsored: 25,
+        successRate: 90.2,
+        categories: ["Exchange", "DeFi", "Infrastructure"],
+        location: "Dubai, UAE",
+        joinDate: "2019-05-10",
+        lastActive: "2024-01-09",
+        reputation: 4.9,
+        totalPrizeMoney: 600000,
+        favoriteCategories: ["Exchange", "DeFi", "Infrastructure"],
+        socialLinks: {
+            website: "https://binance.com",
+            twitter: "https://twitter.com/binance",
+            linkedin: "https://linkedin.com/company/binance"
+        }
+    },
+    {
+        id: 8,
+        name: "Priya Sharma",
+        company: "Coinbase",
+        email: "priya@coinbase.com",
+        avatar: "/images/avatars/8.png",
+        totalContributions: 450000,
+        hackathonsSponsored: 16,
+        successRate: 83.7,
+        categories: ["Exchange", "Infrastructure", "DeFi"],
+        location: "San Francisco, CA",
+        joinDate: "2020-12-05",
+        lastActive: "2024-01-08",
+        reputation: 4.8,
+        totalPrizeMoney: 450000,
+        favoriteCategories: ["Exchange", "Infrastructure", "DeFi"],
+        socialLinks: {
+            website: "https://coinbase.com",
+            twitter: "https://twitter.com/coinbase",
+            linkedin: "https://linkedin.com/company/coinbase"
+        }
+    }
+];

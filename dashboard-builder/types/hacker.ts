@@ -20,4 +20,5 @@ export interface Hacker {
         twitter: string;
         linkedin: string;
     };
+    walletAddress: string;
 }

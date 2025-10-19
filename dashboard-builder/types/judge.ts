@@ -19,4 +19,5 @@ export interface Judge {
         twitter: string;
         linkedin: string;
     };
+    walletAddress: string;
 }

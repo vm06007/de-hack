@@ -19,4 +19,5 @@ export interface Sponsor {
         twitter: string;
         linkedin: string;
     };
+    companyWebsite: string;
 }

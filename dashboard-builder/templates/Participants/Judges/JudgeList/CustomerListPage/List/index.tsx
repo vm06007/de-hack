@@ -103,21 +103,15 @@ const List = ({
                                                     : ""
                                             }`}
                                         >
-                                            <button className="action">
-                                                <Icon name="chat" />
-                                                Message
-                                            </button>
-                                            <Link
+                                            <a
                                                 className="action"
-                                                href="/participants/judges/judge-list/details"
+                                                href={`https://etherscan.io/address/${item.walletAddress}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
                                             >
                                                 <Icon name="arrow-up-right" />
                                                 Detail
-                                            </Link>
-                                            <button className="action">
-                                                <Icon name="star" />
-                                                Follow
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -138,7 +132,7 @@ const List = ({
                         </td>
                         <td className="max-lg:hidden">
                             <div className="flex flex-wrap gap-1">
-                                {item.expertise.slice(0, 2).map((skill, index) => (
+                                {(item.expertise || []).slice(0, 2).map((skill, index) => (
                                     <span
                                         key={index}
                                         className="px-2 py-1 text-caption-2 bg-n-3 rounded-full"
@@ -146,9 +140,9 @@ const List = ({
                                         {skill}
                                     </span>
                                 ))}
-                                {item.expertise.length > 2 && (
+                                {(item.expertise || []).length > 2 && (
                                     <span className="px-2 py-1 text-caption-2 bg-n-3 rounded-full">
-                                        +{item.expertise.length - 2}
+                                        +{(item.expertise || []).length - 2}
                                     </span>
                                 )}
                             </div>

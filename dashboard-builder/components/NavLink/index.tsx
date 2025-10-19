@@ -21,7 +21,7 @@ const NavLink = ({ value, onClick }: NavLinkProps) => {
 
         switch (value.title) {
             case "Customer list":
-                return pathname.includes("/customers/customer-list/");
+                return pathname.includes("/hackers/hacker-list/");
             case "Shop":
                 return pathname.includes("/org/");
             case "Refunds":

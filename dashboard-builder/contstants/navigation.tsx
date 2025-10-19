@@ -19,7 +19,7 @@ export const navigation = [
             },
             {
                 title: "Concluded",
-                href: "/products/released",
+                href: "/products/concluded",
             },
             {
                 title: "Scheduled",

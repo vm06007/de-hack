@@ -1,17 +1,19 @@
 "use client";
 
+import { use } from 'react';
 import { notFound } from 'next/navigation';
 import { useHackathon } from '@/src/hooks/useHackathons';
 import OrgDetailsPage from '@/templates/Organizations/OrgDetailsPage';
 
 interface PageProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 export default function HackathonPage({ params }: PageProps) {
-    const { hackathon, loading, error } = useHackathon(params.id);
+    const { id } = use(params);
+    const { hackathon, loading, error } = useHackathon(id);
 
     if (loading) {
         return (
@@ -28,5 +30,5 @@ export default function HackathonPage({ params }: PageProps) {
         notFound();
     }
 
-    return <OrgDetailsPage />;
+    return <OrgDetailsPage hackathon={hackathon} />;
 }

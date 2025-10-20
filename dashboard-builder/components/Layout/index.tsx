@@ -6,9 +6,10 @@ type LayoutProps = {
     children: React.ReactNode;
     newProduct?: boolean;
     hideSidebar?: boolean;
+    onDeploy?: () => void;
 };
 
-const Layout = ({ title, children, newProduct, hideSidebar }: LayoutProps) => {
+const Layout = ({ title, children, newProduct, hideSidebar, onDeploy }: LayoutProps) => {
     const [visibleSidebar, setVisibleSidebar] = useState(false);
 
     useEffect(() => {
@@ -58,6 +59,7 @@ const Layout = ({ title, children, newProduct, hideSidebar }: LayoutProps) => {
                 title={title}
                 newProduct={newProduct}
                 hideSidebar={hideSidebar}
+                onDeploy={onDeploy}
                 onToggleSidebar={() => {
                     setVisibleSidebar(!visibleSidebar);
                 }}

@@ -13,6 +13,7 @@ type HeaderProps = {
     title?: string;
     newProduct?: boolean;
     hideSidebar?: boolean;
+    onDeploy?: () => void;
     onToggleSidebar?: () => void;
 };
 
@@ -21,6 +22,7 @@ const Header = ({
     title,
     newProduct,
     hideSidebar,
+    onDeploy,
     onToggleSidebar,
 }: HeaderProps) => {
     const [hasOverflowHidden, setHasOverflowHidden] = useState(false);
@@ -63,7 +65,7 @@ const Header = ({
             } ${className || ""}`}
         >
             <div
-                className={`flex items-center h-22 max-md:h-18 ${
+                className={`flex items-center justify-between w-full h-22 max-md:h-18 ${
                     hideSidebar ? "center max-w-full" : "center-with-sidebar"
                 } ${
                     newProduct
@@ -90,10 +92,8 @@ const Header = ({
                     </div>
                 )}
                 <div
-                    className={`flex items-center gap-3 ${
+                    className={`flex items-center gap-3 ml-auto ${
                         newProduct ? "hidden max-md:flex" : ""
-                    } ${
-                        hideSidebar ? "grow max-lg:grow-0 max-lg:ml-auto" : ""
                     }`}
                 >
                     {!newProduct && (
@@ -120,6 +120,7 @@ const Header = ({
                         <Button
                             className="min-w-36 max-md:w-full max-md:mx-1.5"
                             isBlack
+                            onClick={onDeploy}
                         >
                             Deploy Now
                         </Button>

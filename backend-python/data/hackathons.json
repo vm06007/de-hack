@@ -238,5 +238,116 @@
     "createdBy": 1,
     "createdAt": "2024-01-01T00:00:00Z",
     "updatedAt": "2024-04-20T00:00:00Z"
+  },
+  {
+    "id": 9,
+    "title": "Cursor Test Hackathon",
+    "description": "End-to-end test create via API.",
+    "image": null,
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-25T00:00:00Z",
+    "endDate": "2025-10-27T23:59:59Z",
+    "registrationDeadline": "2025-10-24T23:59:59Z",
+    "totalPrizePool": "12345",
+    "maxParticipants": 42,
+    "currentParticipants": 0,
+    "requirements": [
+      "Typing"
+    ],
+    "tags": [
+      "Test",
+      "API"
+    ],
+    "isOnline": true,
+    "location": null,
+    "organizerId": 1,
+    "createdBy": 1,
+    "createdAt": "2025-10-20T19:53:42.980411",
+    "updatedAt": "2025-10-20T19:53:42.980442"
+  },
+  {
+    "id": 10,
+    "title": "Untitled Hackathon",
+    "description": "Created from New Hackathon page",
+    "image": null,
+    "category": null,
+    "status": "scheduled",
+    "startDate": null,
+    "endDate": null,
+    "registrationDeadline": null,
+    "totalPrizePool": null,
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "createdAt": "2025-10-20T20:29:09.790820",
+    "updatedAt": "2025-10-20T20:29:09.790919"
+  },
+  {
+    "id": 11,
+    "title": "Untitled Hackathon",
+    "description": "Created from New Hackathon page",
+    "image": null,
+    "category": null,
+    "status": "scheduled",
+    "startDate": null,
+    "endDate": null,
+    "registrationDeadline": null,
+    "totalPrizePool": null,
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "createdAt": "2025-10-20T20:38:08.503634",
+    "updatedAt": "2025-10-20T20:38:08.503639"
+  },
+  {
+    "id": 12,
+    "title": "My New Hackathon",
+    "description": "<p>Very Simple Test</p>",
+    "image": "http://localhost:5000/uploads/20251020210338990978_upload.jpeg",
+    "category": null,
+    "status": "scheduled",
+    "startDate": null,
+    "endDate": null,
+    "registrationDeadline": null,
+    "totalPrizePool": "1000",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "333.33",
+        "percentage": 33.333333333333336
+      },
+      {
+        "name": "2nd Place",
+        "amount": "333.33",
+        "percentage": 33.333333333333336
+      },
+      {
+        "name": "3rd Place",
+        "amount": "333.33",
+        "percentage": 33.333333333333336
+      }
+    ],
+    "sponsors": null,
+    "createdAt": "2025-10-20T21:03:54.308555",
+    "updatedAt": "2025-10-20T21:03:54.308576"
   }
 ]

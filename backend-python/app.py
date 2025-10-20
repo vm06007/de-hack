@@ -520,6 +520,57 @@ def get_overview():
     active_hackathons = [h for h in hackathons if h.get('status') == 'active']
     return jsonify(active_hackathons)
 
+# Serve uploaded files
+@app.route('/uploads/<path:filename>', methods=['GET'])
+def serve_upload(filename):
+    return send_from_directory(UPLOAD_DIR, filename)
+
+# Generic upload endpoint – returns a URL for the uploaded image
+@app.route('/api/uploads', methods=['POST'])
+def upload_file():
+    """Upload an image via multipart (file) or JSON (imageBase64) and return its URL."""
+    try:
+        # Multipart route
+        if 'file' in request.files:
+            image_file = request.files['file']
+            if not image_file or not image_file.filename:
+                return jsonify({"error": "No file provided"}), 400
+            if not is_allowed_image(image_file.filename):
+                return jsonify({"error": "Unsupported image type"}), 400
+            safe_name = secure_filename(image_file.filename)
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
+            filename = f"{timestamp}_{safe_name}"
+            image_file.save(os.path.join(UPLOAD_DIR, filename))
+            return jsonify({"url": f"http://localhost:5000/uploads/{filename}", "filename": filename}), 201
+
+        # JSON with base64
+        if request.is_json:
+            import base64, re
+            payload = request.get_json() or {}
+            image_b64 = payload.get('imageBase64') or payload.get('image_base64')
+            if not image_b64:
+                return jsonify({"error": "imageBase64 required"}), 400
+            data_url_match = re.match(r'^data:image/(png|jpg|jpeg|gif|webp);base64,(.+)$', image_b64, re.IGNORECASE)
+            if data_url_match:
+                ext = data_url_match.group(1).lower()
+                b64_payload = data_url_match.group(2)
+            else:
+                ext = 'png'
+                b64_payload = image_b64
+            try:
+                binary = base64.b64decode(b64_payload)
+            except Exception:
+                return jsonify({"error": "Invalid base64 image"}), 400
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
+            filename = f"{timestamp}_upload.{ext}"
+            with open(os.path.join(UPLOAD_DIR, filename), 'wb') as f:
+                f.write(binary)
+            return jsonify({"url": f"http://localhost:5000/uploads/{filename}", "filename": filename}), 201
+
+        return jsonify({"error": "Unsupported upload format"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # Charts API
 @app.route('/api/charts', methods=['GET'])
 def get_charts():

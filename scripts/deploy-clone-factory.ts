@@ -24,9 +24,9 @@ async function main() {
     console.log("Factory implementation address:", storedImplementation);
     
     if (storedImplementation.toLowerCase() === implementationAddress.toLowerCase()) {
-        console.log("✅ Implementation address set correctly in factory");
+        console.log("SUCCESS: Implementation address set correctly in factory");
     } else {
-        console.log("❌ Implementation address mismatch!");
+        console.log("ERROR: Implementation address mismatch!");
     }
 
     console.log("\nDeployment Summary:");

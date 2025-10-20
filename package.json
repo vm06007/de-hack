@@ -25,7 +25,14 @@
         "intro": "cd intro && python3 -m http.server 8080",
         "compile": "hardhat compile",
         "test": "npx hardhat test",
-        "deploy:counter": "hardhat ignition deploy ignition/modules/Counter.ts"
+        "deploy:counter": "hardhat ignition deploy ignition/modules/Counter.ts",
+        "deploy:factory": "hardhat ignition deploy ignition/modules/HackathonFactory.ts --network mainnet",
+        "deploy:factory:local": "hardhat ignition deploy ignition/modules/HackathonFactory.ts",
+        "deploy:factory:complete": "bun run scripts/deploy-factory-complete.ts mainnet",
+        "deploy:factory:simple": "bun run scripts/deploy-factory-simple.ts",
+        "deploy:factory:direct": "bun run scripts/deploy-factory-direct.ts --network mainnet",
+        "deploy:factory:mainnet": "bun run scripts/deploy-factory-mainnet.ts",
+        "verify:factory": "bun run scripts/verify-factory.ts"
     },
     "dependencies": {
         "@openzeppelin/contracts": "^5.4.0",

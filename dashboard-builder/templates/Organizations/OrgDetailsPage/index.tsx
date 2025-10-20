@@ -68,7 +68,7 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                     />
                     <Sponsors sponsors={sponsors} hackathon={hackathon} />
                     <Judges hackathon={hackathon} />
-                    <HackathonStats />
+                    <HackathonStats hackathon={hackathon} />
                 </div>
                 {/* <Comments /> */}
                 <Populars />

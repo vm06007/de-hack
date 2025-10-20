@@ -35,7 +35,7 @@ const getHighlights = (hackathon: any) => {
 
     // Add cost of participation if staking is required (without $ if currency specified)
     if (hackathon?.requireStaking && hackathon?.stakingAmount) {
-        highlights.push(`${hackathon.stakingAmount} ${hackathon.stakingCurrency} participation fee`);
+        highlights.push(`${hackathon.stakingAmount} ${hackathon.stakingCurrency} participation stake`);
     }
 
     // Add voting model

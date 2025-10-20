@@ -1,38 +1,65 @@
 import Card from "@/components/Card";
 import Icon from "@/components/Icon";
 
-const stats = [
-    {
-        id: 1,
-        title: "Participants",
-        value: "1,247",
-        icon: "users",
-        color: "text-blue-500",
-    },
-    {
-        id: 2,
-        title: "Projects",
-        value: "89",
-        icon: "code",
-        color: "text-green-500",
-    },
-    {
-        id: 3,
-        title: "Days Left",
-        value: "15",
-        icon: "calendar",
-        color: "text-orange-500",
-    },
-    {
-        id: 4,
-        title: "Applications",
-        value: "2,156",
-        icon: "file",
-        color: "text-purple-500",
-    },
-];
+type HackathonStatsProps = {
+    hackathon?: any;
+};
 
-const HackathonStats = () => {
+const HackathonStats = ({ hackathon }: HackathonStatsProps) => {
+    // Calculate days left until hackathon ends
+    const calculateDaysLeft = () => {
+        if (!hackathon?.endDate) return "0";
+        
+        const endDate = new Date(hackathon.endDate);
+        const today = new Date();
+        const diffTime = endDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        // Debug: log the calculation
+        console.log('Days left calculation:', {
+            endDate: hackathon.endDate,
+            endDateObj: endDate,
+            today: today,
+            diffTime: diffTime,
+            diffDays: diffDays
+        });
+        
+        // If hackathon has ended, show 0
+        if (diffDays <= 0) return "0";
+        
+        return diffDays.toString();
+    };
+
+    const stats = [
+        {
+            id: 1,
+            title: "Participants",
+            value: "0",
+            icon: "profile",
+            color: "text-blue-500",
+        },
+        {
+            id: 2,
+            title: "Projects",
+            value: "0",
+            icon: "cube",
+            color: "text-green-500",
+        },
+        {
+            id: 3,
+            title: "Days Left",
+            value: calculateDaysLeft(),
+            icon: "clock",
+            color: "text-orange-500",
+        },
+        {
+            id: 4,
+            title: "Applications",
+            value: "0",
+            icon: "envelope",
+            color: "text-purple-500",
+        },
+    ];
     return (
         <Card title="Hackathon Stats">
             <div className="p-5 max-lg:p-3">

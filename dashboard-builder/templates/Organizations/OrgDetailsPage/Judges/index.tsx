@@ -40,8 +40,8 @@ const judges = [
     {
         id: 6,
         name: "Vitalik Marincenko",
-        avatar: "/images/vitalik-marincenko.jpg",
-        role: "Developer",
+        avatar: "/images/vitalik-m.jpg",
+        role: "Lead",
         company: "Bitcoin.com",
     },
 ];

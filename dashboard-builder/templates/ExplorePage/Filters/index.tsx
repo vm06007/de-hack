@@ -111,7 +111,7 @@ const Filters = ({}) => {
                             Reset
                         </Button>
                         <Button className="flex-1" isBlack>
-                            Apply filter
+                            Coming Soon
                         </Button>
                     </div>
                 </div>

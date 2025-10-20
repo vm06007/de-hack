@@ -12,8 +12,8 @@ import { useOrganizations } from "@/src/hooks/useApiData";
 
 const types = [
     { id: 1, name: "All" },
-    { id: 2, name: "Online hackathon" },
-    { id: 3, name: "IRL hackathon" },
+    { id: 2, name: "New organizers" },
+    { id: 3, name: "Top organizers" },
 ];
 
 const sortOptions = [
@@ -65,7 +65,22 @@ const ShopPage = () => {
                     <Filters />
                 </div>
                 <div className="flex flex-col gap-6 max-md:gap-3">
-                    {(Array.isArray(creators) ? creators : []).map((creator) => (
+                    {(
+                        (() => {
+                            const list = Array.isArray(creators) ? creators : [];
+                            if (type.name === "New organizers") {
+                                return list.filter(
+                                    (c) => c.slug === "token2049" || c.name === "Token2049"
+                                );
+                            }
+                            if (type.name === "Top organizers") {
+                                return list.filter(
+                                    (c) => c.slug === "ethglobal" || c.name === "ETHGlobal"
+                                );
+                            }
+                            return list;
+                        })()
+                    ).map((creator) => (
                         <Creator value={creator} key={creator.id} />
                     ))}
                 </div>

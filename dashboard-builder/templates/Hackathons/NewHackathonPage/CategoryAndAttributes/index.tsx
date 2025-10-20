@@ -10,8 +10,8 @@ import Image from "@/components/Image";
 import { SelectOption } from "@/types/select";
 
 const judgingModels = [
-    { id: 1, name: "Open Voting" },
-    { id: 2, name: "Commit Reveal" },
+    { id: 1, name: "Open voting" },
+    { id: 2, name: "Commit reveal" },
     { id: 3, name: "ZK-Voting (MACI)" },
 ];
 

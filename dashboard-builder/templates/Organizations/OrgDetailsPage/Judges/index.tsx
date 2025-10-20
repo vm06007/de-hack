@@ -30,6 +30,20 @@ const judges = [
         role: "Founder",
         company: "Uniswap",
     },
+    {
+        id: 5,
+        name: "Kartik Talwar",
+        avatar: "/images/kartik.jpg",
+        role: "Founder",
+        company: "ETHGlobal",
+    },
+    {
+        id: 6,
+        name: "Vitalik Marincenko",
+        avatar: "/images/vitalik-marincenko.jpg",
+        role: "Developer",
+        company: "Bitcoin.com",
+    },
 ];
 
 type JudgesProps = {

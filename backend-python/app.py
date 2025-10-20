@@ -231,6 +231,18 @@ def create_hackathon():
         "prizeTiers": form.get('prizeTiers') if is_json else (json.loads(form.get('prizeTiers')) if form.get('prizeTiers') else []),
         "sponsors": form.get('sponsors') if is_json else (json.loads(form.get('sponsors')) if form.get('sponsors') else []),
         "logoUrl": form.get('logoUrl'),
+        # Sponsor settings
+        "allowSponsors": parse_bool(form.get('allowSponsors')),
+        "sponsorMinContribution": form.get('sponsorMinContribution'),
+        "sponsorCurrency": form.get('sponsorCurrency'),
+        # Staking settings
+        "requireStaking": parse_bool(form.get('requireStaking')),
+        "stakingAmount": form.get('stakingAmount'),
+        "stakingCurrency": form.get('stakingCurrency'),
+        # Judge settings
+        "selectedJudges": form.get('selectedJudges') if is_json else (json.loads(form.get('selectedJudges')) if form.get('selectedJudges') else []),
+        "judgingModel": form.get('judgingModel'),
+        "allowAIDelegation": parse_bool(form.get('allowAIDelegation')),
         "createdAt": datetime.now().isoformat(),
         "updatedAt": datetime.now().isoformat()
     }

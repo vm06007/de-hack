@@ -30,8 +30,9 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
     const subheader = hackathon?.startDate && hackathon?.endDate
         ? `${formatDate(hackathon.startDate)} - ${formatDate(hackathon.endDate)}`
         : "October 1st - November 1st, 2026";
-    const logo = hackathon?.logoUrl || "/images/html.svg";
-    const coverImage = hackathon?.image;
+    // Use default images if no valid URLs are provided
+    const logo = hackathon?.logoUrl || "/images/logos/ethglobal.png";
+    const coverImage = hackathon?.image || "/images/hackathons/1.jpg";
     const prizePool = hackathon?.totalPrizePool ? Number(hackathon.totalPrizePool) : 500000;
     const sponsors = hackathon?.sponsors || undefined;
     return (
@@ -59,7 +60,12 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                 </div>
                 <Description description={hackathon?.description} title={hackathon?.title} hackathon={hackathon} />
                 <div className="grid grid-cols-4 gap-6 max-2xl:grid-cols-2 max-lg:grid-cols-1">
-                    <PrizePool totalPrize={prizePool} />
+                    <PrizePool 
+                        totalPrize={prizePool} 
+                        prizeTiers={hackathon?.prizeTiers}
+                        sponsors={sponsors}
+                        hackathon={hackathon}
+                    />
                     <Sponsors sponsors={sponsors} hackathon={hackathon} />
                     <Judges hackathon={hackathon} />
                     <HackathonStats />

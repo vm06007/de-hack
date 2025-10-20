@@ -3,7 +3,7 @@ import Link from "next/link";
 import Button from "@/components/Button";
 import Image from "@/components/Image";
 
-type Props = { 
+type Props = {
     description?: string;
     title?: string;
     hackathon?: any;
@@ -12,20 +12,30 @@ type Props = {
 const getHighlights = (hackathon: any) => {
     const highlights = [
         "Global Online Hackathon",
-        "30-day development period",
-        `$${hackathon?.totalPrizePool ? Number(hackathon.totalPrizePool).toLocaleString() : '500K+'}+ total prize pool`,
-        "Expert judges panel",
-        "Networking opportunities",
     ];
 
-    // Add cost of participation if staking is required
-    if (hackathon?.requireStaking && hackathon?.stakingAmount) {
-        highlights.push(`$${hackathon.stakingAmount} ${hackathon.stakingCurrency} participation fee`);
+    // Calculate development period from start and end dates
+    if (hackathon?.startDate && hackathon?.endDate) {
+        const startDate = new Date(hackathon.startDate);
+        const endDate = new Date(hackathon.endDate);
+        const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        highlights.push(`${diffDays}-day development period`);
+    } else {
+        highlights.push("30-day development period");
     }
 
-    // Add minimum sponsor contribution if sponsors are allowed
-    if (hackathon?.allowSponsors && hackathon?.sponsorMinContribution) {
-        highlights.push(`$${hackathon.sponsorMinContribution} ${hackathon.sponsorCurrency} minimum sponsor contribution`);
+    // Format prize pool without $ if currency is specified
+    if (hackathon?.totalPrizePool) {
+        const prizeAmount = Number(hackathon.totalPrizePool).toLocaleString();
+        highlights.push(`${prizeAmount}+ total prize pool`);
+    } else {
+        highlights.push("$500K+ total prize pool");
+    }
+
+    // Add cost of participation if staking is required (without $ if currency specified)
+    if (hackathon?.requireStaking && hackathon?.stakingAmount) {
+        highlights.push(`${hackathon.stakingAmount} ${hackathon.stakingCurrency} participation fee`);
     }
 
     // Add voting model
@@ -48,7 +58,7 @@ const Description = ({ description, title, hackathon }: Props) => {
             <div className="mb-8 text-h4 max-md:mb-6 max-md:text-h5">
                 Overview
             </div>
-            <div 
+            <div
                 className="[&_p,&_ul]:mb-7 [&_ul]:list-disc [&_ul]:pl-5 [&_a]:underline [&_a]:hover:no-underline [&_p:last-child,&_ul:last-child]:mb-0"
                 dangerouslySetInnerHTML={{ __html: content }}
             />
@@ -80,7 +90,10 @@ const Description = ({ description, title, hackathon }: Props) => {
                     </Link>
                     <Link href="/applications/sponsor">
                         <Button className="w-full" isStroke>
-                            Sponsor Application
+                            {hackathon?.allowSponsors && hackathon?.sponsorMinContribution
+                                ? `Sponsor Application (${hackathon.sponsorMinContribution} ${hackathon.sponsorCurrency} Min)`
+                                : "Sponsor Application"
+                            }
                         </Button>
                     </Link>
                 </div>
@@ -97,8 +110,8 @@ const Description = ({ description, title, hackathon }: Props) => {
                         />
                     </div>
                     <div className="grow pl-6">
-                        <div className="text-h4 max-lg:text-h5">ETHGlobal</div>
-                        <div className="text-t-secondary">Kartik Talwar (0x123...321)</div>
+                        <div className="text-h4 max-lg:text-h5">Organization</div>
+                        <div className="text-t-secondary">ETHGlobal (0x123...321)</div>
                     </div>
                 </div>
                 <div className="flex mt-8 border-t border-s-stroke2">

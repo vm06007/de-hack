@@ -17,13 +17,35 @@ const currencies = [
     { id: 8, name: "BNB" },
 ];
 
-const Price = () => {
-    const [allowSponsors, setAllowSponsors] = useState(false);
-    const [sponsorCurrency, setSponsorCurrency] = useState(currencies[0]);
-    const [minSponsorContribution, setMinSponsorContribution] = useState("");
-    const [requireStaking, setRequireStaking] = useState(false);
-    const [stakingCurrency, setStakingCurrency] = useState(currencies[0]);
-    const [stakingAmount, setStakingAmount] = useState("");
+type PriceProps = {
+    allowSponsors: boolean;
+    setAllowSponsors: (value: boolean) => void;
+    sponsorCurrency: any;
+    setSponsorCurrency: (value: any) => void;
+    minSponsorContribution: string;
+    setMinSponsorContribution: (value: string) => void;
+    requireStaking: boolean;
+    setRequireStaking: (value: boolean) => void;
+    stakingCurrency: any;
+    setStakingCurrency: (value: any) => void;
+    stakingAmount: string;
+    setStakingAmount: (value: string) => void;
+};
+
+const Price = ({
+    allowSponsors,
+    setAllowSponsors,
+    sponsorCurrency,
+    setSponsorCurrency,
+    minSponsorContribution,
+    setMinSponsorContribution,
+    requireStaking,
+    setRequireStaking,
+    stakingCurrency,
+    setStakingCurrency,
+    stakingAmount,
+    setStakingAmount,
+}: PriceProps) => {
 
     return (
         <Card classHead="!pl-3" title="Hackathon Settings">

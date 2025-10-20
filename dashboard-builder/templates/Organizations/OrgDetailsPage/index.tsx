@@ -15,8 +15,20 @@ type OrgDetailsPageProps = { hackathon?: any };
 
 const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
     const title = hackathon?.title || "ETHGlobal Online 2026";
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
+    // Debug: log the dates to see what we're getting
+    console.log('Hackathon dates:', { startDate: hackathon?.startDate, endDate: hackathon?.endDate });
+
     const subheader = hackathon?.startDate && hackathon?.endDate
-        ? `${new Date(hackathon.startDate).toLocaleDateString()} - ${new Date(hackathon.endDate).toLocaleDateString()}`
+        ? `${formatDate(hackathon.startDate)} - ${formatDate(hackathon.endDate)}`
         : "October 1st - November 1st, 2026";
     const logo = hackathon?.logoUrl || "/images/html.svg";
     const coverImage = hackathon?.image;
@@ -30,12 +42,12 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                         <div className="grow">
                             <div className="-mt-1.5 text-h3 max-lg:mt-0 max-lg:text-h4 max-md:text-h5">{title}</div>
                             <div className="flex items-center gap-3 mt-2.5">
-                                <div className="flex justify-center items-center shrink-0 w-8 h-8 bg-b-dark1 rounded-full">
+                                <div className="">
                                     <Image
-                                        className="size-4 opacity-100"
+                                        className="w-full h-full object-contain opacity-100"
                                         src={logo}
-                                        width={16}
-                                        height={16}
+                                        width={40}
+                                        height={40}
                                         alt="logo"
                                     />
                                 </div>
@@ -45,11 +57,11 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                     </div>
                     <Gallery coverUrl={coverImage} />
                 </div>
-                <Description />
+                <Description description={hackathon?.description} title={hackathon?.title} hackathon={hackathon} />
                 <div className="grid grid-cols-4 gap-6 max-2xl:grid-cols-2 max-lg:grid-cols-1">
                     <PrizePool totalPrize={prizePool} />
-                    <Sponsors sponsors={sponsors} />
-                    <Judges />
+                    <Sponsors sponsors={sponsors} hackathon={hackathon} />
+                    <Judges hackathon={hackathon} />
                     <HackathonStats />
                 </div>
                 {/* <Comments /> */}

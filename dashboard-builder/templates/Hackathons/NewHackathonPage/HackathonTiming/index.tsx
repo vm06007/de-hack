@@ -13,11 +13,23 @@ const durationOptions = [
     { id: 6, name: "1 month" },
 ];
 
-const HackathonTiming = () => {
-    const [startDate, setStartDate] = useState(new Date());
-    const [startTime, setStartTime] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
-    const [endTime, setEndTime] = useState(new Date());
+type Props = {
+    startDate: Date;
+    setStartDate: (date: Date) => void;
+    startTime: Date;
+    setStartTime: (date: Date) => void;
+    endDate: Date;
+    setEndDate: (date: Date) => void;
+    endTime: Date;
+    setEndTime: (date: Date) => void;
+};
+
+const HackathonTiming = ({ 
+    startDate, setStartDate, 
+    startTime, setStartTime, 
+    endDate, setEndDate, 
+    endTime, setEndTime 
+}: Props) => {
     const [duration, setDuration] = useState(durationOptions[1]); // Default to 48 hours
     const [timezone, setTimezone] = useState("UTC");
 

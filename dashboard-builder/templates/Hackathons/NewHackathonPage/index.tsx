@@ -21,6 +21,26 @@ const NewHackathonPage = () => {
     const [logoUrl, setLogoUrl] = useState<string | undefined>(undefined);
     const [coverUrl, setCoverUrl] = useState<string | undefined>(undefined);
     const [prizeTiers, setPrizeTiers] = useState<any[]>([]);
+    const now = new Date();
+    const oneWeekFromNow = new Date();
+    oneWeekFromNow.setDate(now.getDate() + 7);
+
+    const [startDate, setStartDate] = useState(now);
+    const [startTime, setStartTime] = useState(now);
+    const [endDate, setEndDate] = useState(oneWeekFromNow);
+    const [endTime, setEndTime] = useState(oneWeekFromNow);
+
+    // Hackathon Settings
+    const [allowSponsors, setAllowSponsors] = useState(false);
+    const [sponsorMinContribution, setSponsorMinContribution] = useState("500");
+    const [sponsorCurrency, setSponsorCurrency] = useState({ id: 2, name: "USDC" });
+    const [requireStaking, setRequireStaking] = useState(false);
+    const [stakingAmount, setStakingAmount] = useState("0.001");
+    const [stakingCurrency, setStakingCurrency] = useState({ id: 1, name: "ETH" });
+    const [selectedJudges, setSelectedJudges] = useState<number[]>([]);
+    const [allowAIDelegation, setAllowAIDelegation] = useState(false);
+    const [judgingModel, setJudgingModel] = useState({ id: 1, name: "Open Voting" });
+
     const router = useRouter();
 
     const handleDeploy = async () => {
@@ -40,6 +60,21 @@ const NewHackathonPage = () => {
                     image: coverUrl,
                     // Send logo separately if we want to store it
                     logoUrl: logoUrl,
+                    // Send dates
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
+                    // Sponsor settings
+                    allowSponsors,
+                    sponsorMinContribution,
+                    sponsorCurrency: sponsorCurrency.name,
+                    // Staking settings
+                    requireStaking,
+                    stakingAmount,
+                    stakingCurrency: stakingCurrency.name,
+                    // Judge settings
+                    selectedJudges,
+                    judgingModel: judgingModel.name,
+                    allowAIDelegation,
                 }),
             });
             if (!res.ok) throw new Error(`Create failed: ${res.status}`);
@@ -60,15 +95,44 @@ const NewHackathonPage = () => {
             <div className="flex max-lg:block">
                 <div className="w-[calc(100%-33.75rem)] pr-3 max-4xl:w-[calc(100%-27.5rem)] max-2xl:w-[calc(100%-23rem)] max-lg:w-full max-lg:pr-0">
                     <HackathonDetails title={title} setTitle={setTitle} description={description} setDescription={setDescription} />
-                    <HackathonTiming />
+                    <HackathonTiming
+                        startDate={startDate}
+                        setStartDate={setStartDate}
+                        startTime={startTime}
+                        setStartTime={setStartTime}
+                        endDate={endDate}
+                        setEndDate={setEndDate}
+                        endTime={endTime}
+                        setEndTime={setEndTime}
+                    />
                     <Images setLogoUrl={setLogoUrl} setCoverUrl={setCoverUrl} />
-                    <CategoryAndAttributes />
+                    <CategoryAndAttributes
+                        judgingModel={judgingModel}
+                        setJudgingModel={setJudgingModel}
+                        selectedJudges={selectedJudges}
+                        setSelectedJudges={setSelectedJudges}
+                        allowAIAgentDelegations={allowAIDelegation}
+                        setAllowAIAgentDelegations={setAllowAIDelegation}
+                    />
                 </div>
                 <div className="w-[33.75rem] max-4xl:w-[27.5rem] max-2xl:w-[23rem] max-lg:w-full max-lg:mt-3">
                     {/*<CoverImage />*/}
                     {/*<UploadProductFiles />*/}
                     <Highlights totalPrize={totalPrize} setTotalPrize={setTotalPrize} onTiersChange={setPrizeTiers} />
-                    <Price />
+                    <Price
+                        allowSponsors={allowSponsors}
+                        setAllowSponsors={setAllowSponsors}
+                        sponsorCurrency={sponsorCurrency}
+                        setSponsorCurrency={setSponsorCurrency}
+                        minSponsorContribution={sponsorMinContribution}
+                        setMinSponsorContribution={setSponsorMinContribution}
+                        requireStaking={requireStaking}
+                        setRequireStaking={setRequireStaking}
+                        stakingCurrency={stakingCurrency}
+                        setStakingCurrency={setStakingCurrency}
+                        stakingAmount={stakingAmount}
+                        setStakingAmount={setStakingAmount}
+                    />
                     <CTA />
                     <Demos />
                 </div>

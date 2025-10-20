@@ -183,7 +183,7 @@ const Highlights = ({ totalPrize, setTotalPrize, onTiersChange }: HighlightsProp
                 <div className="flex gap-3 mb-4">
                     <div className="flex-1">
                         <Select
-                            label="Prize Pool Distribution"
+                            label="Pool Distribution"
                             tooltip="Select how to distribute the prize pool"
                             placeholder="Select distribution type"
                             value={distributionType}

@@ -1,4 +1,5 @@
 import { useEditor, EditorContent } from "@tiptap/react";
+import { useEffect } from "react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
@@ -6,6 +7,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { EmojiClickData } from "emoji-picker-react";
 import Emoji from "@/components/Emoji";
 import Tooltip from "@/components/Tooltip";
+import Image from "next/image";
 
 type EditorProps = {
     className?: string;
@@ -13,6 +15,7 @@ type EditorProps = {
     onChange?: (content: string) => void;
     label?: string;
     tooltip?: string;
+    onAIGenerate?: () => void;
 };
 
 const svg = (path: string) => (
@@ -33,6 +36,7 @@ const Editor = ({
     onChange,
     label,
     tooltip,
+    onAIGenerate,
 }: EditorProps) => {
     const editor = useEditor({
         extensions: [
@@ -65,6 +69,13 @@ const Editor = ({
     const onEmojiClick = (emojiData: EmojiClickData) => {
         editor?.chain().focus().insertContent(emojiData.emoji).run();
     };
+
+    // Update editor content when content prop changes
+    useEffect(() => {
+        if (editor && content !== editor.getHTML()) {
+            editor.commands.setContent(content);
+        }
+    }, [content, editor]);
 
     const styleButton =
         "flex items-center justify-center w-10 h-10 rounded-xl fill-t-secondary transition-colors hover:bg-shade-08/80 hover:fill-t-primary dark:hover:bg-shade-05/50";
@@ -168,22 +179,22 @@ const Editor = ({
                             "M20.25 18.5a.75.75 0 1 1 0 1.5H3.75a.75.75 0 1 1 0-1.5h16.5zm-4-7.25a.75.75 0 1 1 0 1.5h-8.5a.75.75 0 1 1 0-1.5h8.5zm4-7.25a.75.75 0 1 1 0 1.5H3.75a.75.75 0 1 1 0-1.5h16.5z"
                         )}
                     </button>
-                    <button
-                        className={`${styleButton} ml-auto rotate-180`}
-                        onClick={() => editor?.chain().focus().undo().run()}
-                    >
-                        {svg(
-                            "M14.94 7.47l2.586 2.586a2.75 2.75 0 0 1 0 3.889L14.94 16.53a.75.75 0 1 1-1.061-1.061l2.586-2.586a1.26 1.26 0 0 0 .115-.133L6.41 12.75a.75.75 0 1 1 0-1.5h10.172a1.26 1.26 0 0 0-.116-.134L13.88 8.53A.75.75 0 0 1 14.94 7.47z"
-                        )}
-                    </button>
-                    <button
-                        className={`${styleButton}`}
-                        onClick={() => editor?.chain().focus().redo().run()}
-                    >
-                        {svg(
-                            "M14.94 7.47l2.586 2.586a2.75 2.75 0 0 1 0 3.889L14.94 16.53a.75.75 0 1 1-1.061-1.061l2.586-2.586a1.26 1.26 0 0 0 .115-.133L6.41 12.75a.75.75 0 1 1 0-1.5h10.172a1.26 1.26 0 0 0-.116-.134L13.88 8.53A.75.75 0 0 1 14.94 7.47z"
-                        )}
-                    </button>
+                    {onAIGenerate && (
+                        <button
+                            className={`${styleButton} ml-auto`}
+                            onClick={onAIGenerate}
+                            title="Generate AI description"
+                        >
+                            <Image
+                                src="/images/ai.png"
+                                alt="AI Generate"
+                                width={24}
+                                height={24}
+                                className="w-6 h-6"
+                                style={{ filter: 'invert(1)' }}
+                            />
+                        </button>
+                    )}
                 </div>
                 <EditorContent className="min-h-28" editor={editor} />
             </div>

@@ -28,9 +28,12 @@ const defaultSponsors = [
     },
 ];
 
-type SponsorsProps = { sponsors?: { id: number; name: string; logo: string; tier: string }[] };
+type SponsorsProps = { 
+    sponsors?: { id: number; name: string; logo: string; tier: string }[];
+    hackathon?: any;
+};
 
-const Sponsors = ({ sponsors }: SponsorsProps) => {
+const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
     const list = sponsors && sponsors.length > 0 ? sponsors : defaultSponsors;
     return (
         <Card title="Sponsors">
@@ -64,9 +67,15 @@ const Sponsors = ({ sponsors }: SponsorsProps) => {
                 </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-s-stroke2 text-center">
-                    <div className="text-caption text-t-secondary">
-                        Want to become a sponsor?
-                    </div>
+                    {hackathon?.allowSponsors && hackathon?.sponsorMinContribution ? (
+                        <div className="text-caption text-t-secondary">
+                            Minimum contribution: ${hackathon.sponsorMinContribution} {hackathon.sponsorCurrency}
+                        </div>
+                    ) : (
+                        <div className="text-caption text-t-secondary">
+                            Want to become a sponsor?
+                        </div>
+                    )}
                 </div>
             </div>
         </Card>

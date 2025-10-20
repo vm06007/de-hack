@@ -87,12 +87,6 @@ const ProfileInformation = ({}) => {
                     onChange={setLocation}
                     options={locations}
                 />
-                <Editor
-                    label="Bio"
-                    tooltip="Maximum 100 characters. No HTML or emoji allowed"
-                    content={content}
-                    onChange={setContent}
-                />
             </div>
         </Card>
     );

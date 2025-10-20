@@ -35,7 +35,7 @@ contract HackathonFactory is JudgeCouncil {
 
     event HackathonCreated(
         address indexed hackathonAddress,
-        string name,
+        uint256 hackathonId,
         address indexed organizer,
         uint256 prizePool,
         VotingSystemType votingSystem,
@@ -85,49 +85,33 @@ contract HackathonFactory is JudgeCouncil {
     /**
      * @notice Creates a new hackathon contract
      * @dev Deploys a new Hackathon contract with the specified parameters and tracks it
-     * @param _name Name of the hackathon
-     * @param _description Description of the hackathon
+     * @param _hackathonId Unique identifier for the hackathon
      * @param _startTime Start time in Unix timestamp
      * @param _endTime End time in Unix timestamp
      * @param _minimumSponsorContribution Minimum contribution required to become a sponsor
-     * @param _selectedJudges Array of judge addresses to assign to this hackathon
-     * @param _judgeRewardPercentage Judge reward percentage (0-500, representing 0.00% to 5.00%)
      * @param _stakeAmount Amount participants must stake when joining
      * @param _prizeDistribution Array defining how the prize pool is distributed among winners
-     * @param _prizeClaimCooldown Cooldown period before winners can claim prizes
-     * @param _judgingDuration Duration of judging phase (2 hours to 2 days)
+     * @param _selectedJudges Array of judge addresses to assign to this hackathon
      * @param _votingConfig Voting system configuration
      * @return hackathonAddress Address of the newly created hackathon
      */
     function createHackathon(
-        string memory _name,
-        string memory _description,
+        uint256 _hackathonId,
         uint256 _startTime,
         uint256 _endTime,
         uint256 _minimumSponsorContribution,
-        address[] memory _selectedJudges,
-        uint256 _judgeRewardPercentage,
         uint256 _stakeAmount,
         uint256[] memory _prizeDistribution,
-        uint256 _prizeClaimCooldown,
-        uint256 _judgingDuration,
+        address[] memory _selectedJudges,
         VotingConfig memory _votingConfig
     )
         external
         payable
         returns (address hackathonAddress)
     {
-        // Validate cooldown period
-        require(
-            _prizeClaimCooldown <= MAX_PRIZE_CLAIM_COOLDOWN,
-            "Prize claim cooldown cannot exceed 7 days"
-        );
-
-        // Validate judging duration
-        require(
-            _judgingDuration >= 2 hours && _judgingDuration <= 2 days,
-            "Judging duration must be between 2 hours and 2 days"
-        );
+        // Basic validation
+        require(_startTime > block.timestamp, "Start time must be in the future");
+        require(_endTime > _startTime, "End time must be after start time");
 
         require(
             msg.value > 0,
@@ -143,47 +127,35 @@ contract HackathonFactory is JudgeCouncil {
         }
 
         // Deploy voting system
-        _deployVotingSystem(
-            _votingConfig,
-            _selectedJudges
-        );
+        _deployVotingSystem(_votingConfig, _selectedJudges);
 
         // Clone the implementation contract
-        hackathonAddress = Clones.clone(
-            implementation
-        );
+        hackathonAddress = Clones.clone(implementation);
 
         // Initialize the cloned contract
         Hackathon(hackathonAddress).initialize{
             value: msg.value
         }(
             msg.sender, // organizer
-            _name,
-            _description,
+            _hackathonId,
             _startTime,
             _endTime,
             _minimumSponsorContribution,
-            _judgeRewardPercentage,
             _stakeAmount,
             _prizeDistribution,
-            _prizeClaimCooldown,
-            _judgingDuration,
             address(this), // factory
             _selectedJudges
         );
 
         // Store the hackathon address
-        uint256 organizerIndex = organizerHackathonCount[
-            msg.sender
-        ];
-
+        uint256 organizerIndex = organizerHackathonCount[msg.sender];
         totalHackathons++;
         organizerHackathonCount[msg.sender]++;
         organizerHackathons[msg.sender][organizerIndex] = hackathonAddress;
 
         emit HackathonCreated(
             hackathonAddress,
-            _name,
+            _hackathonId,
             msg.sender,
             msg.value,
             _votingConfig.systemType,
@@ -227,15 +199,10 @@ contract HackathonFactory is JudgeCouncil {
         // Wrap with quadratic voting if enabled
         if (_votingConfig.useQuadraticVoting) {
             // Clone QVWrapper for gas efficiency
-            address qvWrapper = Clones.clone(
-                qvWrapperImplementation
-            );
+            address qvWrapper = Clones.clone(qvWrapperImplementation);
 
             // Initialize the QVWrapper
-            QVWrapper(qvWrapper).initialize(
-                votingContract,
-                _votingConfig.votingPowerPerJudge
-            );
+            QVWrapper(qvWrapper).initialize(votingContract, _votingConfig.votingPowerPerJudge);
 
             votingContract = qvWrapper;
         }

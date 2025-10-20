@@ -22,8 +22,7 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         bool isActive;
     }
 
-    string public name;
-    string public description;
+    uint256 public hackathonId;
     uint256 public startTime;
     uint256 public endTime;
     uint256 public prizePool;
@@ -120,8 +119,7 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
      * @notice This function is called by the implementation contract during initialization
      */
     function _initializeHackathon(
-        string memory _name,
-        string memory _description,
+        uint256 _hackathonId,
         uint256 _startTime,
         uint256 _endTime,
         uint256[] memory _prizeDistribution,
@@ -166,8 +164,7 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         }
 
         // Initialize all hackathon state variables
-        name = _name;
-        description = _description;
+        hackathonId = _hackathonId;
         startTime = _startTime;
         endTime = _endTime;
         isActive = true;
@@ -214,16 +211,12 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
      */
     function initialize(
         address _organizer,
-        string memory _name,
-        string memory _description,
+        uint256 _hackathonId,
         uint256 _startTime,
         uint256 _endTime,
         uint256 _minimumSponsorContribution,
-        uint256 _judgeRewardPercentage,
         uint256 _stakeAmount,
         uint256[] memory _prizeDistribution,
-        uint256 _prizeClaimCooldown,
-        uint256 _judgingDuration,
         address _factory,
         address[] memory _selectedJudges
     )
@@ -246,13 +239,15 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         organizer = _organizer;
         factory = _factory;
 
-        // Set other parameters
+        // Set parameters
         minimumSponsorContribution = _minimumSponsorContribution;
+        uint256 _prizeClaimCooldown = 1 days; // Default prize claim cooldown
+        uint256 _judgingDuration = 1 days; // Default judging duration
+        uint256 _judgeRewardPercentage = 50; // Default 0.5% judge reward
 
         // Initialize the hackathon with the provided parameters
         _initializeHackathon(
-            _name,
-            _description,
+            _hackathonId,
             _startTime,
             _endTime,
             _prizeDistribution,
@@ -432,8 +427,7 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         external
         view
         returns (
-            string memory _name,
-            string memory _description,
+            uint256 _hackathonId,
             uint256 _startTime,
             uint256 _endTime,
             uint256 _prizePool,
@@ -443,8 +437,7 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         )
     {
         return (
-            name,
-            description,
+            hackathonId,
             startTime,
             endTime,
             prizePool,

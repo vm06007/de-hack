@@ -32,9 +32,10 @@ const currencies = [
 type HighlightsProps = {
     totalPrize: string;
     setTotalPrize: (value: string) => void;
+    onTiersChange?: (tiers: { name: string; amount: string; percentage: number }[]) => void;
 };
 
-const Highlights = ({ totalPrize, setTotalPrize }: HighlightsProps) => {
+const Highlights = ({ totalPrize, setTotalPrize, onTiersChange }: HighlightsProps) => {
     const [distributions, setDistributions] = useState<PrizeDistribution[]>([
         { id: 1, name: "1st Place", amount: "", percentage: 50 },
         { id: 2, name: "2nd Place", amount: "", percentage: 30 },
@@ -136,6 +137,10 @@ const Highlights = ({ totalPrize, setTotalPrize }: HighlightsProps) => {
         calculateAmounts();
     }, [totalPrize, distributionType, distributions.length]);
 
+    useEffect(() => {
+        onTiersChange && onTiersChange(distributions.map(d => ({ name: d.name, amount: d.amount, percentage: d.percentage })));
+    }, [distributions, onTiersChange]);
+
     const totalAmount = distributions.reduce((sum, d) => sum + parseFloat(d.amount || "0"), 0);
     const isTotalMatching = Math.abs(totalAmount - parseFloat(totalPrize || "0")) < 0.01;
 
@@ -175,22 +180,33 @@ const Highlights = ({ totalPrize, setTotalPrize }: HighlightsProps) => {
                     </div>
                 </div>
 
-                <div className="mb-4">
-                    <Select
-                        label="Prize Pool Distribution"
-                        tooltip="Select how to distribute the prize pool"
-                        placeholder="Select distribution type"
-                        value={distributionType}
-                        onChange={setDistributionType}
-                        options={distributionTypes}
-                    />
+                <div className="flex gap-3 mb-4">
+                    <div className="flex-1">
+                        <Select
+                            label="Prize Pool Distribution"
+                            tooltip="Select how to distribute the prize pool"
+                            placeholder="Select distribution type"
+                            value={distributionType}
+                            onChange={setDistributionType}
+                            options={distributionTypes}
+                        />
+                    </div>
+                    <div className="flex-1 flex items-end">
+                        <Button
+                            className="w-full h-13 flex items-center justify-center"
+                            isStroke
+                            onClick={addDistribution}
+                        >
+                            <Icon name="plus" /> Add Prize
+                        </Button>
+                    </div>
                 </div>
 
 
                 <div className="space-y-3">
                     {distributions.map((distribution, index) => (
                         <div key={distribution.id} className="flex items-end gap-3">
-                            <div className="flex-1">
+                            <div className="w-2/5">
                                 <Field
                                     label={distribution.name}
                                     placeholder="Enter amount"
@@ -199,17 +215,17 @@ const Highlights = ({ totalPrize, setTotalPrize }: HighlightsProps) => {
                                     disabled={!isCustomMode}
                                 />
                             </div>
-                            <div className="w-20">
+                            <div className="w-2/5">
                                 <Field
-                                    label="%"
+                                    label="Percent %"
                                     placeholder="0"
-                                    value={distribution.percentage.toString()}
+                                    value={distribution.percentage.toFixed(2)}
                                     onChange={(e) => updateDistribution(distribution.id, "percentage", parseFloat(e.target.value) || 0)}
                                     disabled={!isCustomMode}
                                 />
                             </div>
                             <Button
-                                className="w-10 h-10 flex items-center justify-center mb-1"
+                                className="w-1/5 h-13 flex items-center justify-center mb-1"
                                 isStroke
                                 onClick={() => removeDistribution(distribution.id)}
                                 disabled={distributions.length <= 1}
@@ -228,13 +244,7 @@ const Highlights = ({ totalPrize, setTotalPrize }: HighlightsProps) => {
                                 {isTotalMatching ? " ✓ Balanced" : " ✗ Imbalanced"}
                             </span>
                         </div>
-                        <Button
-                            className="flex items-center gap-2"
-                            isStroke
-                            onClick={addDistribution}
-                        >
-                            <Icon name="plus" />
-                        </Button>
+                        {/* plus button moved to Prize Pool Distribution row */}
                     </div>
                 </div>
             </div>

@@ -7,7 +7,8 @@ Simple JSON-based API server
 import json
 import os
 from datetime import datetime
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
+from werkzeug.utils import secure_filename
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -18,6 +19,19 @@ DATA_DIR = "data"
 
 # Ensure data directory exists
 os.makedirs(DATA_DIR, exist_ok=True)
+
+# Uploads directory
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# Allowed image extensions
+ALLOWED_IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+
+def is_allowed_image(filename):
+    if not filename or "." not in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1].lower()
+    return ext in ALLOWED_IMAGE_EXTENSIONS
 
 def load_data(filename):
     """Load data from JSON file"""

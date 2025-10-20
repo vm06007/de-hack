@@ -3,9 +3,14 @@ import Card from "@/components/Card";
 import Field from "@/components/Field";
 import Editor from "@/components/Editor";
 
-const HackathonDetails = () => {
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+type Props = {
+    title: string;
+    setTitle: (v: string) => void;
+    description: string;
+    setDescription: (v: string) => void;
+};
+
+const HackathonDetails = ({ title, setTitle, description, setDescription }: Props) => {
 
     return (
         <Card title="Hackathon details">
@@ -21,8 +26,8 @@ const HackathonDetails = () => {
                 <Editor
                     label="Description"
                     tooltip="Describe the hackathon theme, goals, and what participants should build"
-                    content={content}
-                    onChange={setContent}
+                    content={description}
+                    onChange={setDescription}
                 />
             </div>
         </Card>

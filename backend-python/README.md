@@ -26,6 +26,72 @@ cd backend-python
 ### Hackathons
 - `GET /api/hackathons` - List hackathons with filters
 - `GET /api/hackathons/:id` - Get specific hackathon
+- `POST /api/hackathons` - Create a new hackathon (JSON or multipart with image)
+
+#### Create Hackathon
+
+You can create a hackathon using either JSON or `multipart/form-data` (to upload an image). Uploaded images are saved to `uploads/` and can be accessed at `/uploads/<filename>`.
+
+Minimal required fields: `title`, `description`.
+
+Example (JSON):
+
+```bash
+curl -X POST http://localhost:5000/api/hackathons \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "title": "My New Hackathon",
+        "description": "Build the future of Web3.",
+        "status": "scheduled",
+        "isOnline": true,
+        "tags": ["Web3", "Solidity"],
+        "requirements": ["EVM", "Frontend"],
+        "startDate": "2025-06-01T00:00:00Z",
+        "endDate": "2025-06-07T23:59:59Z",
+        "registrationDeadline": "2025-05-31T23:59:59Z",
+        "totalPrizePool": "10000",
+        "maxParticipants": 200,
+        "organizerId": 1,
+        "createdBy": 1,
+        "imageBase64": "data:image/png;base64,iVBORw0KGgo..."  # optional
+    }'
+```
+
+Example (multipart with image):
+
+```bash
+curl -X POST http://localhost:5000/api/hackathons \
+    -H 'Accept: application/json' \
+    -F title='My New Hackathon' \
+    -F description='Build the future of Web3.' \
+    -F status='scheduled' \
+    -F isOnline='true' \
+    -F tags='Web3,Solidity' \
+    -F requirements='EVM,Frontend' \
+    -F image=@./path/to/banner.png
+```
+
+Response:
+
+```json
+{
+    "id": 9,
+    "title": "My New Hackathon",
+    "description": "Build the future of Web3.",
+    "image": "/uploads/20250101T000000_banner.png",
+    "status": "scheduled",
+    "isOnline": true,
+    "createdAt": "2025-01-01T00:00:00Z",
+    "updatedAt": "2025-01-01T00:00:00Z",
+    "currentParticipants": 0,
+    "tags": ["Web3", "Solidity"],
+    "requirements": ["EVM", "Frontend"]
+}
+```
+
+The response includes a `Location` header pointing to `/api/hackathons/:id` to facilitate frontend redirects.
+
+Allowed image types: `png`, `jpg`, `jpeg`, `gif`, `webp`.
 
 ### Users  
 - `GET /api/users` - List users with filters

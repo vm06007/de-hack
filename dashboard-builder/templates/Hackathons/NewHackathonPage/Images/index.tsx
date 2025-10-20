@@ -2,16 +2,59 @@ import { useState } from "react";
 import Card from "@/components/Card";
 import FieldImage from "@/components/FieldImage";
 
-const Images = () => {
+type Props = {
+    setLogoUrl: (s: string | undefined) => void;
+    setCoverUrl: (s: string | undefined) => void;
+};
+
+const Images = ({ setLogoUrl, setCoverUrl }: Props) => {
     const [logoImage, setLogoImage] = useState<File | null>(null);
     const [coverImage, setCoverImage] = useState<File | null>(null);
 
-    const handleChangeLogo = (file: File) => {
-        setLogoImage(file);
+    const fileToDataUrl = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result));
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
     };
 
-    const handleChangeCover = (file: File) => {
+    const handleChangeLogo = async (file: File) => {
+        setLogoImage(file);
+        try {
+            const dataUrl = await fileToDataUrl(file);
+            // Upload to backend to get a stable URL
+            const res = await fetch("http://localhost:5000/api/uploads", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ imageBase64: dataUrl }),
+            });
+            if (res.ok) {
+                const json = await res.json();
+                setLogoUrl(json.url);
+            } else {
+                setLogoUrl(dataUrl);
+            }
+        } catch {}
+    };
+
+    const handleChangeCover = async (file: File) => {
         setCoverImage(file);
+        try {
+            const dataUrl = await fileToDataUrl(file);
+            const res = await fetch("http://localhost:5000/api/uploads", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ imageBase64: dataUrl }),
+            });
+            if (res.ok) {
+                const json = await res.json();
+                setCoverUrl(json.url);
+            } else {
+                setCoverUrl(dataUrl);
+            }
+        } catch {}
     };
 
     return (

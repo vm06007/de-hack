@@ -81,7 +81,7 @@ const Creator = ({ value }: CreatorProps) => {
                         <div
                             className={`absolute top-0 right-0 transition-all group-hover:invisible group-hover:opacity-0 max-md:static label ${
                                 value.name === 'Token2049' || value.slug === 'token2049'
-                                    ? 'label-orange'
+                                    ? 'label-yellow'
                                     : 'label-green'
                             }`}
                         >
@@ -137,7 +137,7 @@ const Creator = ({ value }: CreatorProps) => {
                                     : ""
                             }`}
                             as="link"
-                            href="/org/details"
+                            href={`/hackathons/${item.id}`}
                             icon="arrow"
                             isWhite
                             isCircle

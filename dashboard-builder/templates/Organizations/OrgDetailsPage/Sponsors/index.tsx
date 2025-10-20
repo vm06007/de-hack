@@ -1,39 +1,43 @@
 import Card from "@/components/Card";
 import Image from "@/components/Image";
 
-const sponsors = [
+const defaultSponsors = [
     {
         id: 1,
         name: "Ethereum Foundation",
         logo: "/images/ethereum.svg",
-        tier: "Platinum",
+        tier: "$25,000",
     },
     {
         id: 2,
         name: "Polygon",
         logo: "/images/polygon.svg",
-        tier: "Gold",
+        tier: "$10,000",
     },
     {
         id: 3,
         name: "Chainlink",
         logo: "/images/chainlink.svg",
-        tier: "Silver",
+        tier: "$1,000",
     },
     {
         id: 4,
         name: "Uniswap",
         logo: "/images/uniswap.svg",
-        tier: "Bronze",
+        tier: "$25,000",
     },
 ];
 
-const Sponsors = () => {
+type SponsorsProps = { sponsors?: { id: number; name: string; logo: string; tier: string }[] };
+
+const Sponsors = ({ sponsors }: SponsorsProps) => {
+    const list = sponsors && sponsors.length > 0 ? sponsors : defaultSponsors;
     return (
         <Card title="Sponsors">
-            <div className="p-5 max-lg:p-3">
+            <div className="p-5 max-lg:p-3 flex flex-col h-full">
+                <div className="grow">
                 <div className="space-y-4">
-                    {sponsors.map((sponsor) => (
+                    {list.map((sponsor) => (
                         <div
                             key={sponsor.id}
                             className="flex items-center gap-3 p-3 rounded-2xl bg-b-surface1"
@@ -52,11 +56,12 @@ const Sponsors = () => {
                                     {sponsor.name}
                                 </div>
                                 <div className="text-caption text-t-secondary">
-                                    {sponsor.tier} Sponsor
+                                    {sponsor.tier}
                                 </div>
                             </div>
                         </div>
                     ))}
+                </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-s-stroke2 text-center">
                     <div className="text-caption text-t-secondary">

@@ -115,6 +115,135 @@ def get_hackathons():
         }
     })
 
+@app.route('/api/hackathons', methods=['POST'])
+def create_hackathon():
+    """Create a new hackathon. Supports multipart/form-data with optional image upload.
+
+    Expected fields (form-data or JSON):
+    - title (str) [required]
+    - description (str) [required]
+    - category (str) [optional]
+    - status (str) [optional; defaults to 'scheduled']
+    - startDate (ISO str) [optional]
+    - endDate (ISO str) [optional]
+    - registrationDeadline (ISO str) [optional]
+    - totalPrizePool (str/number) [optional]
+    - maxParticipants (int) [optional]
+    - isOnline (bool) [optional]
+    - location (str|null) [optional]
+    - organizerId (int) [optional]
+    - createdBy (int) [optional]
+    - tags ([]string) [optional; comma-separated]
+    - requirements ([]string) [optional; comma-separated]
+    - image (file) [optional]
+    """
+
+    # Support both JSON and multipart/form-data
+    is_json = request.is_json and request.mimetype == 'application/json'
+    form = request.get_json() if is_json else request.form
+
+    title = (form.get('title') or '').strip()
+    description = (form.get('description') or '').strip()
+    if not title or not description:
+        return jsonify({"error": "'title' and 'description' are required"}), 400
+
+    hackathons = load_data('hackathons')
+
+    # Handle image upload if present
+    image_path = None
+    if not is_json:
+        image_file = request.files.get('image')
+        if image_file and image_file.filename:
+            if not is_allowed_image(image_file.filename):
+                return jsonify({"error": "Unsupported image type"}), 400
+            safe_name = secure_filename(image_file.filename)
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
+            filename = f"{timestamp}_{safe_name}"
+            image_file.save(os.path.join(UPLOAD_DIR, filename))
+            image_path = f"http://localhost:5000/uploads/{filename}"
+    else:
+        # JSON payload may include base64 image or direct URL/path
+        import base64
+        import re
+        image_b64 = form.get('imageBase64') or form.get('image_base64')
+        if image_b64:
+            # Support data URLs or raw base64
+            data_url_match = re.match(r'^data:image/(png|jpg|jpeg|gif|webp);base64,(.+)$', image_b64, re.IGNORECASE)
+            if data_url_match:
+                ext = data_url_match.group(1).lower()
+                b64_payload = data_url_match.group(2)
+            else:
+                # Default extension if not specified; use png
+                ext = 'png'
+                b64_payload = image_b64
+            try:
+                binary = base64.b64decode(b64_payload)
+            except Exception:
+                return jsonify({"error": "Invalid base64 image"}), 400
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
+            filename = f"{timestamp}_upload.{ext}"
+            with open(os.path.join(UPLOAD_DIR, filename), 'wb') as f:
+                f.write(binary)
+            image_path = f"http://localhost:5000/uploads/{filename}"
+        elif form.get('image'):
+            image_path = form.get('image')
+
+    def parse_bool(val, default=None):
+        if val is None:
+            return default
+        if isinstance(val, bool):
+            return val
+        return str(val).lower() in ['1', 'true', 'yes', 'on']
+
+    def parse_int(val, default=None):
+        try:
+            return int(val) if val is not None and str(val) != '' else default
+        except ValueError:
+            return default
+
+    def parse_list(val):
+        if val is None:
+            return []
+        if isinstance(val, list):
+            return val
+        return [x.strip() for x in str(val).split(',') if x.strip()]
+
+    new_hackathon = {
+        "id": get_next_id(hackathons),
+        "title": title,
+        "description": description,
+        "image": image_path,
+        "category": form.get('category') or None,
+        "status": form.get('status') or 'scheduled',
+        "startDate": form.get('startDate') or None,
+        "endDate": form.get('endDate') or None,
+        "registrationDeadline": form.get('registrationDeadline') or None,
+        "totalPrizePool": str(form.get('totalPrizePool')) if form.get('totalPrizePool') is not None else None,
+        "maxParticipants": parse_int(form.get('maxParticipants')),
+        "currentParticipants": 0,
+        "requirements": parse_list(form.get('requirements')),
+        "tags": parse_list(form.get('tags')),
+        "isOnline": parse_bool(form.get('isOnline'), default=True),
+        "location": form.get('location') or (None if parse_bool(form.get('isOnline'), True) else ''),
+        "organizerId": parse_int(form.get('organizerId')),
+        "createdBy": parse_int(form.get('createdBy')),
+        # Optional structured arrays
+        "prizeTiers": form.get('prizeTiers') if is_json else (json.loads(form.get('prizeTiers')) if form.get('prizeTiers') else []),
+        "sponsors": form.get('sponsors') if is_json else (json.loads(form.get('sponsors')) if form.get('sponsors') else []),
+        "logoUrl": form.get('logoUrl'),
+        "createdAt": datetime.now().isoformat(),
+        "updatedAt": datetime.now().isoformat()
+    }
+
+    hackathons.append(new_hackathon)
+    save_data('hackathons', hackathons)
+
+    response = jsonify(new_hackathon)
+    response.status_code = 201
+    # Location header for easy redirect on frontend
+    response.headers['Location'] = f"/api/hackathons/{new_hackathon['id']}"
+    return response
+
 @app.route('/api/hackathons/<int:hackathon_id>', methods=['GET'])
 def get_hackathon(hackathon_id):
     hackathons = load_data('hackathons')

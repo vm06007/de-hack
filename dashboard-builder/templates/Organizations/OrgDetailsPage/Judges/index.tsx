@@ -4,7 +4,7 @@ import Image from "@/components/Image";
 const judges = [
     {
         id: 1,
-        name: "Vitalik Buterin!",
+        name: "Vitalik Buterin",
         avatar: "/images/vitalik.jpg",
         role: "Researcher",
         company: "EF",
@@ -19,8 +19,8 @@ const judges = [
     {
         id: 3,
         name: "Sergey Nazarov",
-        avatar: "/images/sergey.jpg",
-        role: "Co-Founder",
+        avatar: "/images/nazarov.jpg",
+        role: "Founder",
         company: "Chainlink",
     },
     {
@@ -35,20 +35,21 @@ const judges = [
 const Judges = () => {
     return (
         <Card title="Judges">
-            <div className="p-5 max-lg:p-3">
+            <div className="p-5 max-lg:p-3 flex flex-col h-full">
+                <div className="grow">
                 <div className="space-y-4">
                     {judges.map((judge) => (
                         <div
                             key={judge.id}
                             className="flex items-center gap-3 p-3 rounded-2xl bg-b-surface1"
                         >
-                            <div className="relative shrink-0 w-10 h-10">
+                            <div className="relative shrink-0 w-10 h-10 rounded-full overflow-hidden">
                                 <Image
-                                    className="rounded-full opacity-100"
+                                    className="w-full h-full object-cover object-center opacity-100"
                                     src={judge.avatar}
-                                    width={40}
-                                    height={40}
+                                    fill
                                     alt={judge.name}
+                                    sizes="40px"
                                 />
                             </div>
                             <div className="grow">
@@ -61,6 +62,7 @@ const Judges = () => {
                             </div>
                         </div>
                     ))}
+                </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-s-stroke2 text-center">
                     <div className="text-caption text-t-secondary">

@@ -1,4 +1,6 @@
 import Icon from "@/components/Icon";
+import Link from "next/link";
+import Button from "@/components/Button";
 import Image from "@/components/Image";
 
 const highlights = [
@@ -75,6 +77,18 @@ const Description = ({}) => (
                         </li>
                     ))}
                 </ul>
+                <div className="flex flex-col gap-3 shrink-0 mt-2">
+                    <Link href="/applications/hacker">
+                        <Button className="w-full" isBlack>
+                            Hacker Application
+                        </Button>
+                    </Link>
+                    <Link href="/applications/sponsor">
+                        <Button className="w-full" isStroke>
+                            Sponsor Application
+                        </Button>
+                    </Link>
+                </div>
             </div>
             <div className="mt-15 max-lg:flex-1 max-lg:mt-0">
                 <div className="flex items-center">

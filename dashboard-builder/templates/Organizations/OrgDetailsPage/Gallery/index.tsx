@@ -1,16 +1,19 @@
 import Image from "@/components/Image";
 
-const Gallery = ({}) => {
+type Props = { coverUrl?: string };
+
+const Gallery = ({ coverUrl }: Props) => {
     return (
         <div className="relative mt-12 max-lg:mt-8">
-            <div className="relative h-150 max-lg:h-120 max-md:h-64 rounded-4xl overflow-hidden">
+            <div className="relative h-50 max-lg:h-50 max-md:h-64 rounded-4xl overflow-hidden">
                 <Image
                     className="object-cover"
                     fill
-                    src="/images/gallery-pic-1.png"
+                    src={coverUrl || "/images/gallery-pic-1.png"}
                     alt="Hackathon Hero Image"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     priority
+                    quality={100}
                 />
             </div>
         </div>

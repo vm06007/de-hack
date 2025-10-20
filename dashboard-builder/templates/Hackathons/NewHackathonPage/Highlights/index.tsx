@@ -148,7 +148,7 @@ const Highlights = ({ totalPrize, setTotalPrize }: HighlightsProps) => {
                     <div className="flex-1">
                         <Field
                             classInput="pl-12.5"
-                            label={`Total Prize Pool (${prizeCurrency.name})`}
+                            label={`Total Prize Pool`}
                             placeholder="10"
                             tooltip="Total prize pool for the hackathon"
                             value={totalPrize}

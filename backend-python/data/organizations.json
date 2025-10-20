@@ -1,32 +1,172 @@
 [
-  {
-    "id": 1,
-    "name": "ETHGlobal",
-    "slug": "ethglobal",
-    "description": "The world's largest Ethereum hackathon series",
-    "logo": "/images/logos/ethglobal.png",
-    "website": "https://ethglobal.com",
-    "socialLinks": {
-      "twitter": "https://twitter.com/ETHGlobal",
-      "discord": "https://discord.gg/ethglobal"
+    {
+        "id": 1,
+        "name": "ETHGlobal",
+        "slug": "ethglobal",
+        "description": "The world's largest Ethereum hackathon series",
+        "logo": "/images/logos/ethglobal.png",
+        "website": "https://ethglobal.com",
+         "socialLinks": {
+             "twitter": "https://twitter.com/ETHGlobal",
+             "chain": "https://ethglobal.com"
+         },
+        "createdBy": 1,
+        "createdAt": "2020-01-01T00:00:00Z",
+        "updatedAt": "2024-01-01T00:00:00Z",
+        "hostedHackathons": [
+            {
+                "id": 1,
+                "title": "DeFi Protocol Template",
+                "status": "active",
+                "startDate": "2025-01-15T00:00:00Z",
+                "endDate": "2025-01-29T23:59:59Z",
+                "totalPrizePool": "50000.00",
+                "currentParticipants": 234,
+                "maxParticipants": 500
+            },
+            {
+                "id": 3,
+                "title": "ETHGlobal Online 2025",
+                "status": "scheduled",
+                "startDate": "2025-04-15T00:00:00Z",
+                "endDate": "2025-04-29T23:59:59Z",
+                "totalPrizePool": "100000.00",
+                "currentParticipants": 0,
+                "maxParticipants": 1000
+            },
+            {
+                "id": 5,
+                "title": "ETHGlobal Istanbul 2024",
+                "status": "completed",
+                "startDate": "2024-09-15T00:00:00Z",
+                "endDate": "2024-09-17T23:59:59Z",
+                "totalPrizePool": "200000.00",
+                "currentParticipants": 800,
+                "maxParticipants": 800
+            },
+            {
+                "id": 7,
+                "title": "ETHGlobal London 2024",
+                "status": "completed",
+                "startDate": "2024-07-19T00:00:00Z",
+                "endDate": "2024-07-21T23:59:59Z",
+                "totalPrizePool": "180000.00",
+                "currentParticipants": 600,
+                "maxParticipants": 600
+            }
+        ],
+        "stats": {
+            "totalHackathons": 4,
+            "totalParticipants": 1834,
+            "totalPrizePool": "530000.00",
+            "averageResponseTime": "24 hours"
+        },
+        "shop": [
+            {
+                "id": 1,
+                "image": "/images/hackathons/1.png",
+                "title": "DeFi Protocol Template",
+                "status": "active"
+            },
+            {
+                "id": 3,
+                "image": "/images/hackathons/3.png",
+                "title": "ETHGlobal Online 2025",
+                "status": "scheduled"
+            },
+            {
+                "id": 5,
+                "image": "/images/hackathons/4.png",
+                "title": "ETHGlobal Istanbul 2024",
+                "status": "completed"
+            }
+        ],
+        "tags": [
+            "Ethereum",
+            "DeFi",
+            "Web3",
+            "Hackathons"
+        ],
+        "time": "24 hours",
+        "creationFrequency": "every 2 months"
     },
-    "createdBy": 1,
-    "createdAt": "2020-01-01T00:00:00Z",
-    "updatedAt": "2024-01-01T00:00:00Z"
-  },
-  {
-    "id": 2,
-    "name": "Token2049",
-    "slug": "token2049",
-    "description": "The premier crypto and Web3 conference",
-    "logo": "/images/logos/token2049.png",
-    "website": "https://token2049.com",
-    "socialLinks": {
-      "twitter": "https://twitter.com/Token2049",
-      "linkedin": "https://linkedin.com/company/token2049"
-    },
-    "createdBy": 1,
-    "createdAt": "2020-01-01T00:00:00Z",
-    "updatedAt": "2024-01-01T00:00:00Z"
-  }
+    {
+        "id": 2,
+        "name": "Token2049",
+        "slug": "token2049",
+        "description": "The premier crypto and Web3 conference",
+        "logo": "/images/logos/token2049.png",
+        "website": "https://token2049.com",
+         "socialLinks": {
+             "twitter": "https://twitter.com/Token2049",
+             "chain": "https://token2049.com"
+         },
+        "createdBy": 1,
+        "createdAt": "2020-01-01T00:00:00Z",
+        "updatedAt": "2024-01-01T00:00:00Z",
+        "hostedHackathons": [
+            {
+                "id": 2,
+                "title": "NFT Marketplace Kit",
+                "status": "active",
+                "startDate": "2025-01-20T00:00:00Z",
+                "endDate": "2025-02-03T23:59:59Z",
+                "totalPrizePool": "30000.00",
+                "currentParticipants": 156,
+                "maxParticipants": 300
+            },
+            {
+                "id": 4,
+                "title": "Unite DeFi 2025",
+                "status": "scheduled",
+                "startDate": "2025-05-15T00:00:00Z",
+                "endDate": "2025-05-29T23:59:59Z",
+                "totalPrizePool": "500000.00",
+                "currentParticipants": 0,
+                "maxParticipants": 500
+            },
+            {
+                "id": 6,
+                "title": "Token2049 Singapore Hackathon",
+                "status": "completed",
+                "startDate": "2024-09-13T00:00:00Z",
+                "endDate": "2024-09-15T23:59:59Z",
+                "totalPrizePool": "150000.00",
+                "currentParticipants": 500,
+                "maxParticipants": 500
+            },
+            {
+                "id": 8,
+                "title": "Token2049 Dubai Hackathon",
+                "status": "completed",
+                "startDate": "2024-04-18T00:00:00Z",
+                "endDate": "2024-04-20T23:59:59Z",
+                "totalPrizePool": "120000.00",
+                "currentParticipants": 400,
+                "maxParticipants": 400
+            }
+        ],
+        "stats": {
+            "totalHackathons": 4,
+            "totalParticipants": 1056,
+            "totalPrizePool": "800000.00",
+            "averageResponseTime": "24 hours"
+        },
+        "shop": [
+            {
+                "id": 2,
+                "image": "/images/hackathons/2.png",
+                "title": "NFT Marketplace Kit",
+                "status": "active"
+            }
+        ],
+        "tags": [
+            "Web3",
+            "Conference",
+            "Blockchain",
+            "Innovation"
+        ],
+        "time": "24 hours",
+        "creationFrequency": "once a year"
+    }
 ]

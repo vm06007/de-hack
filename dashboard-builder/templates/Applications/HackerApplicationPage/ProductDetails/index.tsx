@@ -19,13 +19,6 @@ const ProductDetails = () => {
         <Card title="Hacker Application Details">
             <div className="flex flex-col gap-8 px-5 pb-5 max-lg:px-3 max-lg:pb-3">
                 <Field
-                    label="Application Title"
-                    placeholder="Enter your application title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                />
-                <Field
                     label="Why do you want to participate in this hackathon?"
                     placeholder="Describe your motivation and what you hope to achieve..."
                     value={description}

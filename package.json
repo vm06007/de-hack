@@ -22,6 +22,7 @@
         "dev": "concurrently \"bun run backend\" \"bun run frontend\"",
         "backend": "cd backend-python && ./start.sh",
         "frontend": "cd dashboard-builder && bun run dev",
+        "intro": "cd intro && python3 -m http.server 8080",
         "compile": "hardhat compile",
         "test": "npx hardhat test",
         "deploy:counter": "hardhat ignition deploy ignition/modules/Counter.ts"

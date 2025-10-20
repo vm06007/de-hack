@@ -88,7 +88,7 @@ const FieldImage = ({
                         name="camera"
                     />
                     <div className="text-body-2 text-t-secondary text-center">
-                        Drag and drop an image, or{" "}
+                        Drag and drop an image or{" "}
                         <span className="font-bold text-t-primary">Browse</span>
                     </div>
                 </div>

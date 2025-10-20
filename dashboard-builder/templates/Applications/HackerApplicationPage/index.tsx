@@ -18,7 +18,6 @@ const HackerApplicationPage = () => {
             <div className="flex max-lg:block">
                 <div className="w-[calc(100%-33.75rem)] pr-3 max-4xl:w-[calc(100%-27.5rem)] max-2xl:w-[calc(100%-23rem)] max-lg:w-full max-lg:pr-0">
                     <ProductDetails />
-                    <PersonalInfo />
                     <SkillsAndExperience />
                 </div>
                 <div className="w-[33.75rem] max-4xl:w-[27.5rem] max-2xl:w-[23rem] max-lg:w-full max-lg:mt-3">

@@ -6,6 +6,7 @@ type CreatorProps = {
     value: {
         id: number;
         name?: string;
+        slug?: string;
         login?: string;
         description?: string;
         details?: string;
@@ -15,6 +16,7 @@ type CreatorProps = {
         label?: string;
         tags?: string[];
         time?: string;
+        creationFrequency?: string;
         shop?: {
             id: number;
             image: string;
@@ -76,8 +78,14 @@ const Creator = ({ value }: CreatorProps) => {
                         <div className="text-h6 max-md:text-sub-title-1">
                             @{displayName}
                         </div>
-                        <div className="label label-green absolute top-0 right-0 transition-all group-hover:invisible group-hover:opacity-0 max-md:static">
-                            Top #1 creator
+                        <div
+                            className={`absolute top-0 right-0 transition-all group-hover:invisible group-hover:opacity-0 max-md:static label ${
+                                value.name === 'Token2049' || value.slug === 'token2049'
+                                    ? 'label-orange'
+                                    : 'label-green'
+                            }`}
+                        >
+                            {value.name === 'Token2049' || value.slug === 'token2049' ? 'New creator' : 'Top #1 creator'}
                         </div>
                     </div>
                     <div className="text-t-secondary max-lg:text-body-2 max-md:text-caption">
@@ -111,15 +119,15 @@ const Creator = ({ value }: CreatorProps) => {
             <div className="flex gap-4 mt-8 max-md:gap-3 max-md:mt-5 max-md:-mx-4 max-md:overflow-x-auto max-md:scrollbar-none max-md:before:shrink-0 max-md:before:w-1 max-md:after:shrink-0 max-md:after:w-1">
                 {displayShop.map((item) => (
                     <div
-                        className="group/image relative flex-1 max-md:flex-auto max-md:shrink-0 max-md:w-45"
+                        className="group/image relative w-90 max-md:flex-auto max-md:shrink-0 max-md:w-90"
                         key={item.id}
                         onClick={() => setActiveId(item.id)}
                     >
                         <Image
-                            className="w-full h-auto rounded-2xl"
+                            className="w-full h-45 object-cover rounded-2xl"
                             src={item.image}
                             width={342}
-                            height={242}
+                            height={180}
                             alt=""
                         />
                         <Button
@@ -150,7 +158,7 @@ const Creator = ({ value }: CreatorProps) => {
                         ))}
                     </div>
                     <div className="text-caption text-t-secondary">
-                        Average response time in {value.time || '24 hours'}
+                        Average hackathon creation: {value.creationFrequency || (value.name === 'Token2049' ? 'once a year' : 'every 2 months')}
                     </div>
                 </div>
             </div>

@@ -88,8 +88,8 @@ const HackathonDetails = ({ hackathon }: HackathonDetailsProps) => {
 
                 {hackathon.image && (
                     <div className="mb-6">
-                        <img 
-                            src={hackathon.image} 
+                        <img
+                            src={hackathon.image}
                             alt={hackathon.title}
                             className="w-full h-64 object-cover rounded-lg"
                         />
@@ -172,7 +172,7 @@ const HackathonDetails = ({ hackathon }: HackathonDetailsProps) => {
                     <h3 className="text-lg font-semibold mb-3">Tags</h3>
                     <div className="flex flex-wrap gap-2">
                         {hackathon.tags.map((tag, index) => (
-                            <span 
+                            <span
                                 key={index}
                                 className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
                             >
@@ -187,7 +187,7 @@ const HackathonDetails = ({ hackathon }: HackathonDetailsProps) => {
             <div className="bg-white rounded-lg shadow-sm border mb-8">
                 <div className="p-6 border-b">
                     <h3 className="text-lg font-semibold">Prize Breakdown</h3>
-                    <p className="text-gray-500 text-sm">Total Prize Pool: ${parseFloat(hackathon.totalPrizePool).toLocaleString()}</p>
+                    <p className="text-gray-500 text-sm">Total Prize Pool</p>
                 </div>
                 <div className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -310,7 +310,7 @@ const HackathonDetails = ({ hackathon }: HackathonDetailsProps) => {
                         {applications.length} applications received
                     </p>
                 </div>
-                
+
                 {loading ? (
                     <div className="p-6 text-center">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>

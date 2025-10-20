@@ -118,5 +118,125 @@
     "createdBy": 1,
     "createdAt": "2024-01-01T00:00:00Z",
     "updatedAt": "2024-01-15T00:00:00Z"
+  },
+  {
+    "id": 5,
+    "title": "ETHGlobal Istanbul 2024",
+    "description": "The biggest Ethereum hackathon in Istanbul",
+    "image": "/images/hackathons/ethglobal-istanbul.png",
+    "category": "In-person hackathon",
+    "status": "completed",
+    "startDate": "2024-09-15T00:00:00Z",
+    "endDate": "2024-09-17T23:59:59Z",
+    "registrationDeadline": "2024-09-14T23:59:59Z",
+    "totalPrizePool": "200000.00",
+    "maxParticipants": 800,
+    "currentParticipants": 800,
+    "requirements": [
+      "Ethereum development",
+      "Web3 knowledge"
+    ],
+    "tags": [
+      "Ethereum",
+      "Istanbul",
+      "In-person",
+      "Web3"
+    ],
+    "isOnline": false,
+    "location": "Istanbul, Turkey",
+    "organizerId": 1,
+    "createdBy": 1,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-09-17T00:00:00Z"
+  },
+  {
+    "id": 6,
+    "title": "Token2049 Singapore Hackathon",
+    "description": "Build the future of Web3 at Asia's premier crypto conference",
+    "image": "/images/hackathons/token2049-singapore.png",
+    "category": "In-person hackathon",
+    "status": "completed",
+    "startDate": "2024-09-13T00:00:00Z",
+    "endDate": "2024-09-15T23:59:59Z",
+    "registrationDeadline": "2024-09-12T23:59:59Z",
+    "totalPrizePool": "150000.00",
+    "maxParticipants": 500,
+    "currentParticipants": 500,
+    "requirements": [
+      "Blockchain development",
+      "Web3 protocols"
+    ],
+    "tags": [
+      "Singapore",
+      "Web3",
+      "In-person",
+      "Asia"
+    ],
+    "isOnline": false,
+    "location": "Singapore",
+    "organizerId": 2,
+    "createdBy": 1,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-09-15T00:00:00Z"
+  },
+  {
+    "id": 7,
+    "title": "ETHGlobal London 2024",
+    "description": "Join the Ethereum community in London for an epic hackathon",
+    "image": "/images/hackathons/ethglobal-london.png",
+    "category": "In-person hackathon",
+    "status": "completed",
+    "startDate": "2024-07-19T00:00:00Z",
+    "endDate": "2024-07-21T23:59:59Z",
+    "registrationDeadline": "2024-07-18T23:59:59Z",
+    "totalPrizePool": "180000.00",
+    "maxParticipants": 600,
+    "currentParticipants": 600,
+    "requirements": [
+      "Ethereum ecosystem",
+      "Smart contracts"
+    ],
+    "tags": [
+      "Ethereum",
+      "London",
+      "In-person",
+      "Europe"
+    ],
+    "isOnline": false,
+    "location": "London, UK",
+    "organizerId": 1,
+    "createdBy": 1,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-07-21T00:00:00Z"
+  },
+  {
+    "id": 8,
+    "title": "Token2049 Dubai Hackathon",
+    "description": "Innovate in the heart of the Middle East's crypto hub",
+    "image": "/images/hackathons/token2049-dubai.png",
+    "category": "In-person hackathon",
+    "status": "completed",
+    "startDate": "2024-04-18T00:00:00Z",
+    "endDate": "2024-04-20T23:59:59Z",
+    "registrationDeadline": "2024-04-17T23:59:59Z",
+    "totalPrizePool": "120000.00",
+    "maxParticipants": 400,
+    "currentParticipants": 400,
+    "requirements": [
+      "Blockchain innovation",
+      "DeFi protocols"
+    ],
+    "tags": [
+      "Dubai",
+      "Middle East",
+      "In-person",
+      "Innovation"
+    ],
+    "isOnline": false,
+    "location": "Dubai, UAE",
+    "organizerId": 2,
+    "createdBy": 1,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-04-20T00:00:00Z"
   }
 ]

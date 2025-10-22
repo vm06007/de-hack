@@ -29,8 +29,13 @@ type PropsSponsor = {
 };
 
 type SponsorsProps = {
-    sponsors?: { id: number; name: string; logo: string; tier: string }[];
+    sponsors?: PropsSponsor[];
     hackathon?: any;
+};
+
+// Type guard to check if sponsor is from backend
+const isBackendSponsor = (sponsor: BackendSponsor | PropsSponsor): sponsor is BackendSponsor => {
+    return 'companyName' in sponsor;
 };
 
 const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
@@ -158,7 +163,7 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                     };
 
                     console.log("Storing sponsor data in backend...", sponsorData);
-                    const backendResult = await createSponsor(sponsorData);
+                    const backendResult = await createSponsor(sponsorData as any);
                     console.log("Sponsor data stored in backend:", backendResult);
 
                     // Dispatch custom event to notify other components of sponsor update
@@ -217,28 +222,28 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                                 onClick={() => handleSponsorClick(sponsor)}
                             >
                                 <div className="relative shrink-0 w-10 h-10">
-                                    {sponsor.companyLogo ? (
+                                    {(isBackendSponsor(sponsor) ? sponsor.companyLogo : sponsor.logo) ? (
                                         <Image
                                             className="rounded-lg opacity-100"
-                                            src={sponsor.companyLogo}
+                                            src={isBackendSponsor(sponsor) ? (sponsor.companyLogo || '') : sponsor.logo}
                                             width={40}
                                             height={40}
-                                            alt={sponsor.companyName}
+                                            alt={isBackendSponsor(sponsor) ? sponsor.companyName : sponsor.name}
                                         />
                                     ) : (
                                         <div className="w-10 h-10 rounded-lg bg-b-surface2 flex items-center justify-center">
                                             <div className="text-caption text-t-secondary">
-                                                {sponsor.companyName.charAt(0).toUpperCase()}
+                                                {(isBackendSponsor(sponsor) ? sponsor.companyName : sponsor.name).charAt(0).toUpperCase()}
                                             </div>
                                         </div>
                                     )}
                                 </div>
                                 <div className="grow">
                                     <div className="text-body-2 font-medium">
-                                        {sponsor.companyName}
+                                        {isBackendSponsor(sponsor) ? sponsor.companyName : sponsor.name}
                                     </div>
                                     <div className="text-caption text-t-secondary">
-                                        ${sponsor.contributionAmount} {hackathon?.sponsorCurrency || 'USDC'}
+                                        ${isBackendSponsor(sponsor) ? sponsor.contributionAmount : sponsor.tier} {hackathon?.sponsorCurrency || 'USDC'}
                                     </div>
                                 </div>
                             </div>

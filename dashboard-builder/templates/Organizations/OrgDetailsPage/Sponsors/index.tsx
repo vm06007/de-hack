@@ -56,6 +56,9 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
     // Use the sponsors hook for backend data
     const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor, fetchSponsors } = useSponsors(hackathon?.id);
 
+    // Use the becomeSponsor hook for smart contract interaction
+    const { becomeSponsor, isLoading: contractLoading } = useBecomeSponsor(hackathon?.contractAddress || '');
+
     // Fetch sponsors when component mounts
     useEffect(() => {
         if (hackathon?.id && fetchSponsors) {
@@ -72,7 +75,7 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
     // Validate form fields
     const validateForm = () => {
         const errors: {[key: string]: string} = {};
-        
+
         if (!companyName.trim()) {
             errors.companyName = "Company name is required";
         }
@@ -81,12 +84,12 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
             errors.contributionAmount = "Contribution amount is required";
         } else {
             const contributionValue = parseFloat(contributionAmount);
-            const minimumDeposit = 500;
-            
+            const minimumDeposit = hackathon?.sponsorMinContribution || 0;
+
             if (isNaN(contributionValue) || contributionValue <= 0) {
                 errors.contributionAmount = "Please enter a valid amount";
             } else if (contributionValue < minimumDeposit) {
-                errors.contributionAmount = `Minimum contribution is $${minimumDeposit} USDC`;
+                errors.contributionAmount = `Minimum contribution is $${minimumDeposit} ${hackathon?.sponsorCurrency || 'USDC'}`;
             }
         }
 
@@ -134,53 +137,69 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
             return;
         }
 
-        if (!hackathon?.id) {
-            alert("Error: No hackathon ID found");
+        if (!hackathon?.id || !hackathon?.contractAddress) {
+            alert("Error: No hackathon contract address found");
             return;
         }
 
         try {
             setIsSubmitting(true);
 
-            // For now, skip blockchain transaction and just store in backend
-            console.log("Storing sponsor application in backend...");
+            console.log("Starting sponsor application with smart contract...");
+            console.log("Contract address:", hackathon.contractAddress);
+            console.log("Contribution amount (ETH):", contributionAmount);
 
-            const sponsorData = {
-                hackathonId: hackathon.id,
-                companyName: companyName.trim(),
-                contributionAmount: contributionAmount,
-                companyLogo: logoPreview, // Base64 image data
-                prizeDistribution: prizeDistribution,
-                depositHook: depositHook.name,
-                transactionHash: "pending", // Will be updated when blockchain transaction is added
-                sponsorAddress: "pending", // Will be updated when blockchain transaction is added
-            };
+            // First, call the smart contract
+            const contractResult = await becomeSponsor(contributionAmount, async (result) => {
+                console.log("Smart contract transaction successful:", result);
 
-            const backendResult = await createSponsor(sponsorData);
-            console.log("Sponsor data stored in backend:", backendResult);
+                try {
+                    // Now call the backend with the transaction data
+                    const sponsorData = {
+                        hackathonId: hackathon.id,
+                        companyName: companyName.trim(),
+                        contributionAmount: contributionAmount,
+                        companyLogo: logoPreview, // Base64 image data
+                        prizeDistribution: prizeDistribution,
+                        depositHook: depositHook.name,
+                        transactionHash: result.hash,
+                        sponsorAddress: result.sponsor || '',
+                    };
 
-            // Dispatch custom event to notify other components of sponsor update
-            window.dispatchEvent(new CustomEvent('sponsorUpdated', { 
-                detail: { sponsor: backendResult } 
-            }));
+                    console.log("Storing sponsor data in backend...", sponsorData);
+                    const backendResult = await createSponsor(sponsorData);
+                    console.log("Sponsor data stored in backend:", backendResult);
 
-            console.log("Sponsor application submitted successfully:", {
-                companyName,
-                contributionAmount,
-                backendResult
+                    // Dispatch custom event to notify other components of sponsor update
+                    window.dispatchEvent(new CustomEvent('sponsorUpdated', {
+                        detail: { sponsor: backendResult }
+                    }));
+
+                    console.log("Complete sponsor flow successful:", {
+                        contractResult: result,
+                        backendResult
+                    });
+
+                    // Close modal and reset form after successful backend call
+                    setShowModal(false);
+                    setCompanyName("");
+                    setContributionAmount("");
+                    setCompanyLogo(null);
+                    setLogoPreview(null);
+                    setPrizeDistribution("");
+                    setDepositHook({ id: 1, name: "Plain Deposit" });
+
+                } catch (backendError) {
+                    console.error("Backend call failed after successful contract transaction:", backendError);
+                    alert("Smart contract transaction successful, but failed to save to backend. Please contact support.");
+                }
             });
 
-            // Close modal and reset form
-            setShowModal(false);
-            setCompanyName("");
-            setContributionAmount("");
-            setCompanyLogo(null);
-            setLogoPreview(null);
-            setPrizeDistribution("");
-            setDepositHook({ id: 1, name: "Plain Deposit" });
+            console.log("Smart contract call initiated:", contractResult);
 
         } catch (error) {
             console.error("Failed to submit sponsor application:", error);
+            alert("Failed to submit sponsor application. Please try again.");
             // Don't close modal on error so user can retry
         } finally {
             setIsSubmitting(false);
@@ -188,7 +207,7 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
     };
     return (
         <>
-        <Card 
+        <Card
             title="Sponsors"
             headContent={<PlusIcon onClick={() => setShowModal(true)} />}
         >
@@ -377,9 +396,9 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                             <Button
                                 onClick={handleSubmit}
                                 className="flex-1"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || contractLoading}
                             >
-                                {isSubmitting ? "Submitting..." : "Proceed"}
+                                {isSubmitting || contractLoading ? "Processing..." : "Proceed"}
                             </Button>
                         </div>
                     </div>
@@ -437,29 +456,31 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                             <div>
                                 <label className="block text-body-2 font-medium mb-2">Prize Distribution Details</label>
                                 <div
-                                    className="p-4 rounded-lg bg-b-surface1 text-body-2 text-t-secondary prose prose-invert max-w-none"
+                                    className="p-0 rounded-lg bg-b-surface1 text-body-2 text-t-secondary prose prose-invert max-w-none"
                                     dangerouslySetInnerHTML={{ __html: selectedSponsor.prizeDistribution }}
                                 />
                             </div>
                         )}
 
-                        <div className="pt-4 border-t border-s-stroke2">
-                            <label className="block text-body-2 font-medium mb-2">Verify Funds</label>
-                            <div className="text-caption text-t-secondary mb-3">
-                                Verify that funds have been deposited to the hackathon contract
+                        {selectedSponsor.transactionHash && selectedSponsor.transactionHash !== 'pending' && (
+                            <div className="pt-4 border-t border-s-stroke2">
+                                <label className="block text-body-2 font-medium mb-2">Verify Funds</label>
+                                <div className="text-caption text-t-secondary mb-3">
+                                    Verify that funds have been deposited to the hackathon contract
+                                </div>
+                                <a
+                                    href={`https://etherscan.io/tx/${selectedSponsor.transactionHash}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-button text-t-primary hover:underline"
+                                >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+                                    </svg>
+                                    View Transaction on Etherscan
+                                </a>
                             </div>
-                            <a
-                                href={`https://etherscan.io/address/${hackathon?.contractAddress || '0xDeHackPrizePoolContract'}#tokentxns`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-button text-t-primary hover:underline"
-                            >
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
-                                </svg>
-                                View Contract on Etherscan
-                            </a>
-                        </div>
+                        )}
 
                         <div className="flex gap-3 pt-4">
                             <Button

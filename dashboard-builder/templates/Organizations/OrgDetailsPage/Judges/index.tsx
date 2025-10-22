@@ -63,7 +63,7 @@ const Judges = ({ hackathon }: JudgesProps) => {
     };
 
     return (
-        <Card 
+        <Card
             title="Judges"
             headContent={<PlusIcon onClick={() => console.log('Judges plus clicked')} />}
         >
@@ -136,7 +136,7 @@ const Judges = ({ hackathon }: JudgesProps) => {
                 </div>
                 <div className="mt-4 pt-4 border-t border-s-stroke2 text-center">
                     <div className="text-caption text-t-secondary">
-                        Expert judges from leading Web3 companies
+                        Whitelisted council of judges
                     </div>
                 </div>
             </div>

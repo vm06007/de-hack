@@ -8,6 +8,7 @@ const judges = [
         avatar: "/images/vitalik.jpg",
         role: "Researcher",
         company: "EF",
+        wallet: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
     },
     {
         id: 2,
@@ -15,6 +16,7 @@ const judges = [
         avatar: "/images/sandeep.webp",
         role: "Co-Founder",
         company: "Polygon",
+        wallet: "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6",
     },
     {
         id: 3,
@@ -22,6 +24,7 @@ const judges = [
         avatar: "/images/nazarov.jpg",
         role: "Founder",
         company: "Chainlink",
+        wallet: "0x53C61cfb8128ad59244E8c1D26109252ACe23d14",
     },
     {
         id: 4,
@@ -29,6 +32,7 @@ const judges = [
         avatar: "/images/hayden.jpg",
         role: "Founder",
         company: "Uniswap",
+        wallet: "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3",
     },
     {
         id: 5,
@@ -36,6 +40,7 @@ const judges = [
         avatar: "/images/kartik.jpg",
         role: "Founder",
         company: "ETHGlobal",
+        wallet: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
     },
     {
         id: 6,
@@ -43,6 +48,7 @@ const judges = [
         avatar: "/images/vitalik-m.jpg",
         role: "Lead",
         company: "Bitcoin.com",
+        wallet: "0x641AD78BAca220C5BD28b51Ce8e0F495e85Fe689",
     },
 ];
 
@@ -51,6 +57,10 @@ type JudgesProps = {
 };
 
 const Judges = ({ hackathon }: JudgesProps) => {
+    const handleJudgeClick = (wallet: string) => {
+        window.open(`https://etherscan.io/address/${wallet}`, '_blank', 'noopener,noreferrer');
+    };
+
     return (
         <Card title="Judges">
             <div className="p-5 max-lg:p-3 flex flex-col h-full">
@@ -63,7 +73,8 @@ const Judges = ({ hackathon }: JudgesProps) => {
                             return (
                                 <div
                                     key={judge.id}
-                                    className="flex items-center gap-3 p-3 rounded-2xl bg-b-surface1"
+                                    className="flex items-center gap-3 p-3 rounded-2xl bg-b-surface1 cursor-pointer hover:bg-black transition-colors"
+                                    onClick={() => handleJudgeClick(judge.wallet)}
                                 >
                                     <div className="relative shrink-0 w-10 h-10 rounded-full overflow-hidden">
                                         <Image
@@ -94,7 +105,8 @@ const Judges = ({ hackathon }: JudgesProps) => {
                         judges.map((judge) => (
                             <div
                                 key={judge.id}
-                                className="flex items-center gap-3 p-3 rounded-2xl bg-b-surface1"
+                                className="flex items-center gap-3 p-3 rounded-2xl bg-b-surface1 cursor-pointer hover:bg-black transition-colors"
+                                onClick={() => handleJudgeClick(judge.wallet)}
                             >
                                 <div className="relative shrink-0 w-10 h-10 rounded-full overflow-hidden">
                                     <Image

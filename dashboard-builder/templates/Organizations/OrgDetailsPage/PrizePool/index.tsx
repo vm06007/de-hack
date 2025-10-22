@@ -1,6 +1,7 @@
 import Card from "@/components/Card";
 import Icon from "@/components/Icon";
 import { NumericFormat } from "react-number-format";
+import { useSponsors } from "@/src/hooks/useSponsors";
 
 type PrizePoolProps = {
     totalPrize?: number;
@@ -11,13 +12,20 @@ type PrizePoolProps = {
 
 const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackathon }: PrizePoolProps) => {
     const ethPrice = 2500; // ETH price in USD
-    const ethAmount = totalPrize / ethPrice;
 
-    // Calculate sponsor contributions
-    const sponsorContributions = sponsors?.reduce((sum, sponsor) => {
-        const amount = parseFloat(sponsor.tier?.replace(/[$,]/g, '') || '0');
+    // Use backend sponsor data
+    const { sponsors: backendSponsors } = useSponsors(hackathon?.id);
+    const sponsorData = backendSponsors && backendSponsors.length > 0 ? backendSponsors : sponsors;
+
+    // Calculate sponsor contributions from backend data
+    const sponsorContributions = sponsorData?.reduce((sum, sponsor) => {
+        const amount = parseFloat(sponsor.contributionAmount || '0');
         return sum + amount;
     }, 0) || 0;
+
+    // Calculate total prize pool including sponsor contributions
+    const totalPrizePool = totalPrize + sponsorContributions;
+    const ethAmount = totalPrizePool / ethPrice;
 
     // Use dynamic prize tiers if available, otherwise use default breakdown
     const displayTiers = prizeTiers && prizeTiers.length > 0 ? prizeTiers : [
@@ -33,15 +41,15 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
                 <div className="text-center">
                     <NumericFormat
                         className="block mb-2 text-h3 max-lg:text-h4"
-                        value={totalPrize}
+                        value={totalPrizePool}
                         thousandSeparator=","
                         decimalScale={0}
                         displayType="text"
                         prefix="$"
                     />
-                    <div className="text-body-2 text-t-secondary">
+                    {/*<div className="text-body-2 text-t-secondary">
                         {ethAmount.toFixed(2)} ETH
-                    </div>
+                    </div>*/}
                 </div>
                 <div className="mt-4 pt-4 border-t border-s-stroke2 h-40">
                     {displayTiers.map((tier, index) => (

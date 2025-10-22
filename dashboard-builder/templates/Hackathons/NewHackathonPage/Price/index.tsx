@@ -4,6 +4,7 @@ import Field from "@/components/Field";
 import Icon from "@/components/Icon";
 import Select from "@/components/Select";
 import Switch from "@/components/Switch";
+import { depositStrategies } from "@/constants/depositStrategies";
 
 
 const currencies = [
@@ -30,6 +31,8 @@ type PriceProps = {
     setStakingCurrency: (value: any) => void;
     stakingAmount: string;
     setStakingAmount: (value: string) => void;
+    automaticStakeReturn: boolean;
+    setAutomaticStakeReturn: (value: boolean) => void;
 };
 
 const Price = ({
@@ -45,6 +48,8 @@ const Price = ({
     setStakingCurrency,
     stakingAmount,
     setStakingAmount,
+    automaticStakeReturn,
+    setAutomaticStakeReturn,
 }: PriceProps) => {
 
     return (
@@ -104,28 +109,44 @@ const Price = ({
                     </div>
 
                     {requireStaking && (
-                        <div className="flex gap-3">
-                            <div className="flex-1">
-                                <Field
-                                    label="Staking Amount"
-                                    placeholder="50"
-                                    tooltip="Amount hackers must stake to join"
-                                    value={stakingAmount}
-                                    onChange={(e) => setStakingAmount(e.target.value)}
-                                    required
+                        <>
+                            <div className="flex gap-3">
+                                <div className="flex-1">
+                                    <Field
+                                        label="Staking Amount"
+                                        placeholder="50"
+                                        tooltip="Amount hackers must stake to join"
+                                        value={stakingAmount}
+                                        onChange={(e) => setStakingAmount(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="flex-1">
+                                    <Select
+                                        label="Staking Currency"
+                                        tooltip="Currency hackers must stake in"
+                                        placeholder="Select currency"
+                                        value={stakingCurrency}
+                                        onChange={setStakingCurrency}
+                                        options={currencies}
+                                    />
+                                </div>
+                            </div>
+                            
+                            
+                            <div className="flex items-center justify-between p-4 bg-b-surface1 rounded-2xl">
+                                <div>
+                                    <div className="text-body-2 font-medium">Automatic Stake Return</div>
+                                    <div className="text-caption text-t-secondary">
+                                        Stake returned automatically upon project submission
+                                    </div>
+                                </div>
+                                <Switch
+                                    checked={automaticStakeReturn}
+                                    onChange={() => setAutomaticStakeReturn(!automaticStakeReturn)}
                                 />
                             </div>
-                            <div className="flex-1">
-                                <Select
-                                    label="Staking Currency"
-                                    tooltip="Currency hackers must stake in"
-                                    placeholder="Select currency"
-                                    value={stakingCurrency}
-                                    onChange={setStakingCurrency}
-                                    options={currencies}
-                                />
-                            </div>
-                        </div>
+                        </>
                     )}
 
                 </div>

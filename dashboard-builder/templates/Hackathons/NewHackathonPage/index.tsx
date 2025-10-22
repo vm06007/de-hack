@@ -41,9 +41,12 @@ const NewHackathonPage = () => {
     const [requireStaking, setRequireStaking] = useState(false);
     const [stakingAmount, setStakingAmount] = useState("0.0001");
     const [stakingCurrency, setStakingCurrency] = useState({ id: 1, name: "ETH" });
+    const [automaticStakeReturn, setAutomaticStakeReturn] = useState(false);
+    const [depositStrategy, setDepositStrategy] = useState({ id: 1, name: "Plain Deposit" });
     const [selectedJudges, setSelectedJudges] = useState<number[]>([]);
     const [allowAIDelegation, setAllowAIDelegation] = useState(false);
     const [judgingModel, setJudgingModel] = useState({ id: 1, name: "Open Voting" });
+    const [votingType, setVotingType] = useState({ id: 1, name: "Linear Voting" });
 
     const router = useRouter();
     const { address } = useAccount();
@@ -217,6 +220,8 @@ const NewHackathonPage = () => {
                         setSelectedJudges={setSelectedJudges}
                         allowAIAgentDelegations={allowAIDelegation}
                         setAllowAIAgentDelegations={setAllowAIDelegation}
+                        votingType={votingType}
+                        setVotingType={setVotingType}
                     />
                 </div>
                 <div className="w-[33.75rem] max-4xl:w-[27.5rem] max-2xl:w-[23rem] max-lg:w-full max-lg:mt-3">
@@ -236,6 +241,8 @@ const NewHackathonPage = () => {
                         setStakingCurrency={setStakingCurrency}
                         stakingAmount={stakingAmount}
                         setStakingAmount={setStakingAmount}
+                        automaticStakeReturn={automaticStakeReturn}
+                        setAutomaticStakeReturn={setAutomaticStakeReturn}
                     />
                     <CTA />
                     <Demos />

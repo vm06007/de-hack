@@ -15,6 +15,11 @@ const judgingModels = [
     { id: 3, name: "ZK-Voting (MACI)" },
 ];
 
+const votingTypes = [
+    { id: 1, name: "Linear Voting" },
+    { id: 2, name: "Quadratic Voting" },
+];
+
 const judges = [
     {
         id: 1,
@@ -73,6 +78,8 @@ type CategoryAndAttributesProps = {
     setSelectedJudges: (judges: number[]) => void;
     allowAIAgentDelegations: boolean;
     setAllowAIAgentDelegations: (value: boolean) => void;
+    votingType: any;
+    setVotingType: (value: any) => void;
 };
 
 const CategoryAndAttributes = ({
@@ -82,6 +89,8 @@ const CategoryAndAttributes = ({
     setSelectedJudges,
     allowAIAgentDelegations,
     setAllowAIAgentDelegations,
+    votingType,
+    setVotingType,
 }: CategoryAndAttributesProps) => {
 
     const toggleJudge = (judgeId: number) => {
@@ -95,14 +104,24 @@ const CategoryAndAttributes = ({
     return (
         <Card title="Invite Judges">
             <div className="flex flex-col gap-8 px-5 pb-5 max-lg:px-3 max-lg:pb-3">
-                <Select
-                    label="Voting Model"
-                    tooltip="Choose the voting mechanism for judging"
-                    placeholder="Select voting model"
-                    value={judgingModel}
-                    onChange={setJudgingModel}
-                    options={judgingModels}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                    <Select
+                        label="Voting Model"
+                        tooltip="Choose the voting mechanism for judging"
+                        placeholder="Select voting model"
+                        value={judgingModel}
+                        onChange={setJudgingModel}
+                        options={judgingModels}
+                    />
+                    <Select
+                        label="Voting Type"
+                        tooltip="Choose the voting type for judging"
+                        placeholder="Select voting type"
+                        value={votingType}
+                        onChange={setVotingType}
+                        options={votingTypes}
+                    />
+                </div>
 
                 <div>
                     <div className="mb-4 text-button">Invite Judges</div>

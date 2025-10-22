@@ -9,6 +9,7 @@ import Field from "@/components/Field";
 import PlusIcon from "@/components/PlusIcon";
 import { useBecomeSponsor } from "@/src/hooks/useBecomeSponsor";
 import { useSponsors } from "@/src/hooks/useSponsors";
+import { depositStrategies } from "@/constants/depositStrategies";
 
 type BackendSponsor = {
     id: number;
@@ -100,11 +101,7 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
     // Use backend sponsors if available, otherwise fall back to props
     const list = backendSponsors && backendSponsors.length > 0 ? backendSponsors : (sponsors && sponsors.length > 0 ? sponsors : []);
 
-    const depositHookOptions = [
-        { id: 1, name: "Plain Deposit" },
-        { id: 2, name: "Deposit To Aave" },
-        { id: 3, name: "Deposit to Morpho" }
-    ];
+    const depositHookOptions = depositStrategies;
 
     const handleSponsorClick = (sponsor: any) => {
         setSelectedSponsor(sponsor);

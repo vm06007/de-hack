@@ -86,9 +86,8 @@ export const useSponsors = (hackathonId?: number) => {
         }
     };
 
-    useEffect(() => {
-        fetchSponsors();
-    }, [hackathonId]);
+    // Remove automatic fetching to prevent infinite loops
+    // Components should call fetchSponsors manually when needed
 
     return {
         sponsors,

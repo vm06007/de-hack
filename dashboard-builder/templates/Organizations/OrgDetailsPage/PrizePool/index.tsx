@@ -45,12 +45,12 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
     const totalPrizePool = totalPrize + sponsorContributions;
     const ethAmount = totalPrizePool / ethPrice;
 
-    // Refresh sponsor data when hackathon changes
+    // Fetch sponsor data when component mounts or hackathon changes
     useEffect(() => {
         if (hackathon?.id && fetchSponsors) {
             fetchSponsors();
         }
-    }, [hackathon?.id, fetchSponsors]);
+    }, [hackathon?.id]); // Remove fetchSponsors from dependencies to prevent infinite loops
 
     // Use dynamic prize tiers if available, otherwise use default breakdown
     const displayTiers = prizeTiers && prizeTiers.length > 0 ? prizeTiers : [

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Card from "@/components/Card";
 import Image from "@/components/Image";
 import Button from "@/components/Button";
@@ -54,7 +54,14 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
     const [depositHook, setDepositHook] = useState({ id: 1, name: "Plain Deposit" });
 
     // Use the sponsors hook for backend data
-    const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor } = useSponsors(hackathon?.id);
+    const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor, fetchSponsors } = useSponsors(hackathon?.id);
+
+    // Fetch sponsors when component mounts
+    useEffect(() => {
+        if (hackathon?.id && fetchSponsors) {
+            fetchSponsors();
+        }
+    }, [hackathon?.id]);
 
     // Local loading state for form submission
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -370,7 +377,7 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                             <Button
                                 onClick={handleSubmit}
                                 className="flex-1"
-                                disabled={isSubmitting || !companyName.trim() || !contributionAmount.trim() || !prizeDistribution.trim()}
+                                disabled={isSubmitting}
                             >
                                 {isSubmitting ? "Submitting..." : "Proceed"}
                             </Button>

@@ -1,5 +1,6 @@
 import Card from "@/components/Card";
 import Icon from "@/components/Icon";
+import PlusIcon from "@/components/PlusIcon";
 
 type HackathonStatsProps = {
     hackathon?: any;
@@ -61,7 +62,10 @@ const HackathonStats = ({ hackathon }: HackathonStatsProps) => {
         },
     ];
     return (
-        <Card title="Hackathon Stats">
+        <Card 
+            title="Hackathon Stats"
+            headContent={<PlusIcon onClick={() => console.log('Hackathon Stats plus clicked')} />}
+        >
             <div className="p-5 max-lg:p-3">
                 <div className="grid grid-cols-2 gap-4">
                     {stats.map((stat) => (

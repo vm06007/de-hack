@@ -1,5 +1,6 @@
 import Card from "@/components/Card";
 import Image from "@/components/Image";
+import PlusIcon from "@/components/PlusIcon";
 
 const judges = [
     {
@@ -62,7 +63,10 @@ const Judges = ({ hackathon }: JudgesProps) => {
     };
 
     return (
-        <Card title="Judges">
+        <Card 
+            title="Judges"
+            headContent={<PlusIcon onClick={() => console.log('Judges plus clicked')} />}
+        >
             <div className="p-5 max-lg:p-3 flex flex-col h-full">
                 <div className="grow">
                 <div className="space-y-4">

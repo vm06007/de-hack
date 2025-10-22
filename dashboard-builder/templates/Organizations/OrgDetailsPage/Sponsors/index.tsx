@@ -6,6 +6,9 @@ import Modal from "@/components/Modal";
 import Editor from "@/components/Editor";
 import Select from "@/components/Select";
 import Field from "@/components/Field";
+import PlusIcon from "@/components/PlusIcon";
+import { useBecomeSponsor } from "@/src/hooks/useBecomeSponsor";
+import { useSponsors } from "@/src/hooks/useSponsors";
 
 const defaultSponsors = [
     {
@@ -41,19 +44,34 @@ type SponsorsProps = {
 
 const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
     const [showModal, setShowModal] = useState(false);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [selectedSponsor, setSelectedSponsor] = useState<any>(null);
     const [companyName, setCompanyName] = useState("");
     const [contributionAmount, setContributionAmount] = useState("");
     const [companyLogo, setCompanyLogo] = useState<File | null>(null);
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [prizeDistribution, setPrizeDistribution] = useState("");
     const [depositHook, setDepositHook] = useState({ id: 1, name: "Plain Deposit" });
-    const list = sponsors && sponsors.length > 0 ? sponsors : [];
+
+    // Use the sponsors hook for backend data
+    const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor } = useSponsors(hackathon?.id);
+
+    // Local loading state for form submission
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Use backend sponsors if available, otherwise fall back to props
+    const list = backendSponsors && backendSponsors.length > 0 ? backendSponsors : (sponsors && sponsors.length > 0 ? sponsors : []);
 
     const depositHookOptions = [
         { id: 1, name: "Plain Deposit" },
         { id: 2, name: "Deposit To Aave" },
         { id: 3, name: "Deposit to Morpho" }
     ];
+
+    const handleSponsorClick = (sponsor: any) => {
+        setSelectedSponsor(sponsor);
+        setShowDetailsModal(true);
+    };
 
     const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -68,51 +86,112 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
         }
     };
 
-    const handleSubmit = () => {
-        // Handle sponsor application submission
-        console.log("Sponsor application:", {
-            companyName,
-            contributionAmount,
-            companyLogo,
-            prizeDistribution,
-            depositHook: depositHook.name
-        });
-        setShowModal(false);
-        // Reset form
-        setCompanyName("");
-        setContributionAmount("");
-        setCompanyLogo(null);
-        setLogoPreview(null);
-        setPrizeDistribution("");
-        setDepositHook({ id: 1, name: "Plain Deposit" });
+    const handleSubmit = async () => {
+        if (!hackathon?.id) {
+            console.error("No hackathon ID found");
+            return;
+        }
+
+        if (!contributionAmount || parseFloat(contributionAmount) <= 0) {
+            console.error("Please enter a valid contribution amount");
+            return;
+        }
+
+        if (!companyName.trim()) {
+            console.error("Please enter a company name");
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+
+            // For now, skip blockchain transaction and just store in backend
+            console.log("Storing sponsor application in backend...");
+
+            const sponsorData = {
+                hackathonId: hackathon.id,
+                companyName: companyName.trim(),
+                contributionAmount: contributionAmount,
+                companyLogo: logoPreview, // Base64 image data
+                prizeDistribution: prizeDistribution,
+                depositHook: depositHook.name,
+                transactionHash: "pending", // Will be updated when blockchain transaction is added
+                sponsorAddress: "pending", // Will be updated when blockchain transaction is added
+            };
+
+            const backendResult = await createSponsor(sponsorData);
+            console.log("Sponsor data stored in backend:", backendResult);
+
+            // Dispatch custom event to notify other components of sponsor update
+            window.dispatchEvent(new CustomEvent('sponsorUpdated', { 
+                detail: { sponsor: backendResult } 
+            }));
+
+            console.log("Sponsor application submitted successfully:", {
+                companyName,
+                contributionAmount,
+                backendResult
+            });
+
+            // Close modal and reset form
+            setShowModal(false);
+            setCompanyName("");
+            setContributionAmount("");
+            setCompanyLogo(null);
+            setLogoPreview(null);
+            setPrizeDistribution("");
+            setDepositHook({ id: 1, name: "Plain Deposit" });
+
+        } catch (error) {
+            console.error("Failed to submit sponsor application:", error);
+            // Don't close modal on error so user can retry
+        } finally {
+            setIsSubmitting(false);
+        }
     };
     return (
         <>
-        <Card title="Sponsors">
+        <Card 
+            title="Sponsors"
+            headContent={<PlusIcon onClick={() => setShowModal(true)} />}
+        >
             <div className="p-5 max-lg:p-3 flex flex-col h-full">
                 <div className="grow">
                 <div className="space-y-4">
-                    {list.length > 0 ? (
+                    {sponsorsLoading ? (
+                        <div className="text-center py-4">
+                            <div className="text-body-2 text-t-secondary">Loading sponsors...</div>
+                        </div>
+                    ) : list.length > 0 ? (
                         list.map((sponsor) => (
                             <div
                                 key={sponsor.id}
-                                className="flex items-center gap-3 p-3 rounded-2xl bg-b-surface1"
+                                className="flex items-center gap-3 p-3 rounded-2xl bg-b-surface1 cursor-pointer hover:bg-black transition-colors"
+                                onClick={() => handleSponsorClick(sponsor)}
                             >
                                 <div className="relative shrink-0 w-10 h-10">
-                                    <Image
-                                        className="rounded-lg opacity-100"
-                                        src={sponsor.logo}
-                                        width={40}
-                                        height={40}
-                                        alt={sponsor.name}
-                                    />
+                                    {sponsor.companyLogo ? (
+                                        <Image
+                                            className="rounded-lg opacity-100"
+                                            src={sponsor.companyLogo}
+                                            width={40}
+                                            height={40}
+                                            alt={sponsor.companyName}
+                                        />
+                                    ) : (
+                                        <div className="w-10 h-10 rounded-lg bg-b-surface2 flex items-center justify-center">
+                                            <div className="text-caption text-t-secondary">
+                                                {sponsor.companyName.charAt(0).toUpperCase()}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="grow">
                                     <div className="text-body-2 font-medium">
-                                        {sponsor.name}
+                                        {sponsor.companyName}
                                     </div>
                                     <div className="text-caption text-t-secondary">
-                                        {sponsor.tier}
+                                        ${sponsor.contributionAmount} {hackathon?.sponsorCurrency || 'USDC'}
                                     </div>
                                 </div>
                             </div>
@@ -237,8 +316,96 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                             <Button
                                 onClick={handleSubmit}
                                 className="flex-1"
+                                disabled={isSubmitting}
                             >
-                                Proceed
+                                {isSubmitting ? "Submitting..." : "Proceed"}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
+        )}
+
+        {showDetailsModal && selectedSponsor && (
+            <Modal open={showDetailsModal} onClose={() => setShowDetailsModal(false)} classWrapper="p-0">
+                <div className="p-0 max-w-2xl">
+                    <h3 className="text-h4 mb-6">Sponsor Details</h3>
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-4">
+                            <div className="relative shrink-0 w-16 h-16">
+                                {selectedSponsor.companyLogo ? (
+                                    <Image
+                                        className="rounded-lg opacity-100"
+                                        src={selectedSponsor.companyLogo}
+                                        width={64}
+                                        height={64}
+                                        alt={selectedSponsor.companyName}
+                                    />
+                                ) : (
+                                    <div className="w-16 h-16 rounded-lg bg-b-surface2 flex items-center justify-center">
+                                        <div className="text-h4 text-t-secondary">
+                                            {selectedSponsor.companyName.charAt(0).toUpperCase()}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <h4 className="text-h5 font-medium">{selectedSponsor.companyName}</h4>
+                                <div className="text-body-2 text-t-secondary">
+                                    ${selectedSponsor.contributionAmount} {hackathon?.sponsorCurrency || 'USDC'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-body-2 font-medium mb-2">Deposit Hook</label>
+                                <div className="text-body-2 text-t-secondary">
+                                    {selectedSponsor.depositHook || 'Plain Deposit'}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-body-2 font-medium mb-2">Application Status</label>
+                                <div className="text-body-2 text-t-secondary">
+                                    {selectedSponsor.transactionHash === 'pending' ? 'Pending' : 'Completed'}
+                                </div>
+                            </div>
+                        </div>
+
+                        {selectedSponsor.prizeDistribution && (
+                            <div>
+                                <label className="block text-body-2 font-medium mb-2">Prize Distribution Details</label>
+                                <div
+                                    className="p-4 rounded-lg bg-b-surface1 text-body-2 text-t-secondary prose prose-invert max-w-none"
+                                    dangerouslySetInnerHTML={{ __html: selectedSponsor.prizeDistribution }}
+                                />
+                            </div>
+                        )}
+
+                        <div className="pt-4 border-t border-s-stroke2">
+                            <label className="block text-body-2 font-medium mb-2">Verify Funds</label>
+                            <div className="text-caption text-t-secondary mb-3">
+                                Verify that funds have been deposited to the hackathon contract
+                            </div>
+                            <a
+                                href={`https://etherscan.io/address/${hackathon?.contractAddress || '0xDeHackPrizePoolContract'}#tokentxns`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-button text-t-primary hover:underline"
+                            >
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
+                                </svg>
+                                View Contract on Etherscan
+                            </a>
+                        </div>
+
+                        <div className="flex gap-3 pt-4">
+                            <Button
+                                onClick={() => setShowDetailsModal(false)}
+                                className="flex-1"
+                            >
+                                Close
                             </Button>
                         </div>
                     </div>

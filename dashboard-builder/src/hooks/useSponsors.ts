@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface Sponsor {
     id: number;
@@ -20,7 +20,7 @@ export const useSponsors = (hackathonId?: number) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchSponsors = async () => {
+    const fetchSponsors = useCallback(async () => {
         if (!hackathonId) return;
         
         setLoading(true);
@@ -45,7 +45,7 @@ export const useSponsors = (hackathonId?: number) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [hackathonId]);
 
     const createSponsor = async (sponsorData: {
         hackathonId: number;

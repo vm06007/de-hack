@@ -1,7 +1,9 @@
 import Card from "@/components/Card";
 import Icon from "@/components/Icon";
+import PlusIcon from "@/components/PlusIcon";
 import { NumericFormat } from "react-number-format";
 import { useSponsors } from "@/src/hooks/useSponsors";
+import { useEffect } from "react";
 
 type PrizePoolProps = {
     totalPrize?: number;
@@ -14,8 +16,24 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
     const ethPrice = 2500; // ETH price in USD
 
     // Use backend sponsor data
-    const { sponsors: backendSponsors } = useSponsors(hackathon?.id);
+    const { sponsors: backendSponsors, fetchSponsors } = useSponsors(hackathon?.id);
     const sponsorData = backendSponsors && backendSponsors.length > 0 ? backendSponsors : sponsors;
+
+    // Listen for sponsor updates via custom events
+    useEffect(() => {
+        const handleSponsorUpdate = () => {
+            if (hackathon?.id && fetchSponsors) {
+                fetchSponsors();
+            }
+        };
+
+        // Listen for custom sponsor update events
+        window.addEventListener('sponsorUpdated', handleSponsorUpdate);
+
+        return () => {
+            window.removeEventListener('sponsorUpdated', handleSponsorUpdate);
+        };
+    }, [hackathon?.id, fetchSponsors]);
 
     // Calculate sponsor contributions from backend data
     const sponsorContributions = sponsorData?.reduce((sum, sponsor) => {
@@ -27,6 +45,13 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
     const totalPrizePool = totalPrize + sponsorContributions;
     const ethAmount = totalPrizePool / ethPrice;
 
+    // Refresh sponsor data when hackathon changes
+    useEffect(() => {
+        if (hackathon?.id && fetchSponsors) {
+            fetchSponsors();
+        }
+    }, [hackathon?.id, fetchSponsors]);
+
     // Use dynamic prize tiers if available, otherwise use default breakdown
     const displayTiers = prizeTiers && prizeTiers.length > 0 ? prizeTiers : [
         { name: "1st Place", amount: totalPrize * 0.5, percentage: 50 },
@@ -35,12 +60,15 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
     ];
 
     return (
-        <Card title="Prize Pool">
+        <Card
+            title="Prize Pool"
+            headContent={<PlusIcon onClick={() => console.log('Prize Pool plus clicked')} />}
+        >
             <div className="p-5 max-lg:p-3 flex flex-col h-full">
                 <div className="grow">
                 <div className="text-center">
                     <NumericFormat
-                        className="block mb-2 text-h3 max-lg:text-h4"
+                        className="block mb-5 text-h3 max-lg:text-h4"
                         value={totalPrizePool}
                         thousandSeparator=","
                         decimalScale={0}

@@ -1,6 +1,6 @@
 import { http, createConfig } from 'wagmi'
-import { mainnet, sepolia, localhost } from 'wagmi/chains'
-import { injected, metaMask, walletConnect } from 'wagmi/connectors'
+import { mainnet, sepolia, arbitrum, base, optimism, polygon } from 'wagmi/chains'
+import { getDefaultConfig } from 'connectkit'
 
 // Define the contract ABI for DeHack Platform
 export const DEHACK_PLATFORM_ABI = [
@@ -579,21 +579,24 @@ export const DEHACK_PLATFORM_ABI = [
 // Contract address - DeHack Platform Factory on mainnet
 export const DEHACK_PLATFORM_ADDRESS = process.env.NEXT_PUBLIC_DEHACK_PLATFORM_ADDRESS || '0x553db01f160771DF2b483F6E9BB5AD173B040151'
 
-export const config = createConfig({
-    chains: [mainnet, sepolia, localhost],
-    connectors: [
-        injected(),
-        metaMask(),
-        walletConnect({
-            projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id',
-        }),
-    ],
-    transports: {
-        [mainnet.id]: http(),
-        [sepolia.id]: http(),
-        [localhost.id]: http('http://localhost:8545'),
-    },
-})
+export const config = createConfig(
+    getDefaultConfig({
+        chains: [mainnet, sepolia, arbitrum, base, optimism, polygon],
+        transports: {
+            [mainnet.id]: http(),
+            [sepolia.id]: http(),
+            [arbitrum.id]: http(),
+            [base.id]: http(),
+            [optimism.id]: http(),
+            [polygon.id]: http(),
+        },
+        walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'a0c4b5e8f9d2c1a3b4c5d6e7f8a9b0c1',
+        appName: 'DeHack Platform',
+        appDescription: 'Decentralized hackathon platform',
+        appUrl: 'https://dehack.dev',
+        appIcon: 'https://dehack.dev/icon.png',
+    })
+)
 
 declare module 'wagmi' {
     interface Register {

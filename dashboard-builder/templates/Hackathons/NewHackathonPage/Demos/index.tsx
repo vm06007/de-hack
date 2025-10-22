@@ -36,6 +36,18 @@ const Demos = () => {
                         onChange={() => setAllowJoinAnyTime(!allowJoinAnyTime)}
                     />
                 </div>
+                <div className="flex items-center justify-between p-4 bg-b-surface1 rounded-2xl">
+                    <div>
+                        <div className="text-body-2 font-medium">Require application approval</div>
+                        <div className="text-caption text-t-secondary">
+                            Hackers needs to be approved to join
+                        </div>
+                    </div>
+                    <Switch
+                        checked={allowJoinAnyTime}
+                        onChange={() => setAllowJoinAnyTime(!allowJoinAnyTime)}
+                    />
+                </div>
             </div>
         </Card>
     );

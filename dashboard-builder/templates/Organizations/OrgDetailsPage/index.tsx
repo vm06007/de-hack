@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Layout from "@/components/Layout";
 import Image from "@/components/Image";
 import Gallery from "./Gallery";
@@ -14,6 +15,7 @@ import HackathonStats from "./HackathonStats";
 type OrgDetailsPageProps = { hackathon?: any };
 
 const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
+    const [showSponsorModal, setShowSponsorModal] = useState(false);
     const title = hackathon?.title || "ETHGlobal Online 2026";
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -61,7 +63,15 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                     </div>
                     <Gallery coverUrl={coverImage} />
                 </div>
-                <Description description={hackathon?.description} title={hackathon?.title} hackathon={hackathon} />
+                <Description 
+                    description={hackathon?.description} 
+                    title={hackathon?.title} 
+                    hackathon={hackathon}
+                    onSponsorModalOpen={() => {
+                        console.log('Opening sponsor modal, current state:', showSponsorModal);
+                        setShowSponsorModal(true);
+                    }}
+                />
                 <div className="grid grid-cols-4 gap-6 max-2xl:grid-cols-2 max-lg:grid-cols-1">
                     <PrizePool
                         totalPrize={prizePool}
@@ -69,7 +79,12 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                         sponsors={sponsors}
                         hackathon={hackathon}
                     />
-                    <Sponsors sponsors={sponsors} hackathon={hackathon} />
+                    <Sponsors 
+                        sponsors={sponsors} 
+                        hackathon={hackathon}
+                        showModal={showSponsorModal}
+                        setShowModal={setShowSponsorModal}
+                    />
                     <Judges hackathon={hackathon} />
                     <HackathonStats hackathon={hackathon} />
                 </div>

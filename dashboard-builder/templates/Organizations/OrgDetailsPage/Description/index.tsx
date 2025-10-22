@@ -9,6 +9,7 @@ type Props = {
     description?: string;
     title?: string;
     hackathon?: any;
+    onSponsorModalOpen?: () => void;
 };
 
 const getHighlights = (hackathon: any, sponsorContributions: number = 0) => {
@@ -47,7 +48,7 @@ const getHighlights = (hackathon: any, sponsorContributions: number = 0) => {
     return highlights;
 };
 
-const Description = ({ description, title, hackathon }: Props) => {
+const Description = ({ description, title, hackathon, onSponsorModalOpen }: Props) => {
     // Use backend sponsor data to calculate contributions
     const { sponsors: backendSponsors, fetchSponsors } = useSponsors(hackathon?.id);
 
@@ -121,14 +122,19 @@ const Description = ({ description, title, hackathon }: Props) => {
                             Hacker Application
                         </Button>
                     </Link>
-                    <Link href="/applications/sponsor">
-                        <Button className="w-full" isStroke>
-                            {hackathon?.allowSponsors && hackathon?.sponsorMinContribution
-                                ? `Sponsor Application (${hackathon.sponsorMinContribution} ${hackathon.sponsorCurrency} Min)`
-                                : "Sponsor Application"
-                            }
-                        </Button>
-                    </Link>
+                    <Button 
+                        className="w-full" 
+                        isStroke
+                        onClick={() => {
+                            console.log('Sponsor Application button clicked, onSponsorModalOpen:', onSponsorModalOpen);
+                            onSponsorModalOpen?.();
+                        }}
+                    >
+                        {hackathon?.allowSponsors && hackathon?.sponsorMinContribution
+                            ? `Sponsor Application (${hackathon.sponsorMinContribution} ${hackathon.sponsorCurrency} Min)`
+                            : "Sponsor Application"
+                        }
+                    </Button>
                 </div>
             </div>
             <div className="mt-15 max-lg:flex-1 max-lg:mt-0">

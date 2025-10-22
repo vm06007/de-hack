@@ -7,6 +7,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { EmojiClickData } from "emoji-picker-react";
 import Emoji from "@/components/Emoji";
 import Tooltip from "@/components/Tooltip";
+import Icon from "@/components/Icon";
 import Image from "next/image";
 
 type EditorProps = {
@@ -16,6 +17,7 @@ type EditorProps = {
     label?: string;
     tooltip?: string;
     onAIGenerate?: () => void;
+    onExpand?: () => void;
 };
 
 const svg = (path: string) => (
@@ -37,6 +39,7 @@ const Editor = ({
     label,
     tooltip,
     onAIGenerate,
+    onExpand,
 }: EditorProps) => {
     const editor = useEditor({
         extensions: [
@@ -193,6 +196,15 @@ const Editor = ({
                                 className="w-6 h-6"
                                 style={{ filter: 'invert(1)' }}
                             />
+                        </button>
+                    )}
+                    {onExpand && (
+                        <button
+                            className={`${styleButton} ${onAIGenerate ? '' : 'ml-auto'}`}
+                            onClick={onExpand}
+                            title="Expand to full page"
+                        >
+                            <Icon name="arrow-up-right" />
                         </button>
                     )}
                 </div>

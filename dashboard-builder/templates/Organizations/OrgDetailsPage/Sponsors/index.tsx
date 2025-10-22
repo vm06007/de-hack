@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Card from "@/components/Card";
 import Image from "@/components/Image";
 import Button from "@/components/Button";
@@ -32,6 +33,8 @@ type PropsSponsor = {
 type SponsorsProps = {
     sponsors?: PropsSponsor[];
     hackathon?: any;
+    showModal?: boolean;
+    setShowModal?: (show: boolean) => void;
 };
 
 // Type guard to check if sponsor is from backend
@@ -39,8 +42,13 @@ const isBackendSponsor = (sponsor: BackendSponsor | PropsSponsor): sponsor is Ba
     return 'companyName' in sponsor;
 };
 
-const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
-    const [showModal, setShowModal] = useState(false);
+const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowModal: externalSetShowModal }: SponsorsProps) => {
+    const router = useRouter();
+    const [internalShowModal, setInternalShowModal] = useState(false);
+    const showModal = externalShowModal !== undefined ? externalShowModal : internalShowModal;
+    const setShowModal = externalSetShowModal || setInternalShowModal;
+    
+    console.log('Sponsors component - externalShowModal:', externalShowModal, 'showModal:', showModal);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedSponsor, setSelectedSponsor] = useState<any>(null);
     const [companyName, setCompanyName] = useState("");
@@ -371,6 +379,7 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                                         setValidationErrors(prev => ({ ...prev, prizeDistribution: '' }));
                                     }
                                 }}
+                                onExpand={() => router.push('/applications/sponsor')}
                                 className="min-h-24"
                             />
                             {validationErrors.prizeDistribution && (

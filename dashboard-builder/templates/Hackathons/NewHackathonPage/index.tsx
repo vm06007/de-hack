@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAddress } from "@thirdweb-dev/react";
+import { useAccount } from "wagmi";
 import toast from "react-hot-toast";
 import Layout from "@/components/Layout";
 import HackathonDetails from "./HackathonDetails";
@@ -45,7 +45,7 @@ const NewHackathonPage = () => {
     const [judgingModel, setJudgingModel] = useState({ id: 1, name: "Open Voting" });
 
     const router = useRouter();
-    const address = useAddress();
+    const { address } = useAccount();
     const { createHackathon, isLoading } = useCreateHackathon();
 
     // This useEffect is no longer needed since we handle events in the hook
@@ -163,8 +163,8 @@ const NewHackathonPage = () => {
             const stakeAmountInWei = (BigInt(Math.floor(parseFloat(stakingAmount) * 1000000000000000000))).toString();
             const sponsorContributionInWei = (BigInt(Math.floor(parseFloat(sponsorMinContribution) * 1000000000000000000))).toString();
 
-            // Call the blockchain transaction
-            const result = await createHackathon({
+            // Call the blockchain transaction with callback for when we get the contract address
+            await createHackathon({
                 hackathonId,
                 startTime: startTimestamp.toString(),
                 endTime: endTimestamp.toString(),
@@ -174,12 +174,18 @@ const NewHackathonPage = () => {
                 selectedJudges: validJudgeAddresses, // Use only valid judge addresses
                 votingConfig,
                 value: "0.0001" // 0.0001 ETH for testing
+            }, async (result) => {
+                // This callback is called when we get the contract address from the receipt
+                console.log("Got contract address, calling backend API...");
+                if (result.hackathonAddress && result.hackathonId) {
+                    await callBackendAPI(result.hackathonAddress, result.hackathonId);
+                } else {
+                    console.error("Missing contract address or hackathon ID");
+                    toast.error("Failed to get contract address");
+                }
             });
 
-            // If we got the hackathon address and ID from the transaction, call the backend
-            if (result.hackathonAddress && result.hackathonId) {
-                await callBackendAPI(result.hackathonAddress, result.hackathonId);
-            }
+            console.log("Transaction submitted, waiting for confirmation to get contract address...");
 
         } catch (e) {
             console.error("Blockchain transaction error:", e);

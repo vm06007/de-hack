@@ -1,10 +1,9 @@
 "use client";
 
 import { ThemeProvider } from "next-themes";
-import { ThirdwebProvider } from "@thirdweb-dev/react";
-import { Ethereum } from "@thirdweb-dev/chains";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
+import { ConnectKitProvider } from 'connectkit';
 import { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { config } from '@/src/lib/wagmi';
@@ -15,6 +14,8 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
             queries: {
                 staleTime: 1000 * 60 * 5, // 5 minutes
                 gcTime: 1000 * 60 * 10, // 10 minutes
+                retry: 1,
+                refetchOnWindowFocus: false,
             },
         },
     }));
@@ -22,10 +23,13 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
     return (
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
-                <ThirdwebProvider
-                    activeChain={Ethereum}
-                    clientId={process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID}
-                    supportedChains={[Ethereum]}
+                <ConnectKitProvider
+                    theme="midnight"
+                    mode="dark"
+                    options={{
+                        initialChainId: 0,
+                        embedGoogleFonts: true,
+                    }}
                 >
                     <ThemeProvider defaultTheme="dark" disableTransitionOnChange>
                         {children}
@@ -41,7 +45,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
                             }}
                         />
                     </ThemeProvider>
-                </ThirdwebProvider>
+                </ConnectKitProvider>
             </QueryClientProvider>
         </WagmiProvider>
     );

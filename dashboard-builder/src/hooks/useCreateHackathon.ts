@@ -1,6 +1,8 @@
-import { useContract, useContractWrite } from "@thirdweb-dev/react";
+import { useWriteContract, useWaitForTransactionReceipt, useAccount } from "wagmi";
 import toast from "react-hot-toast";
-import { DEHACK_PLATFORM_ABI } from "@/src/lib/abi";
+import { DEHACK_PLATFORM_ABI, DEHACK_PLATFORM_ADDRESS } from "@/src/lib/wagmi";
+import { parseEther } from "viem";
+import { useState, useRef, useEffect } from "react";
 
 export interface VotingConfig {
     systemType: number; // 0 = Open, 1 = MACI, 2 = ZK, 3 = RevealCommit
@@ -21,107 +23,152 @@ export interface CreateHackathonParams {
     value: string; // ETH value to send with transaction
 }
 
-// Contract address - DeHack Platform Factory on mainnet
-const DEHACK_PLATFORM_ADDRESS = process.env.NEXT_PUBLIC_DEHACK_PLATFORM_ADDRESS || "0x553db01f160771DF2b483F6E9BB5AD173B040151";
+export interface HackathonCreatedResult {
+    hash: `0x${string}`;
+    hackathonAddress?: string;
+    hackathonId?: string;
+}
 
 export const useCreateHackathon = () => {
-    const { contract } = useContract(DEHACK_PLATFORM_ADDRESS, DEHACK_PLATFORM_ABI);
+    const [isLoading, setIsLoading] = useState(false);
+    const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
+    const callbackRef = useRef<((result: HackathonCreatedResult) => void) | null>(null);
     
-    const { mutateAsync: createHackathon, isLoading, error } = useContractWrite(contract, "createHackathon");
-
-    const createHackathonWithToast = async (params: CreateHackathonParams) => {
-        try {
-            console.log("Contract address:", DEHACK_PLATFORM_ADDRESS);
-            console.log("Contract instance:", contract);
-            console.log("Parameters:", params);
-            
-            toast.loading("Preparing transaction...", { id: "create-hackathon" });
-
-            // Convert ETH value to wei using BigInt to avoid scientific notation
-            const ethValue = parseFloat(params.value);
-            const valueInWei = (BigInt(Math.floor(ethValue * 1000000000000000000))).toString();
-            console.log("ETH value:", ethValue);
-            console.log("Value in wei:", valueInWei);
-
-            // Convert string values to proper format for the contract call
-            const result = await createHackathon({
-                args: [
-                    params.hackathonId,
-                    params.startTime,
-                    params.endTime,
-                    params.minimumSponsorContribution,
-                    params.stakeAmount,
-                    params.prizeDistribution,
-                    params.selectedJudges,
-                    [
-                        params.votingConfig.systemType,
-                        params.votingConfig.useQuadraticVoting,
-                        params.votingConfig.votingPowerPerJudge,
-                        params.votingConfig.maxWinners
-                    ]
-                ],
-                overrides: {
-                    value: valueInWei
-                }
-            });
-
+    const { address, isConnected } = useAccount();
+    const { writeContract, data: contractWriteData, error } = useWriteContract();
+    
+    // Wait for transaction receipt
+    const { data: txReceipt } = useWaitForTransactionReceipt({
+        hash: contractWriteData,
+    });
+    
+    // Update txHash when contractWriteData changes
+    useEffect(() => {
+        if (contractWriteData && contractWriteData !== txHash) {
+            console.log("Contract write data received:", contractWriteData);
+            setTxHash(contractWriteData);
             toast.loading("Transaction submitted, waiting for confirmation...", { id: "create-hackathon" });
+        }
+    }, [contractWriteData, txHash]);
 
-            // Wait for the transaction to be mined
-            const receipt = await result.receipt;
-
-            // Parse the HackathonCreated event from the transaction receipt
-            // The HackathonCreated event signature hash is: 0x526b2cf7f5bb87f9a4c01a6eb8c01bf90405b9726286908ac1dfd93944da0e84
+    // Handle receipt when it arrives
+    useEffect(() => {
+        console.log("useEffect triggered:", {
+            txReceipt: !!txReceipt,
+            txHash: txHash,
+            hasCallback: !!callbackRef.current,
+            receiptStatus: txReceipt?.status
+        });
+        
+        if (txReceipt && txHash && callbackRef.current) {
+            console.log("Processing transaction receipt...", txReceipt);
+            
+            // Parse the HackathonCreated event
             const hackathonCreatedEventSignature = "0x526b2cf7f5bb87f9a4c01a6eb8c01bf90405b9726286908ac1dfd93944da0e84";
             
-            const hackathonCreatedEvent = receipt.logs.find(log => {
+            const hackathonCreatedEvent = txReceipt.logs.find(log => {
                 return log.topics && log.topics[0] === hackathonCreatedEventSignature;
             });
 
-            if (hackathonCreatedEvent) {
-                // Extract data from the event log
-                // Topics: [0] = event signature, [1] = hackathonAddress, [2] = organizer
-                // Data: hackathonId, prizePool, votingSystem, useQuadraticVoting
-                const hackathonAddress = "0x" + hackathonCreatedEvent.topics[1].slice(26); // Remove 0x and first 24 chars
-                const organizer = "0x" + hackathonCreatedEvent.topics[2].slice(26); // Remove 0x and first 24 chars
+            if (hackathonCreatedEvent && hackathonCreatedEvent.topics[1]) {
+                // Extract hackathon address from event
+                const hackathonAddress = "0x" + hackathonCreatedEvent.topics[1].slice(26);
                 
-                // Parse the data field (contains hackathonId, prizePool, votingSystem, useQuadraticVoting)
-                const data = hackathonCreatedEvent.data.slice(2); // Remove 0x
+                // Parse hackathon ID from data
+                const data = hackathonCreatedEvent.data.slice(2);
                 const hackathonId = BigInt("0x" + data.slice(0, 64)).toString();
                 
-                console.log("Parsed event data:", {
-                    hackathonAddress,
-                    organizer,
-                    hackathonId,
-                    rawTopics: hackathonCreatedEvent.topics,
-                    rawData: hackathonCreatedEvent.data
-                });
+                console.log("Extracted contract address:", hackathonAddress);
+                console.log("Extracted hackathon ID:", hackathonId);
                 
-                toast.success("Hackathon created successfully!", { id: "create-hackathon" });
-                
-                return {
-                    ...result,
+                // Call the callback with the extracted data
+                const result: HackathonCreatedResult = {
+                    hash: txHash,
                     hackathonAddress,
                     hackathonId
                 };
+                
+                callbackRef.current(result);
+                
+                // Clean up
+                callbackRef.current = null;
+                setTxHash(undefined);
+                setIsLoading(false);
             } else {
-                console.log("Available logs:", receipt.logs.map(log => ({
-                    topics: log.topics,
-                    data: log.data,
-                    address: log.address
-                })));
-                toast.error("HackathonCreated event not found in transaction", { id: "create-hackathon" });
-                throw new Error("HackathonCreated event not found");
+                console.error("Could not extract hackathon address from event");
+                toast.error("Could not get contract address from transaction");
+                setIsLoading(false);
             }
+        }
+    }, [txReceipt, txHash]);
+
+    const createHackathon = async (
+        params: CreateHackathonParams,
+        onSuccess?: (result: HackathonCreatedResult) => void
+    ): Promise<HackathonCreatedResult> => {
+        try {
+            // Check wallet connection first
+            if (!isConnected || !address) {
+                toast.error("Please connect your wallet first");
+                throw new Error("Wallet not connected");
+            }
+            
+            setIsLoading(true);
+            callbackRef.current = onSuccess || null;
+            
+            console.log("Wallet connected:", { address, isConnected });
+            console.log("Contract address:", DEHACK_PLATFORM_ADDRESS);
+            console.log("Parameters:", params);
+            
+            toast.loading("Submitting transaction...", { id: "create-hackathon" });
+
+            // Convert ETH value to wei
+            const valueInWei = parseEther(params.value);
+            console.log("ETH value:", params.value);
+            console.log("Value in wei:", valueInWei.toString());
+
+            console.log("About to call writeContract...");
+            
+            // writeContract doesn't return the hash directly - it triggers the wallet
+            writeContract({
+                address: DEHACK_PLATFORM_ADDRESS,
+                abi: DEHACK_PLATFORM_ABI,
+                functionName: "createHackathon",
+                args: [
+                    BigInt(params.hackathonId),
+                    BigInt(params.startTime),
+                    BigInt(params.endTime),
+                    BigInt(params.minimumSponsorContribution),
+                    BigInt(params.stakeAmount),
+                    params.prizeDistribution.map(p => BigInt(p)),
+                    params.selectedJudges as `0x${string}`[],
+                    [
+                        params.votingConfig.systemType,
+                        params.votingConfig.useQuadraticVoting,
+                        BigInt(params.votingConfig.votingPowerPerJudge),
+                        BigInt(params.votingConfig.maxWinners)
+                    ]
+                ],
+                value: valueInWei
+            });
+
+            console.log("writeContract called, waiting for user to confirm in wallet...");
+            
+            toast.loading("Please confirm transaction in your wallet...", { id: "create-hackathon" });
+
+            // Return empty hash initially - the real hash will come from contractWriteData
+            return { hash: "0x" as `0x${string}` };
         } catch (err) {
             console.error("Error creating hackathon:", err);
             toast.error("Failed to create hackathon. Please try again.", { id: "create-hackathon" });
+            setIsLoading(false);
+            callbackRef.current = null;
             throw err;
         }
     };
 
     return {
-        createHackathon: createHackathonWithToast,
+        createHackathon,
         isLoading,
         error
     };

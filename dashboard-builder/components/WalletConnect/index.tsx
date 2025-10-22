@@ -1,4 +1,6 @@
-import { ConnectWallet } from "@thirdweb-dev/react";
+"use client";
+
+import { ConnectKitButton } from "connectkit";
 
 type WalletConnectProps = {
     className?: string;
@@ -6,22 +8,23 @@ type WalletConnectProps = {
 
 const WalletConnect = ({ className }: WalletConnectProps) => {
     return (
-        <ConnectWallet
-            theme="dark"
-            btnTitle="Connect Wallet"
-            modalTitle="Connect to DeHack"
-            modalTitleIconUrl=""
-            className={className}
-            style={{
-                backgroundColor: "#1a1a1a",
-                color: "#ffffff",
-                border: "1px solid #333333",
-                borderRadius: "8px",
-                padding: "8px 16px",
-                fontSize: "14px",
-                fontWeight: "500",
-            }}
-        />
+        <ConnectKitButton.Custom>
+            {({ isConnected, show, address, truncatedAddress }) => (
+                <button
+                    onClick={show}
+                    className={`${className} inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gray-800 border border-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors`}
+                >
+                    {isConnected ? (
+                        <>
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            {truncatedAddress}
+                        </>
+                    ) : (
+                        "Connect Wallet"
+                    )}
+                </button>
+            )}
+        </ConnectKitButton.Custom>
     );
 };
 

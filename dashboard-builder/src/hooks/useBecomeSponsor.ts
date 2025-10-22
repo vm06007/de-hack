@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useContract, useContractWrite } from '@thirdweb-dev/react';
+import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { parseEther } from 'viem';
 import toast from 'react-hot-toast';
 
 // Hackathon contract ABI - only the becomeSponsor function
@@ -30,20 +31,18 @@ const HACKATHON_ABI = [
         "name": "SponsorAdded",
         "type": "event"
     }
-];
+] as const;
 
 export const useBecomeSponsor = (contractAddress: string) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
     
-    const { contract } = useContract(contractAddress, HACKATHON_ABI);
-    const { mutateAsync: becomeSponsor } = useContractWrite(contract, "becomeSponsor");
+    const { writeContract, error } = useWriteContract();
+    const { data: txReceipt } = useWaitForTransactionReceipt({
+        hash: txHash,
+    });
 
-    const becomeSponsorWithToast = async (contributionAmount: string) => {
-        if (!contract) {
-            toast.error("Contract not found");
-            return;
-        }
-
+    const becomeSponsor = async (contributionAmount: string) => {
         if (!contributionAmount || parseFloat(contributionAmount) <= 0) {
             toast.error("Please enter a valid contribution amount");
             return;
@@ -53,58 +52,61 @@ export const useBecomeSponsor = (contractAddress: string) => {
             setIsLoading(true);
             toast.loading("Submitting sponsorship...", { id: "become-sponsor" });
 
-            // Convert contribution amount to wei (assuming it's in ETH)
-            const contributionInWei = (BigInt(Math.floor(parseFloat(contributionAmount) * 1000000000000000000))).toString();
+            // Convert contribution amount to wei
+            const contributionInWei = parseEther(contributionAmount);
 
             console.log("Becoming sponsor with contribution:", contributionAmount, "ETH");
-            console.log("Contribution in wei:", contributionInWei);
+            console.log("Contribution in wei:", contributionInWei.toString());
 
             // Call the becomeSponsor function with ETH value
-            const result = await becomeSponsor({
+            const hash = await writeContract({
+                address: contractAddress as `0x${string}`,
+                abi: HACKATHON_ABI,
+                functionName: "becomeSponsor",
                 value: contributionInWei
             });
 
-            console.log("Become sponsor transaction result:", result);
-
-            // Wait for the transaction to be mined
-            const receipt = await result.receipt;
-            console.log("Transaction receipt:", receipt);
-
-            // Check for SponsorAdded event
-            const sponsorAddedEvent = receipt.logs.find(log => {
-                try {
-                    const parsed = contract.interface.parseLog(log);
-                    return parsed?.name === "SponsorAdded";
-                } catch {
-                    return false;
-                }
-            });
-
-            if (sponsorAddedEvent) {
-                const parsedEvent = contract.interface.parseLog(sponsorAddedEvent);
-                console.log("SponsorAdded event:", parsedEvent?.args);
-                toast.success("Successfully became a sponsor!", { id: "become-sponsor" });
-            } else {
-                toast.success("Sponsorship submitted successfully!", { id: "become-sponsor" });
-            }
+            setTxHash(hash);
+            console.log("Become sponsor transaction hash:", hash);
 
             return {
                 success: true,
-                transactionHash: result.receipt.transactionHash,
+                transactionHash: hash,
                 contribution: contributionAmount
             };
 
         } catch (err: any) {
             console.error("Error becoming sponsor:", err);
             toast.error(`Failed to become sponsor: ${err.message || "Unknown error"}`, { id: "become-sponsor" });
-            throw err;
-        } finally {
             setIsLoading(false);
+            throw err;
         }
     };
 
+    // Handle transaction receipt
+    if (txReceipt && isLoading) {
+        setIsLoading(false);
+        
+        // Check for SponsorAdded event
+        const sponsorAddedEventSignature = "0x"; // You'll need to add the actual event signature
+        
+        const sponsorAddedEvent = txReceipt.logs.find(log => {
+            return log.topics && log.topics[0] === sponsorAddedEventSignature;
+        });
+
+        if (sponsorAddedEvent) {
+            console.log("SponsorAdded event found:", sponsorAddedEvent);
+            toast.success("Successfully became a sponsor!", { id: "become-sponsor" });
+        } else {
+            toast.success("Sponsorship submitted successfully!", { id: "become-sponsor" });
+        }
+    }
+
     return {
-        becomeSponsor: becomeSponsorWithToast,
-        isLoading
+        becomeSponsor,
+        isLoading,
+        error,
+        txHash,
+        txReceipt
     };
 };

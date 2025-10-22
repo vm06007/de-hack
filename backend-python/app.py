@@ -243,6 +243,9 @@ def create_hackathon():
         "selectedJudges": form.get('selectedJudges') if is_json else (json.loads(form.get('selectedJudges')) if form.get('selectedJudges') else []),
         "judgingModel": form.get('judgingModel'),
         "allowAIDelegation": parse_bool(form.get('allowAIDelegation')),
+        # Blockchain data
+        "contractAddress": form.get('contractAddress'),
+        "hackathonId": form.get('hackathonId'),
         "createdAt": datetime.now().isoformat(),
         "updatedAt": datetime.now().isoformat()
     }

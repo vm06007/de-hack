@@ -2,7 +2,7 @@ import Card from "@/components/Card";
 import Icon from "@/components/Icon";
 import { NumericFormat } from "react-number-format";
 
-type PrizePoolProps = { 
+type PrizePoolProps = {
     totalPrize?: number;
     prizeTiers?: any[];
     sponsors?: any[];
@@ -12,13 +12,13 @@ type PrizePoolProps = {
 const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackathon }: PrizePoolProps) => {
     const ethPrice = 2500; // ETH price in USD
     const ethAmount = totalPrize / ethPrice;
-    
+
     // Calculate sponsor contributions
     const sponsorContributions = sponsors?.reduce((sum, sponsor) => {
         const amount = parseFloat(sponsor.tier?.replace(/[$,]/g, '') || '0');
         return sum + amount;
     }, 0) || 0;
-    
+
     // Use dynamic prize tiers if available, otherwise use default breakdown
     const displayTiers = prizeTiers && prizeTiers.length > 0 ? prizeTiers : [
         { name: "1st Place", amount: totalPrize * 0.5, percentage: 50 },
@@ -74,12 +74,14 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
                     <div className="text-caption mb-2">Verify funds deposited</div>
                     <a
                         className="inline-flex items-center gap-2 text-button text-t-primary hover:underline"
-                        href="https://etherscan.io/address/0xDeHackPrizePoolContract"
+                        href={`https://etherscan.io/address/${hackathon?.contractAddress || '0xDeHackPrizePoolContract'}`}
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        <Icon className="!size-4 fill-t-primary" name="link" />
-                        0xDeHackPrizePoolContract
+                        {hackathon?.contractAddress ?
+                            `${hackathon.contractAddress.slice(0, 8)}...${hackathon.contractAddress.slice(-6)}` :
+                            '0xDeHackPrizePoolContract'
+                        }
                     </a>
                 </div>
             </div>

@@ -10,32 +10,23 @@ import PlusIcon from "@/components/PlusIcon";
 import { useBecomeSponsor } from "@/src/hooks/useBecomeSponsor";
 import { useSponsors } from "@/src/hooks/useSponsors";
 
-const defaultSponsors = [
-    {
-        id: 1,
-        name: "Ethereum Foundation",
-        logo: "/images/ethereum.svg",
-        tier: "$25,000",
-    },
-    {
-        id: 2,
-        name: "Polygon",
-        logo: "/images/polygon.svg",
-        tier: "$10,000",
-    },
-    {
-        id: 3,
-        name: "Chainlink",
-        logo: "/images/chainlink.svg",
-        tier: "$1,000",
-    },
-    {
-        id: 4,
-        name: "Uniswap",
-        logo: "/images/uniswap.svg",
-        tier: "$25,000",
-    },
-];
+type BackendSponsor = {
+    id: number;
+    companyName: string;
+    companyLogo?: string;
+    contributionAmount: string;
+    prizeDistribution?: string;
+    depositHook?: string;
+    transactionHash?: string;
+    sponsorAddress?: string;
+};
+
+type PropsSponsor = {
+    id: number;
+    name: string;
+    logo: string;
+    tier: string;
+};
 
 type SponsorsProps = {
     sponsors?: { id: number; name: string; logo: string; tier: string }[];

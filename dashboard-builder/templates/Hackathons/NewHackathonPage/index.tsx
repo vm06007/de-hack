@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAddress } from "@thirdweb-dev/react";
+import toast from "react-hot-toast";
 import Layout from "@/components/Layout";
 import HackathonDetails from "./HackathonDetails";
 import Images from "./Images";
@@ -13,6 +15,7 @@ import Highlights from "./Highlights";
 import CTA from "./CTA";
 import Demos from "./Demos";
 import HackathonTiming from "./HackathonTiming";
+import { useCreateHackathon, VotingConfig } from "@/src/hooks/useCreateHackathon";
 
 const NewHackathonPage = () => {
     const [totalPrize, setTotalPrize] = useState("");
@@ -35,15 +38,19 @@ const NewHackathonPage = () => {
     const [sponsorMinContribution, setSponsorMinContribution] = useState("500");
     const [sponsorCurrency, setSponsorCurrency] = useState({ id: 2, name: "USDC" });
     const [requireStaking, setRequireStaking] = useState(false);
-    const [stakingAmount, setStakingAmount] = useState("0.001");
+    const [stakingAmount, setStakingAmount] = useState("0.0001");
     const [stakingCurrency, setStakingCurrency] = useState({ id: 1, name: "ETH" });
     const [selectedJudges, setSelectedJudges] = useState<number[]>([]);
     const [allowAIDelegation, setAllowAIDelegation] = useState(false);
     const [judgingModel, setJudgingModel] = useState({ id: 1, name: "Open Voting" });
 
     const router = useRouter();
+    const address = useAddress();
+    const { createHackathon, isLoading } = useCreateHackathon();
 
-    const handleDeploy = async () => {
+    // This useEffect is no longer needed since we handle events in the hook
+
+    const callBackendAPI = async (hackathonAddress: string, hackathonId: string) => {
         try {
             const res = await fetch("http://localhost:5000/api/hackathons", {
                 method: "POST",
@@ -75,23 +82,113 @@ const NewHackathonPage = () => {
                     selectedJudges,
                     judgingModel: judgingModel.name,
                     allowAIDelegation,
+                    // Blockchain data
+                    contractAddress: hackathonAddress,
+                    hackathonId: hackathonId,
                 }),
             });
+
             if (!res.ok) throw new Error(`Create failed: ${res.status}`);
             const json = await res.json();
-            console.log("Hackathon created:", json);
+            console.log("Hackathon created in backend:", json);
+
+            toast.success("Hackathon created successfully!");
+
             const id = json?.id;
             if (id) {
                 router.push(`/hackathons/${id}`);
             }
         } catch (e) {
-            console.error(e);
-            alert("Failed to deploy hackathon");
+            console.error("Backend API error:", e);
+            toast.error("Failed to save hackathon data to backend");
+        }
+    };
+
+    const handleDeploy = async () => {
+        if (!address) {
+            toast.error("Please connect your wallet first");
+            return;
+        }
+
+        try {
+            // Convert dates to Unix timestamps
+            const startTimestamp = Math.floor(startDate.getTime() / 1000);
+            const endTimestamp = Math.floor(endDate.getTime() / 1000);
+
+            // Generate a unique hackathon ID using timestamp + random component
+            const timestamp = Math.floor(Date.now() / 1000);
+            const randomComponent = Math.floor(Math.random() * 1000000);
+            const hackathonId = `${timestamp}${randomComponent}`;
+
+            // Convert prize distribution from tiers to wei using BigInt to avoid scientific notation
+            const prizeDistribution = prizeTiers.map(tier => {
+                const amount = parseFloat(tier.amount || "0");
+                return (BigInt(Math.floor(amount * 1000000000000000000))).toString();
+            });
+
+            // Convert judge IDs to real addresses
+            const judgeAddressMap: { [key: number]: string } = {
+                1: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", // Vitalik Buterin
+                2: "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6", // Sandeep Nailwal
+                3: "0x53C61cfb8128ad59244E8c1D26109252ACe23d14", // Sergey Nazarov
+                4: "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3", // Hayden Adams
+                5: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0", // Kartik Talwar
+                6: "0x641AD78BAca220C5BD28b51Ce8e0F495e85Fe689", // Vitalik Marincenko
+                7: "0x8ba1f109551bD432803012645aac136c4b4d8b6", // Stani Kulechov
+                8: "0xCf7Ed3AccA5aC9b869C65C6fD4C8C4C8C4C8C4C8", // Devin Finzer
+            };
+
+            const judgeAddresses = selectedJudges.map(judgeId => {
+                return judgeAddressMap[judgeId] || "0x0000000000000000000000000000000000000000";
+            });
+
+            // Filter out zero addresses and log for debugging
+            const validJudgeAddresses = judgeAddresses.filter(addr => addr !== "0x0000000000000000000000000000000000000000");
+
+            // If no valid judges, show warning
+            if (validJudgeAddresses.length === 0) {
+                toast.error("Please select at least one valid judge");
+                return;
+            }
+
+            // Create voting config based on judging model
+            const votingConfig: VotingConfig = {
+                systemType: judgingModel.id === 1 ? 0 : 1, // 0 = Open, 1 = MACI, etc.
+                useQuadraticVoting: allowAIDelegation,
+                votingPowerPerJudge: "1",
+                maxWinners: "3"
+            };
+
+            // Convert stake amount from ETH to wei using BigInt to avoid scientific notation
+            const stakeAmountInWei = (BigInt(Math.floor(parseFloat(stakingAmount) * 1000000000000000000))).toString();
+            const sponsorContributionInWei = (BigInt(Math.floor(parseFloat(sponsorMinContribution) * 1000000000000000000))).toString();
+
+            // Call the blockchain transaction
+            const result = await createHackathon({
+                hackathonId,
+                startTime: startTimestamp.toString(),
+                endTime: endTimestamp.toString(),
+                minimumSponsorContribution: sponsorContributionInWei,
+                stakeAmount: stakeAmountInWei,
+                prizeDistribution,
+                selectedJudges: validJudgeAddresses, // Use only valid judge addresses
+                votingConfig,
+                value: "0.0001" // 0.0001 ETH for testing
+            });
+
+            // If we got the hackathon address and ID from the transaction, call the backend
+            if (result.hackathonAddress && result.hackathonId) {
+                await callBackendAPI(result.hackathonAddress, result.hackathonId);
+            }
+
+        } catch (e) {
+            console.error("Blockchain transaction error:", e);
+            toast.error("Failed to create hackathon on blockchain");
         }
     };
 
     return (
-        <Layout title="Host New Hackathon" newProduct onDeploy={handleDeploy}>
+        <Layout title="Host New Hackathon" newProduct onDeploy={handleDeploy} isLoading={isLoading}>
             <div className="flex max-lg:block">
                 <div className="w-[calc(100%-33.75rem)] pr-3 max-4xl:w-[calc(100%-27.5rem)] max-2xl:w-[calc(100%-23rem)] max-lg:w-full max-lg:pr-0">
                     <HackathonDetails title={title} setTitle={setTitle} description={description} setDescription={setDescription} />

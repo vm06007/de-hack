@@ -45,6 +45,9 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                             <div className="flex items-center gap-3 mt-2.5">
                                 <div className="">
                                     <Image
+                                        style={{
+                                            borderRadius: "50px",
+                                        }}
                                         className="w-full h-full object-contain opacity-100"
                                         src={logo}
                                         width={40}
@@ -60,8 +63,8 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                 </div>
                 <Description description={hackathon?.description} title={hackathon?.title} hackathon={hackathon} />
                 <div className="grid grid-cols-4 gap-6 max-2xl:grid-cols-2 max-lg:grid-cols-1">
-                    <PrizePool 
-                        totalPrize={prizePool} 
+                    <PrizePool
+                        totalPrize={prizePool}
                         prizeTiers={hackathon?.prizeTiers}
                         sponsors={sponsors}
                         hackathon={hackathon}

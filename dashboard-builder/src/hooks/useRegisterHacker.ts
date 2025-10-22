@@ -1,15 +1,34 @@
 import { useState, useRef, useEffect } from 'react';
-import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi';
+import { useWriteContract, useWaitForTransactionReceipt, useAccount, useReadContract } from 'wagmi';
 import { parseEther } from 'viem';
 import toast from 'react-hot-toast';
 
-// Hackathon contract ABI - only the register function
+// Hackathon contract ABI - register function and isRegistered view
 const HACKATHON_ABI = [
     {
         "inputs": [],
         "name": "register",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "isRegistered",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -47,6 +66,15 @@ export const useRegisterHacker = (contractAddress: string) => {
     
     const { address, isConnected } = useAccount();
     const { writeContract, data: contractWriteData, error } = useWriteContract();
+    
+    // Check if the current user is registered
+    const { data: isRegistered, refetch: refetchRegistrationStatus } = useReadContract({
+        address: contractAddress as `0x${string}`,
+        abi: HACKATHON_ABI,
+        functionName: 'isRegistered',
+        args: address ? [address] : undefined,
+        enabled: !!address && !!contractAddress,
+    });
     
     // Wait for transaction receipt
     const { data: txReceipt } = useWaitForTransactionReceipt({
@@ -86,6 +114,9 @@ export const useRegisterHacker = (contractAddress: string) => {
                 
                 console.log("Calling hacker registration success callback...", result);
                 callbackRef.current(result);
+                
+                // Refetch registration status after successful transaction
+                refetchRegistrationStatus();
             } else {
                 console.error("Registration transaction failed!");
                 toast.error("Registration transaction failed!", { id: "register-hacker" });
@@ -96,7 +127,7 @@ export const useRegisterHacker = (contractAddress: string) => {
             setTxHash(undefined);
             setIsLoading(false);
         }
-    }, [txReceipt, txHash, address]);
+    }, [txReceipt, txHash, address, refetchRegistrationStatus]);
 
     const registerHacker = async (
         stakeAmount: string,
@@ -155,6 +186,8 @@ export const useRegisterHacker = (contractAddress: string) => {
     return {
         registerHacker,
         isLoading,
-        error
+        error,
+        isRegistered: !!isRegistered,
+        refetchRegistrationStatus
     };
 };

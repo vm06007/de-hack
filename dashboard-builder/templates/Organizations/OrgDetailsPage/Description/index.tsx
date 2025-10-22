@@ -5,6 +5,8 @@ import Image from "@/components/Image";
 import { useSponsors } from "@/src/hooks/useSponsors";
 import { useRegisterHacker } from "@/src/hooks/useRegisterHacker";
 import { useEffect } from "react";
+import { useAccount } from "wagmi";
+import toast from "react-hot-toast";
 
 type Props = {
     description?: string;
@@ -53,8 +55,11 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
     // Use backend sponsor data to calculate contributions
     const { sponsors: backendSponsors, fetchSponsors } = useSponsors(hackathon?.id);
     
+    // Get wallet connection status
+    const { isConnected } = useAccount();
+    
     // Use the registerHacker hook for smart contract interaction
-    const { registerHacker, isLoading: registrationLoading } = useRegisterHacker(hackathon?.contractAddress || '');
+    const { registerHacker, isLoading: registrationLoading, isRegistered } = useRegisterHacker(hackathon?.contractAddress || '');
 
     // Calculate sponsor contributions from backend data
     const sponsorContributions = backendSponsors?.reduce((sum, sponsor) => {
@@ -95,8 +100,14 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
 
     // Handle hacker registration
     const handleHackerRegistration = async () => {
+        // Check wallet connection first
+        if (!isConnected) {
+            toast.error("Please connect your wallet first");
+            return;
+        }
+
         if (!hackathon?.contractAddress) {
-            alert("Error: No hackathon contract address found");
+            toast.error("Error: No hackathon contract address found");
             return;
         }
 
@@ -124,7 +135,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
 
                 } catch (backendError) {
                     console.error("Backend call failed after successful contract transaction:", backendError);
-                    alert("Smart contract registration successful, but failed to save to backend. Please contact support.");
+                    toast.error("Smart contract registration successful, but failed to save to backend. Please contact support.");
                 }
             });
 
@@ -132,8 +143,22 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
 
         } catch (error) {
             console.error("Failed to register for hackathon:", error);
-            alert("Failed to register for hackathon. Please try again.");
+            // Error toasts are already handled in the hook
         }
+    };
+
+    // Handle project submission
+    const handleProjectSubmission = () => {
+        // Check wallet connection first
+        if (!isConnected) {
+            toast.error("Please connect your wallet first");
+            return;
+        }
+
+        // TODO: Open project submission modal/form
+        console.log("Opening project submission form...");
+        toast.info("Project submission form coming soon!");
+        // This will be replaced with actual modal/form logic
     };
 
     // Default description if none provided
@@ -175,15 +200,19 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
                     <Button 
                         className="w-full" 
                         isBlack
-                        onClick={handleHackerRegistration}
+                        onClick={isRegistered ? handleProjectSubmission : handleHackerRegistration}
                         disabled={registrationLoading}
                     >
-                        {registrationLoading ? "Processing..." : "Hacker Application"}
+                        {registrationLoading ? "Processing..." : (isRegistered ? "Submit Project" : "Hacker Application")}
                     </Button>
                     <Button 
                         className="w-full" 
                         isStroke
                         onClick={() => {
+                            if (!isConnected) {
+                                toast.error("Please connect your wallet first");
+                                return;
+                            }
                             console.log('Sponsor Application button clicked, onSponsorModalOpen:', onSponsorModalOpen);
                             onSponsorModalOpen?.();
                         }}

@@ -26,9 +26,9 @@ const Demos = () => {
                 />
                 <div className="flex items-center justify-between p-4 bg-b-surface1 rounded-2xl">
                     <div>
-                        <div className="text-body-2 font-medium">Allow to join any time</div>
+                        <div className="text-body-2 font-medium">Allow to apply at any time</div>
                         <div className="text-caption text-t-secondary">
-                            Hackers can join also after hackathon started
+                            Hackers can still apply after hackathon start
                         </div>
                     </div>
                     <Switch

@@ -11,6 +11,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@tailwindcss/postcss": "^4.0.9",
+    "@tanstack/react-query": "^5.90.5",
     "@thirdweb-dev/react": "^4.9.4",
     "@thirdweb-dev/sdk": "^4.0.99",
     "@tiptap/extension-link": "^2.11.5",
@@ -33,6 +34,7 @@
     "react-animate-height": "^3.2.3",
     "react-datepicker": "^8.2.0",
     "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.6.0",
     "react-number-format": "^5.4.3",
     "react-remove-scroll": "^2.6.3",
     "react-scroll": "^1.9.3",
@@ -45,6 +47,8 @@
     "sharp": "^0.33.5",
     "swiper": "^11.2.4",
     "tailwindcss": "^4.0.9",
+    "viem": "^2.38.3",
+    "wagmi": "^2.18.2",
     "yarn": "^1.22.22"
   },
   "devDependencies": {

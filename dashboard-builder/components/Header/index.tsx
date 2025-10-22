@@ -15,6 +15,7 @@ type HeaderProps = {
     hideSidebar?: boolean;
     onDeploy?: () => void;
     onToggleSidebar?: () => void;
+    isLoading?: boolean;
 };
 
 const Header = ({
@@ -24,6 +25,7 @@ const Header = ({
     hideSidebar,
     onDeploy,
     onToggleSidebar,
+    isLoading,
 }: HeaderProps) => {
     const [hasOverflowHidden, setHasOverflowHidden] = useState(false);
 
@@ -121,8 +123,9 @@ const Header = ({
                             className="min-w-36 max-md:w-full max-md:mx-1.5"
                             isBlack
                             onClick={onDeploy}
+                            disabled={isLoading}
                         >
-                            Deploy Now
+                            {isLoading ? "Deploying..." : "Deploy Now"}
                         </Button>
                     </div>
                 )}

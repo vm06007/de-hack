@@ -7,9 +7,10 @@ type LayoutProps = {
     newProduct?: boolean;
     hideSidebar?: boolean;
     onDeploy?: () => void;
+    isLoading?: boolean;
 };
 
-const Layout = ({ title, children, newProduct, hideSidebar, onDeploy }: LayoutProps) => {
+const Layout = ({ title, children, newProduct, hideSidebar, onDeploy, isLoading }: LayoutProps) => {
     const [visibleSidebar, setVisibleSidebar] = useState(false);
 
     useEffect(() => {
@@ -60,6 +61,7 @@ const Layout = ({ title, children, newProduct, hideSidebar, onDeploy }: LayoutPr
                 newProduct={newProduct}
                 hideSidebar={hideSidebar}
                 onDeploy={onDeploy}
+                isLoading={isLoading}
                 onToggleSidebar={() => {
                     setVisibleSidebar(!visibleSidebar);
                 }}

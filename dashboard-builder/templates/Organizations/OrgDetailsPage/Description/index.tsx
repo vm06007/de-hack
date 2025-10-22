@@ -2,6 +2,8 @@ import Icon from "@/components/Icon";
 import Link from "next/link";
 import Button from "@/components/Button";
 import Image from "@/components/Image";
+import { useSponsors } from "@/src/hooks/useSponsors";
+import { useEffect } from "react";
 
 type Props = {
     description?: string;
@@ -9,7 +11,7 @@ type Props = {
     hackathon?: any;
 };
 
-const getHighlights = (hackathon: any) => {
+const getHighlights = (hackathon: any, sponsorContributions: number = 0) => {
     const highlights = [
         "Global Online Hackathon",
     ];
@@ -25,13 +27,12 @@ const getHighlights = (hackathon: any) => {
         highlights.push("30-day development period");
     }
 
-    // Format prize pool without $ if currency is specified
-    if (hackathon?.totalPrizePool) {
-        const prizeAmount = Number(hackathon.totalPrizePool).toLocaleString();
-        highlights.push(`${prizeAmount}+ total prize pool`);
-    } else {
-        highlights.push("$500K+ total prize pool");
-    }
+    // Calculate total prize pool including sponsor contributions (same logic as Prize Pool component)
+    // Use the same calculation as in OrgDetailsPage: Number(hackathon.totalPrizePool) || 500000
+    const basePrizePool = hackathon?.totalPrizePool ? Number(hackathon.totalPrizePool) : 500000;
+    const totalPrizePool = basePrizePool + sponsorContributions;
+    const prizeAmount = Number(totalPrizePool).toLocaleString();
+    highlights.push(`$${prizeAmount}+ total prize pool`);
 
     // Add cost of participation if staking is required (without $ if currency specified)
     if (hackathon?.requireStaking && hackathon?.stakingAmount) {
@@ -47,6 +48,38 @@ const getHighlights = (hackathon: any) => {
 };
 
 const Description = ({ description, title, hackathon }: Props) => {
+    // Use backend sponsor data to calculate contributions
+    const { sponsors: backendSponsors, fetchSponsors } = useSponsors(hackathon?.id);
+
+    // Calculate sponsor contributions from backend data
+    const sponsorContributions = backendSponsors?.reduce((sum, sponsor) => {
+        const amount = parseFloat(sponsor.contributionAmount || '0');
+        return sum + amount;
+    }, 0) || 0;
+
+    // Listen for sponsor updates via custom events
+    useEffect(() => {
+        const handleSponsorUpdate = () => {
+            if (hackathon?.id && fetchSponsors) {
+                fetchSponsors();
+            }
+        };
+
+        // Listen for custom sponsor update events
+        window.addEventListener('sponsorUpdated', handleSponsorUpdate);
+
+        return () => {
+            window.removeEventListener('sponsorUpdated', handleSponsorUpdate);
+        };
+    }, [hackathon?.id, fetchSponsors]);
+
+    // Fetch sponsor data when component mounts
+    useEffect(() => {
+        if (hackathon?.id && fetchSponsors) {
+            fetchSponsors();
+        }
+    }, [hackathon?.id]);
+
     // Default description if none provided
     const defaultDescription = `<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. ${title || 'This hackathon'} brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum 🚀</p><p><strong>🚀 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, ${title || 'this hackathon'} provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. 😎</p>`;
 
@@ -69,7 +102,7 @@ const Description = ({ description, title, hackathon }: Props) => {
                     Highlights
                 </div>
                 <ul>
-                    {getHighlights(hackathon).map((highlight) => (
+                    {getHighlights(hackathon, sponsorContributions).map((highlight) => (
                         <li
                             className="flex items-center py-5 border-t border-s-stroke2 first:border-t-0"
                             key={highlight}

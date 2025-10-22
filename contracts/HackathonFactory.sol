@@ -80,6 +80,10 @@ contract HackathonFactory is JudgeCouncil {
         qvWrapperImplementation = address(
             new QVWrapper()
         );
+
+        _addFirstGlobalJudge(
+            msg.sender
+        );
     }
 
     /**

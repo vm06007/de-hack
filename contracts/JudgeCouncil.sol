@@ -94,7 +94,9 @@ contract JudgeCouncil {
      * @dev Constructor to set the factory address
      * @param _factory Address of the factory contract
      */
-    constructor(address _factory) {
+    constructor(
+        address _factory
+    ) {
         factory = _factory;
     }
 
@@ -102,11 +104,10 @@ contract JudgeCouncil {
      * @dev Add the first global judge (only factory can call this)
      * @param _judge Address of the first judge to add
      */
-    function addFirstGlobalJudge(
+    function _addFirstGlobalJudge(
         address _judge
     )
-        external
-        onlyFactory
+        internal
     {
         require(_judge != address(0), "Invalid judge address");
         require(!isGlobalJudge[_judge], "Judge already exists");
@@ -117,7 +118,6 @@ contract JudgeCouncil {
 
         emit GlobalJudgeAdded(_judge);
     }
-
 
     /**
      * @dev Delegate judge responsibilities to another address
@@ -188,18 +188,27 @@ contract JudgeCouncil {
     /**
      * @dev Claim accumulated judge rewards
      */
-    function claimJudgeReward() external {
-        address judge = isGlobalJudge[msg.sender] ? msg.sender : delegateToJudge[msg.sender];
-        require(judge != address(0), "Not a judge or delegate");
+    function claimJudgeReward()
+        external
+    {
+        address judge = isGlobalJudge[msg.sender]
+            ? msg.sender
+            : delegateToJudge[msg.sender];
+
         require(judgeRewards[judge] > 0, "No rewards to claim");
         require(!hasClaimedReward[judge], "Already claimed rewards");
 
         uint256 amount = judgeRewards[judge];
         hasClaimedReward[judge] = true;
 
-        payable(msg.sender).transfer(amount);
+        payable(msg.sender).transfer(
+            amount
+        );
 
-        emit JudgeRewardClaimed(judge, amount);
+        emit JudgeRewardClaimed(
+            judge,
+            amount
+        );
     }
 
     /**
@@ -207,7 +216,13 @@ contract JudgeCouncil {
      * @param _address Address to check
      * @return True if the address is a judge or delegate
      */
-    function isJudgeOrDelegate(address _address) public view returns (bool) {
+    function isJudgeOrDelegate(
+        address _address
+    )
+        public
+        view
+        returns (bool)
+    {
         return isGlobalJudge[_address] || delegateToJudge[_address] != address(0);
     }
 
@@ -215,7 +230,11 @@ contract JudgeCouncil {
      * @dev Get all global judges
      * @return Array of global judge addresses
      */
-    function getGlobalJudges() external view returns (address[] memory) {
+    function getGlobalJudges()
+        external
+        view
+        returns (address[] memory)
+    {
         return globalJudges;
     }
 
@@ -224,7 +243,13 @@ contract JudgeCouncil {
      * @param _judge Address of the judge
      * @return Amount of rewards
      */
-    function getJudgeRewards(address _judge) external view returns (uint256) {
+    function getJudgeRewards(
+        address _judge
+    )
+        external
+        view
+        returns (uint256)
+    {
         return judgeRewards[_judge];
     }
 
@@ -233,7 +258,13 @@ contract JudgeCouncil {
      * @param _judge Address of the judge
      * @return Address of the delegate
      */
-    function getJudgeDelegate(address _judge) external view returns (address) {
+    function getJudgeDelegate(
+        address _judge
+    )
+        external
+        view
+        returns (address)
+    {
         return judgeDelegates[_judge];
     }
 
@@ -242,7 +273,13 @@ contract JudgeCouncil {
      * @param _delegate Address of the delegate
      * @return Address of the judge
      */
-    function getDelegateJudge(address _delegate) external view returns (address) {
+    function getDelegateJudge(
+        address _delegate
+    )
+        external
+        view
+        returns (address)
+    {
         return delegateToJudge[_delegate];
     }
 
@@ -253,14 +290,25 @@ contract JudgeCouncil {
      * @param _judge Address of the judge to add
      * @return proposalId Unique identifier for the proposal
      */
-    function proposeAddJudge(address _judge) external onlyGlobalJudge returns (bytes32) {
+    function proposeAddJudge(
+        address _judge
+    )
+        external
+        onlyGlobalJudge
+        returns (bytes32)
+    {
         require(_judge != address(0), "Invalid judge address");
         require(!isGlobalJudge[_judge], "Judge already exists");
 
         bytes32 proposalId = keccak256(abi.encodePacked("addJudge", _judge, block.timestamp));
         require(!proposalExecuted[proposalId], "Proposal already executed");
 
-        emit ProposalCreated(proposalId, "addJudge", msg.sender);
+        emit ProposalCreated(
+            proposalId,
+            "addJudge",
+            msg.sender
+        );
+
         return proposalId;
     }
 
@@ -269,7 +317,13 @@ contract JudgeCouncil {
      * @param _judge Address of the judge to remove
      * @return proposalId Unique identifier for the proposal
      */
-    function proposeRemoveJudge(address _judge) external onlyGlobalJudge returns (bytes32) {
+    function proposeRemoveJudge(
+        address _judge
+    )
+        external
+        onlyGlobalJudge
+        returns (bytes32)
+    {
         require(isGlobalJudge[_judge], "Judge does not exist");
         require(_judge != msg.sender, "Cannot propose to remove yourself");
 
@@ -285,14 +339,25 @@ contract JudgeCouncil {
      * @param _newVotesRequired New number of votes required
      * @return proposalId Unique identifier for the proposal
      */
-    function proposeChangeVotesRequired(uint256 _newVotesRequired) external onlyGlobalJudge returns (bytes32) {
+    function proposeChangeVotesRequired(
+        uint256 _newVotesRequired
+    )
+        external
+        onlyGlobalJudge
+        returns (bytes32)
+    {
         require(_newVotesRequired > 0, "Votes required must be greater than 0");
         require(_newVotesRequired <= globalJudges.length, "Votes required cannot exceed total judges");
 
         bytes32 proposalId = keccak256(abi.encodePacked("changeVotesRequired", _newVotesRequired, block.timestamp));
         require(!proposalExecuted[proposalId], "Proposal already executed");
 
-        emit ProposalCreated(proposalId, "changeVotesRequired", msg.sender);
+        emit ProposalCreated(
+            proposalId,
+            "changeVotesRequired",
+            msg.sender
+        );
+
         return proposalId;
     }
 
@@ -367,10 +432,16 @@ contract JudgeCouncil {
             // Change votes required
             uint256 oldVotesRequired = votesRequired;
             votesRequired = _newVotesRequired;
-            emit VotesRequiredChanged(oldVotesRequired, _newVotesRequired);
+
+            emit VotesRequiredChanged(
+                oldVotesRequired,
+                _newVotesRequired
+            );
         }
 
-        emit ProposalExecuted(_proposalId);
+        emit ProposalExecuted(
+            _proposalId
+        );
     }
 
     /**
@@ -382,7 +453,9 @@ contract JudgeCouncil {
         bytes32 _proposalId
     )
         external
-        view returns (uint256) {
+        view
+        returns (uint256)
+    {
         return proposalVotes[_proposalId];
     }
 

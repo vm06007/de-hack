@@ -4,9 +4,10 @@ import Button from "@/components/Button";
 import Image from "@/components/Image";
 import { useSponsors } from "@/src/hooks/useSponsors";
 import { useRegisterHacker } from "@/src/hooks/useRegisterHacker";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import toast from "react-hot-toast";
+import ProjectSubmission from "@/components/ProjectSubmission";
 
 type Props = {
     description?: string;
@@ -60,6 +61,9 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
     
     // Use the registerHacker hook for smart contract interaction
     const { registerHacker, isLoading: registrationLoading, isRegistered } = useRegisterHacker(hackathon?.contractAddress || '');
+    
+    // Project submission modal state
+    const [showProjectModal, setShowProjectModal] = useState(false);
 
     // Calculate sponsor contributions from backend data
     const sponsorContributions = backendSponsors?.reduce((sum, sponsor) => {
@@ -155,10 +159,20 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
             return;
         }
 
-        // TODO: Open project submission modal/form
+        // Open project submission modal
         console.log("Opening project submission form...");
-        toast.info("Project submission form coming soon!");
-        // This will be replaced with actual modal/form logic
+        setShowProjectModal(true);
+    };
+
+    // Handle project submission data
+    const handleProjectSubmit = async (projectData: any) => {
+        console.log("Project data submitted:", projectData);
+        
+        // TODO: Call smart contract to submit project
+        // TODO: Call backend API to store project data
+        
+        // For now, just log the data
+        toast.success("Project submission received! Backend integration coming soon.");
     };
 
     // Default description if none provided
@@ -167,6 +181,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
     const content = description || defaultDescription;
 
     return (
+        <>
         <div className="flex text-[1.125rem] font-medium leading-[1.75rem] max-lg:block">
         <div className="grow pr-16 max-xl:pr-10 max-lg:pr-0">
             <div className="mb-8 text-h4 max-md:mb-6 max-md:text-h5">
@@ -259,6 +274,15 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
             </div>
         </div>
         </div>
+
+        {/* Project Submission Modal */}
+        <ProjectSubmission
+            open={showProjectModal}
+            onClose={() => setShowProjectModal(false)}
+            hackathon={hackathon}
+            onSubmit={handleProjectSubmit}
+        />
+    </>
     );
 };
 

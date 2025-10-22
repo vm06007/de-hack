@@ -316,7 +316,12 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                                     type="number"
                                     placeholder={`Minimum: $${hackathon?.sponsorMinContribution || '500'} ${hackathon?.sponsorCurrency || 'USDC'}`}
                                     value={contributionAmount}
-                                    onChange={(e) => setContributionAmount(e.target.value)}
+                                    onChange={(e) => {
+                                        setContributionAmount(e.target.value);
+                                        if (validationErrors.contributionAmount) {
+                                            setValidationErrors(prev => ({ ...prev, contributionAmount: '' }));
+                                        }
+                                    }}
                                 />
                                 {validationErrors.contributionAmount && (
                                     <div className="text-red-500 text-sm mt-1">{validationErrors.contributionAmount}</div>
@@ -341,7 +346,12 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                             </div>
                             <Editor
                                 content={prizeDistribution}
-                                onChange={setPrizeDistribution}
+                                onChange={(content) => {
+                                    setPrizeDistribution(content);
+                                    if (validationErrors.prizeDistribution) {
+                                        setValidationErrors(prev => ({ ...prev, prizeDistribution: '' }));
+                                    }
+                                }}
                                 className="min-h-24"
                             />
                             {validationErrors.prizeDistribution && (
@@ -360,7 +370,7 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                             <Button
                                 onClick={handleSubmit}
                                 className="flex-1"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || !companyName.trim() || !contributionAmount.trim() || !prizeDistribution.trim()}
                             >
                                 {isSubmitting ? "Submitting..." : "Proceed"}
                             </Button>

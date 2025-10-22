@@ -25,11 +25,12 @@ const NewHackathonPage = () => {
     const [coverUrl, setCoverUrl] = useState<string | undefined>(undefined);
     const [prizeTiers, setPrizeTiers] = useState<any[]>([]);
     const now = new Date();
+    const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes in the future
     const oneWeekFromNow = new Date();
     oneWeekFromNow.setDate(now.getDate() + 7);
 
     const [startDate, setStartDate] = useState(now);
-    const [startTime, setStartTime] = useState(now);
+    const [startTime, setStartTime] = useState(fiveMinutesFromNow);
     const [endDate, setEndDate] = useState(oneWeekFromNow);
     const [endTime, setEndTime] = useState(oneWeekFromNow);
 

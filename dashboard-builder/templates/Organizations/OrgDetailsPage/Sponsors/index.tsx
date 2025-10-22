@@ -59,6 +59,38 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
     // Local loading state for form submission
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Form validation state
+    const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
+
+    // Validate form fields
+    const validateForm = () => {
+        const errors: {[key: string]: string} = {};
+        
+        if (!companyName.trim()) {
+            errors.companyName = "Company name is required";
+        }
+
+        if (!contributionAmount || contributionAmount.trim() === "") {
+            errors.contributionAmount = "Contribution amount is required";
+        } else {
+            const contributionValue = parseFloat(contributionAmount);
+            const minimumDeposit = 500;
+            
+            if (isNaN(contributionValue) || contributionValue <= 0) {
+                errors.contributionAmount = "Please enter a valid amount";
+            } else if (contributionValue < minimumDeposit) {
+                errors.contributionAmount = `Minimum contribution is $${minimumDeposit} USDC`;
+            }
+        }
+
+        if (!prizeDistribution.trim()) {
+            errors.prizeDistribution = "Prize distribution details are required";
+        }
+
+        setValidationErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
     // Use backend sponsors if available, otherwise fall back to props
     const list = backendSponsors && backendSponsors.length > 0 ? backendSponsors : (sponsors && sponsors.length > 0 ? sponsors : []);
 
@@ -87,18 +119,16 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
     };
 
     const handleSubmit = async () => {
+        // Clear previous validation errors
+        setValidationErrors({});
+
+        // Validate form
+        if (!validateForm()) {
+            return;
+        }
+
         if (!hackathon?.id) {
-            console.error("No hackathon ID found");
-            return;
-        }
-
-        if (!contributionAmount || parseFloat(contributionAmount) <= 0) {
-            console.error("Please enter a valid contribution amount");
-            return;
-        }
-
-        if (!companyName.trim()) {
-            console.error("Please enter a company name");
+            alert("Error: No hackathon ID found");
             return;
         }
 
@@ -266,8 +296,16 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                                     label="Company Name"
                                     placeholder="Enter your company name"
                                     value={companyName}
-                                    onChange={(e) => setCompanyName(e.target.value)}
+                                    onChange={(e) => {
+                                        setCompanyName(e.target.value);
+                                        if (validationErrors.companyName) {
+                                            setValidationErrors(prev => ({ ...prev, companyName: '' }));
+                                        }
+                                    }}
                                 />
+                                {validationErrors.companyName && (
+                                    <div className="text-red-500 text-sm mt-1">{validationErrors.companyName}</div>
+                                )}
                             </div>
                         </div>
 
@@ -280,6 +318,9 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                                     value={contributionAmount}
                                     onChange={(e) => setContributionAmount(e.target.value)}
                                 />
+                                {validationErrors.contributionAmount && (
+                                    <div className="text-red-500 text-sm mt-1">{validationErrors.contributionAmount}</div>
+                                )}
                             </div>
                             <div>
                                 <Select
@@ -303,6 +344,9 @@ const Sponsors = ({ sponsors, hackathon }: SponsorsProps) => {
                                 onChange={setPrizeDistribution}
                                 className="min-h-24"
                             />
+                            {validationErrors.prizeDistribution && (
+                                <div className="text-red-500 text-sm mt-1">{validationErrors.prizeDistribution}</div>
+                            )}
                         </div>
 
                         <div className="flex gap-3 pt-0">

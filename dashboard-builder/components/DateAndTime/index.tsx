@@ -176,7 +176,7 @@ const DateAndTime = ({
                                 className="absolute inset-0 z-3 bg-shade-07/70 rounded-3xl dark:bg-shade-03/90"
                                 onClick={() => setIsOpenTime(false)}
                             ></div>
-                            <div className="relative z-5 w-70">
+                            <div className="relative z-5 w-70" style={{ height: "300px" }}>
                                 <div className="absolute top-4 left-4 right-4 flex items-center z-10 h-12 px-3 text-sub-title-1">
                                     <Icon
                                         className="mr-3 fill-t-primary"

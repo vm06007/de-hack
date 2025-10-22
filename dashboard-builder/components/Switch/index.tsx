@@ -8,7 +8,7 @@ type SwitchProps = {
 
 const Switch = ({ className, checked, onChange }: SwitchProps) => (
     <HeadlessSwitch
-        className={`group inline-flex w-11 h-6 items-center rounded-full bg-b-surface1 shadow-[0_0_0_1.5px_inset] shadow-s-stroke2 transition-colors data-[checked]:bg-[#282828] data-[checked]:shadow-[0_1.5px_0_inset] data-[checked]:shadow-white/20 dark:shadow-[inset_0_0_0_1.5px_rgba(248,248,248,0.20),inset_2px_0_8px_2px_rgba(248,248,248,0.20)] dark:data-[checked]:shadow-[inset_2px_0_8px_2px_rgba(248,248,248,0.20)] ${
+        className={`group inline-flex w-11 h-6 items-center rounded-full bg-b-surface1 shadow-[0_0_0_1.5px_inset] shadow-s-stroke2 transition-colors data-[checked]:bg-[#2a85FF] data-[checked]:shadow-[0_1.5px_0_inset] data-[checked]:shadow-white/20 dark:shadow-[inset_0_0_0_1.5px_rgba(248,248,248,0.20),inset_2px_0_8px_2px_rgba(248,248,248,0.20)] dark:data-[checked]:shadow-[inset_2px_0_8px_2px_rgba(248,248,248,0.20)] ${
             className || ""
         }`}
         checked={checked}

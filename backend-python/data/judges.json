@@ -19,7 +19,8 @@
       "website": "https://vitalik.ca",
       "twitter": "https://twitter.com/VitalikButerin",
       "linkedin": "https://linkedin.com/in/vitalik-buterin"
-    }
+    },
+    "walletAddress": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
   },
   {
     "id": 2,
@@ -41,7 +42,8 @@
       "website": "https://polygon.technology",
       "twitter": "https://twitter.com/sandeepnailwal",
       "linkedin": "https://linkedin.com/in/sandeepnailwal"
-    }
+    },
+    "walletAddress": "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6"
   },
   {
     "id": 3,
@@ -63,7 +65,8 @@
       "website": "https://chain.link",
       "twitter": "https://twitter.com/sergeynazarov",
       "linkedin": "https://linkedin.com/in/sergey-nazarov"
-    }
+    },
+    "walletAddress": "0x53C61cfb8128ad59244E8c1D26109252ACe23d14"
   },
   {
     "id": 4,
@@ -85,7 +88,8 @@
       "website": "https://uniswap.org",
       "twitter": "https://twitter.com/haydenadams",
       "linkedin": "https://linkedin.com/in/hayden-adams"
-    }
+    },
+    "walletAddress": "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3"
   },
   {
     "id": 5,
@@ -107,7 +111,8 @@
       "website": "https://aave.com",
       "twitter": "https://twitter.com/StaniKulechov",
       "linkedin": "https://linkedin.com/in/stani-kulechov"
-    }
+    },
+    "walletAddress": "0x8ba1f109551bD432803012645aac136c4b4d8b6"
   },
   {
     "id": 6,
@@ -129,7 +134,8 @@
       "website": "https://opensea.io",
       "twitter": "https://twitter.com/dfinzer",
       "linkedin": "https://linkedin.com/in/devin-finzer"
-    }
+    },
+    "walletAddress": "0xCf7Ed3AccA5aC9b869C65C6fD4C8C4C8C4C8C4C8"
   },
   {
     "id": 7,
@@ -151,7 +157,8 @@
       "website": "https://binance.com",
       "twitter": "https://twitter.com/cz_binance",
       "linkedin": "https://linkedin.com/in/cz-binance"
-    }
+    },
+    "walletAddress": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
   },
   {
     "id": 8,
@@ -173,6 +180,7 @@
       "website": "https://coinbase.com",
       "twitter": "https://twitter.com/brian_armstrong",
       "linkedin": "https://linkedin.com/in/brian-armstrong"
-    }
+    },
+    "walletAddress": "0x641AD78BAca220C5BD28b51Ce8e0F495e85Fe689"
   }
 ]

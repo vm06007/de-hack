@@ -22,7 +22,7 @@ const judges = [
         avatar: "/images/vitalik.jpg",
         role: "Researcher",
         company: "EF",
-        wallet: "0x123...321",
+        wallet: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
     },
     {
         id: 2,
@@ -30,7 +30,7 @@ const judges = [
         avatar: "/images/sandeep.webp",
         role: "Co-Founder",
         company: "Polygon",
-        wallet: "0x456...654",
+        wallet: "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6",
     },
     {
         id: 3,
@@ -38,7 +38,7 @@ const judges = [
         avatar: "/images/nazarov.jpg",
         role: "Founder",
         company: "Chainlink",
-        wallet: "0x789...987",
+        wallet: "0x53C61cfb8128ad59244E8c1D26109252ACe23d14",
     },
     {
         id: 4,
@@ -46,7 +46,7 @@ const judges = [
         avatar: "/images/hayden.jpg",
         role: "Founder",
         company: "Uniswap",
-        wallet: "0xabc...cba",
+        wallet: "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3",
     },
     {
         id: 5,
@@ -54,7 +54,7 @@ const judges = [
         avatar: "/images/kartik.jpg",
         role: "Founder",
         company: "ETHGlobal",
-        wallet: "0xdef...fed",
+        wallet: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
     },
     {
         id: 6,
@@ -62,7 +62,7 @@ const judges = [
         avatar: "/images/vitalik-marincenko.jpg",
         role: "Developer",
         company: "Bitcoin.com",
-        wallet: "0x012...210",
+        wallet: "0x641AD78BAca220C5BD28b51Ce8e0F495e85Fe689",
     },
 ];
 
@@ -117,19 +117,23 @@ const CategoryAndAttributes = ({
                                 }`}
                                 onClick={() => toggleJudge(judge.id)}
                             >
-                                <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                                <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200">
                                     <Image
-                                        className="w-full h-full object-cover object-center opacity-100"
+                                        className="w-full h-full object-cover object-center"
                                         src={judge.avatar}
                                         fill
                                         alt={judge.name}
                                         sizes="32px"
+                                        onError={(e) => {
+                                            console.log('Image failed to load:', judge.avatar);
+                                            e.currentTarget.style.display = 'none';
+                                        }}
                                     />
                                 </div>
                                 <div className="grow">
                                     <div className="text-button">{judge.name}</div>
                                     <div className="text-caption text-t-secondary">
-                                        {judge.role} at {judge.company} ({judge.wallet})
+                                        {judge.role} at {judge.company} ({judge.wallet.slice(0, 6)}...{judge.wallet.slice(-4)})
                                     </div>
                                 </div>
                                 {selectedJudges.includes(judge.id) && (

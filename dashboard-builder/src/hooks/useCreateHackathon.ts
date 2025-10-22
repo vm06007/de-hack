@@ -22,7 +22,7 @@ export interface CreateHackathonParams {
 }
 
 // Contract address - DeHack Platform Factory on mainnet
-const DEHACK_PLATFORM_ADDRESS = process.env.NEXT_PUBLIC_DEHACK_PLATFORM_ADDRESS || "0x2D55ab16d7ebDEcE1Dbf199A3930f399d0A4C176";
+const DEHACK_PLATFORM_ADDRESS = process.env.NEXT_PUBLIC_DEHACK_PLATFORM_ADDRESS || "0x553db01f160771DF2b483F6E9BB5AD173B040151";
 
 export const useCreateHackathon = () => {
     const { contract } = useContract(DEHACK_PLATFORM_ADDRESS, DEHACK_PLATFORM_ABI);
@@ -71,19 +71,31 @@ export const useCreateHackathon = () => {
             const receipt = await result.receipt;
 
             // Parse the HackathonCreated event from the transaction receipt
+            // The HackathonCreated event signature hash is: 0x526b2cf7f5bb87f9a4c01a6eb8c01bf90405b9726286908ac1dfd93944da0e84
+            const hackathonCreatedEventSignature = "0x526b2cf7f5bb87f9a4c01a6eb8c01bf90405b9726286908ac1dfd93944da0e84";
+            
             const hackathonCreatedEvent = receipt.logs.find(log => {
-                try {
-                    const parsed = contract.interface.parseLog(log);
-                    return parsed?.name === "HackathonCreated";
-                } catch {
-                    return false;
-                }
+                return log.topics && log.topics[0] === hackathonCreatedEventSignature;
             });
 
             if (hackathonCreatedEvent) {
-                const parsedEvent = contract.interface.parseLog(hackathonCreatedEvent);
-                const hackathonAddress = parsedEvent?.args.hackathonAddress;
-                const hackathonId = parsedEvent?.args.hackathonId.toString();
+                // Extract data from the event log
+                // Topics: [0] = event signature, [1] = hackathonAddress, [2] = organizer
+                // Data: hackathonId, prizePool, votingSystem, useQuadraticVoting
+                const hackathonAddress = "0x" + hackathonCreatedEvent.topics[1].slice(26); // Remove 0x and first 24 chars
+                const organizer = "0x" + hackathonCreatedEvent.topics[2].slice(26); // Remove 0x and first 24 chars
+                
+                // Parse the data field (contains hackathonId, prizePool, votingSystem, useQuadraticVoting)
+                const data = hackathonCreatedEvent.data.slice(2); // Remove 0x
+                const hackathonId = BigInt("0x" + data.slice(0, 64)).toString();
+                
+                console.log("Parsed event data:", {
+                    hackathonAddress,
+                    organizer,
+                    hackathonId,
+                    rawTopics: hackathonCreatedEvent.topics,
+                    rawData: hackathonCreatedEvent.data
+                });
                 
                 toast.success("Hackathon created successfully!", { id: "create-hackathon" });
                 
@@ -93,6 +105,11 @@ export const useCreateHackathon = () => {
                     hackathonId
                 };
             } else {
+                console.log("Available logs:", receipt.logs.map(log => ({
+                    topics: log.topics,
+                    data: log.data,
+                    address: log.address
+                })));
                 toast.error("HackathonCreated event not found in transaction", { id: "create-hackathon" });
                 throw new Error("HackathonCreated event not found");
             }

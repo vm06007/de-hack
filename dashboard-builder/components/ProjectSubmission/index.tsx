@@ -167,24 +167,27 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
             console.log("Submitting project:", projectData);
 
             // Call the onSubmit callback if provided
+            // The parent component will handle closing the modal after transaction confirmation
             if (onSubmit) {
                 await onSubmit(projectData);
             }
 
-            toast.success("Project submitted successfully!");
-            onClose();
-            resetForm();
+            // Don't close the modal here - let the parent handle it after transaction confirmation
+            // Only reset form after successful transaction (handled by parent)
 
         } catch (error) {
             console.error("Failed to submit project:", error);
-            toast.error("Failed to submit project. Please try again.");
-        } finally {
+            // Don't show error toast here - the parent component handles it
             setIsSubmitting(false);
         }
     };
 
     return (
-        <Modal open={open} onClose={onClose} classWrapper="max-w-3xl">
+        <Modal 
+            open={open} 
+            onClose={onClose} 
+            classWrapper="max-w-3xl"
+        >
             <div className="max-h-[80vh] overflow-y-auto">
                 <h3 className="text-h4 mb-6">Submit Your Project</h3>
 
@@ -403,7 +406,7 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                             className="flex-1"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Submitting..." : "Submit Project"}
+                            {isSubmitting ? "Processing Transaction..." : "Submit Project"}
                         </Button>
                     </div>
                 </div>

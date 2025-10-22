@@ -4,6 +4,7 @@ import Button from "@/components/Button";
 import Image from "@/components/Image";
 import { useSponsors } from "@/src/hooks/useSponsors";
 import { useRegisterHacker } from "@/src/hooks/useRegisterHacker";
+import { useSubmitProject } from "@/src/hooks/useSubmitProject";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import toast from "react-hot-toast";
@@ -61,6 +62,9 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
     
     // Use the registerHacker hook for smart contract interaction
     const { registerHacker, isLoading: registrationLoading, isRegistered } = useRegisterHacker(hackathon?.contractAddress || '');
+    
+    // Use the submitProject hook for smart contract interaction
+    const { submitProject, isLoading: submissionLoading } = useSubmitProject(hackathon?.contractAddress || '');
     
     // Project submission modal state
     const [showProjectModal, setShowProjectModal] = useState(false);
@@ -168,11 +172,50 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
     const handleProjectSubmit = async (projectData: any) => {
         console.log("Project data submitted:", projectData);
         
-        // TODO: Call smart contract to submit project
-        // TODO: Call backend API to store project data
-        
-        // For now, just log the data
-        toast.success("Project submission received! Backend integration coming soon.");
+        if (!hackathon?.contractAddress) {
+            toast.error("Error: No hackathon contract address found");
+            return;
+        }
+
+        try {
+            // First, call the smart contract with project name and GitHub URL
+            const contractResult = await submitProject(
+                projectData.projectName,
+                projectData.githubLink,
+                async (result) => {
+                    console.log("Smart contract project submission successful:", result);
+                    
+                    try {
+                        // TODO: Call backend API to store full project data including images, description, etc.
+                        const backendData = {
+                            ...projectData,
+                            transactionHash: result.hash,
+                            participantAddress: result.participant,
+                            contractAddress: hackathon.contractAddress
+                        };
+                        
+                        console.log("Backend project data:", backendData);
+                        
+                        // For now, just log the success
+                        toast.success("Project submitted successfully on-chain!");
+                        
+                        // Close the modal only after confirmation
+                        setShowProjectModal(false);
+                        
+                    } catch (backendError) {
+                        console.error("Backend call failed after successful contract transaction:", backendError);
+                        toast.error("Project submitted on-chain, but failed to save additional data. Please contact support.");
+                    }
+                }
+            );
+
+            console.log("Smart contract call initiated:", contractResult);
+
+        } catch (error) {
+            console.error("Failed to submit project:", error);
+            // Error toasts are already handled in the hook
+            // Don't close modal on error so user can retry
+        }
     };
 
     // Default description if none provided

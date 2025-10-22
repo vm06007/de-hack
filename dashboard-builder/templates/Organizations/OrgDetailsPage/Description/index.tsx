@@ -3,6 +3,7 @@ import Link from "next/link";
 import Button from "@/components/Button";
 import Image from "@/components/Image";
 import { useSponsors } from "@/src/hooks/useSponsors";
+import { useRegisterHacker } from "@/src/hooks/useRegisterHacker";
 import { useEffect } from "react";
 
 type Props = {
@@ -51,6 +52,9 @@ const getHighlights = (hackathon: any, sponsorContributions: number = 0) => {
 const Description = ({ description, title, hackathon, onSponsorModalOpen }: Props) => {
     // Use backend sponsor data to calculate contributions
     const { sponsors: backendSponsors, fetchSponsors } = useSponsors(hackathon?.id);
+    
+    // Use the registerHacker hook for smart contract interaction
+    const { registerHacker, isLoading: registrationLoading } = useRegisterHacker(hackathon?.contractAddress || '');
 
     // Calculate sponsor contributions from backend data
     const sponsorContributions = backendSponsors?.reduce((sum, sponsor) => {
@@ -80,6 +84,57 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
             fetchSponsors();
         }
     }, [hackathon?.id]);
+
+    // Extract stake amount from hackathon data
+    const getStakeAmount = () => {
+        if (hackathon?.requireStaking && hackathon?.stakingAmount) {
+            return hackathon.stakingAmount.toString();
+        }
+        return "0.0001"; // Default stake amount in ETH
+    };
+
+    // Handle hacker registration
+    const handleHackerRegistration = async () => {
+        if (!hackathon?.contractAddress) {
+            alert("Error: No hackathon contract address found");
+            return;
+        }
+
+        try {
+            const stakeAmount = getStakeAmount();
+            console.log("Starting hacker registration with smart contract...");
+            console.log("Contract address:", hackathon.contractAddress);
+            console.log("Stake amount (ETH):", stakeAmount);
+
+            // First, call the smart contract
+            const contractResult = await registerHacker(stakeAmount, async (result) => {
+                console.log("Smart contract registration successful:", result);
+                
+                try {
+                    // TODO: Add backend call here when needed
+                    // const hackerData = {
+                    //     hackathonId: hackathon.id,
+                    //     participantAddress: result.participant,
+                    //     stakeAmount: result.stakeAmount,
+                    //     transactionHash: result.hash,
+                    // };
+                    // const backendResult = await createHackerRegistration(hackerData);
+                    
+                    console.log("Complete hacker registration successful:", result);
+
+                } catch (backendError) {
+                    console.error("Backend call failed after successful contract transaction:", backendError);
+                    alert("Smart contract registration successful, but failed to save to backend. Please contact support.");
+                }
+            });
+
+            console.log("Smart contract call initiated:", contractResult);
+
+        } catch (error) {
+            console.error("Failed to register for hackathon:", error);
+            alert("Failed to register for hackathon. Please try again.");
+        }
+    };
 
     // Default description if none provided
     const defaultDescription = `<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. ${title || 'This hackathon'} brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum 🚀</p><p><strong>🚀 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, ${title || 'this hackathon'} provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. 😎</p>`;
@@ -117,11 +172,14 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
                     ))}
                 </ul>
                 <div className="flex flex-col gap-3 shrink-0 mt-2">
-                    <Link href="/applications/hacker">
-                        <Button className="w-full" isBlack>
-                            Hacker Application
-                        </Button>
-                    </Link>
+                    <Button 
+                        className="w-full" 
+                        isBlack
+                        onClick={handleHackerRegistration}
+                        disabled={registrationLoading}
+                    >
+                        {registrationLoading ? "Processing..." : "Hacker Application"}
+                    </Button>
                     <Button 
                         className="w-full" 
                         isStroke

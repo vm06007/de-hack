@@ -614,19 +614,6 @@ def get_judge(judge_id):
         return jsonify({"error": "Judge not found"}), 404
     return jsonify(judge)
 
-# Sponsors API
-@app.route('/api/sponsors', methods=['GET'])
-def get_sponsors():
-    sponsors = load_data('sponsors')
-    return jsonify(sponsors)
-
-@app.route('/api/sponsors/<int:sponsor_id>', methods=['GET'])
-def get_sponsor(sponsor_id):
-    sponsors = load_data('sponsors')
-    sponsor = next((s for s in sponsors if s['id'] == sponsor_id), None)
-    if not sponsor:
-        return jsonify({"error": "Sponsor not found"}), 404
-    return jsonify(sponsor)
 
 # Product Activity API
 @app.route('/api/product-activity', methods=['GET'])
@@ -700,6 +687,90 @@ def get_hackers():
             "pages": (len(filtered_users) + limit - 1) // limit
         }
     })
+
+# Sponsors API
+@app.route('/api/sponsors', methods=['GET'])
+def get_sponsors():
+    """Get all sponsors, optionally filtered by hackathon ID"""
+    sponsors = load_data('sponsors')
+    hackathon_id = request.args.get('hackathonId')
+    
+    if hackathon_id:
+        hackathon_id = int(hackathon_id)
+        sponsors = [s for s in sponsors if s.get('hackathonId') == hackathon_id]
+    
+    return jsonify({
+        "sponsors": sponsors,
+        "total": len(sponsors)
+    })
+
+@app.route('/api/sponsors', methods=['POST'])
+def create_sponsor():
+    """Create a new sponsor application"""
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    required_fields = ['hackathonId', 'companyName', 'contributionAmount']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing required field: {field}"}), 400
+    
+    sponsors = load_data('sponsors')
+    
+    new_sponsor = {
+        "id": get_next_id(sponsors),
+        "hackathonId": int(data['hackathonId']),
+        "companyName": data['companyName'],
+        "contributionAmount": data['contributionAmount'],
+        "companyLogo": data.get('companyLogo'),
+        "prizeDistribution": data.get('prizeDistribution', ''),
+        "depositHook": data.get('depositHook', 'Plain Deposit'),
+        "transactionHash": data.get('transactionHash'),
+        "sponsorAddress": data.get('sponsorAddress'),
+        "status": "approved",  # auto-approve for now
+        "createdAt": datetime.now().isoformat(),
+        "updatedAt": datetime.now().isoformat()
+    }
+    
+    sponsors.append(new_sponsor)
+    save_data('sponsors', sponsors)
+    
+    response = jsonify(new_sponsor)
+    response.status_code = 201
+    return response
+
+@app.route('/api/sponsors/<int:sponsor_id>', methods=['GET'])
+def get_sponsor(sponsor_id):
+    """Get a specific sponsor by ID"""
+    sponsors = load_data('sponsors')
+    sponsor = next((s for s in sponsors if s['id'] == sponsor_id), None)
+    
+    if not sponsor:
+        return jsonify({"error": "Sponsor not found"}), 404
+    
+    return jsonify(sponsor)
+
+@app.route('/api/sponsors/<int:sponsor_id>', methods=['PUT'])
+def update_sponsor(sponsor_id):
+    """Update sponsor status (approve/reject)"""
+    data = request.get_json()
+    
+    if not data or 'status' not in data:
+        return jsonify({"error": "Status is required"}), 400
+    
+    sponsors = load_data('sponsors')
+    sponsor = next((s for s in sponsors if s['id'] == sponsor_id), None)
+    
+    if not sponsor:
+        return jsonify({"error": "Sponsor not found"}), 404
+    
+    sponsor['status'] = data['status']
+    sponsor['updatedAt'] = datetime.now().isoformat()
+    
+    save_data('sponsors', sponsors)
+    return jsonify(sponsor)
 
 
 if __name__ == '__main__':

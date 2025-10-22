@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { format, getYear, getMonth } from "date-fns";
 import { motion } from "framer-motion";
@@ -24,6 +24,20 @@ const DateAndTime = ({
 }) => {
     const [isOpenDate, setIsOpenDate] = useState(false);
     const [isOpenTime, setIsOpenTime] = useState(false);
+
+    // Prevent body scroll when calendar is open
+    useEffect(() => {
+        if (isOpenDate || isOpenTime) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        // Cleanup on unmount
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpenDate, isOpenTime]);
 
     const handleChangeDate = (e: Date | null) => {
         setIsOpenDate(!isOpenDate);
@@ -75,7 +89,7 @@ const DateAndTime = ({
                     </button>
                     {isOpenDate && (
                         <motion.div
-                            className="custom-datepicker absolute inset-0 z-10 flex items-center justify-center"
+                            className="custom-datepicker fixed inset-0 z-50 flex items-center justify-center"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -150,7 +164,7 @@ const DateAndTime = ({
                     </button>
                     {isOpenTime && (
                         <motion.div
-                            className="custom-datepicker absolute inset-0 z-10"
+                            className="custom-datepicker fixed inset-0 z-50 flex items-center justify-center"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -162,7 +176,7 @@ const DateAndTime = ({
                                 className="absolute inset-0 z-3 bg-shade-07/70 rounded-3xl dark:bg-shade-03/90"
                                 onClick={() => setIsOpenTime(false)}
                             ></div>
-                            <div className="absolute top-2 left-1/2 bottom-2 z-5 w-70 -translate-x-1/2">
+                            <div className="relative z-5 w-70">
                                 <div className="absolute top-4 left-4 right-4 flex items-center z-10 h-12 px-3 text-sub-title-1">
                                     <Icon
                                         className="mr-3 fill-t-primary"

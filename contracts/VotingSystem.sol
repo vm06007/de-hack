@@ -2,10 +2,31 @@
 
 pragma solidity ^0.8.28;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+
 contract VotingSystem {
+    using SafeERC20 for IERC20;
 
     uint256[] public prizeDistribution;
     uint256 public pointsPerJudge;
+
+    // PYUSD token for prize distribution
+    IERC20 public pyusdToken;
+
+    /**
+     * @dev Set the PYUSD token address
+     * @param _pyusdToken Address of the PYUSD token
+     */
+    function _setPyusdToken(
+        address _pyusdToken
+    )
+        internal
+    {
+        pyusdToken = IERC20(
+            _pyusdToken
+        );
+    }
 
     mapping(address => bool) public hasVoted;
     mapping(address => uint256) public totalPoints;
@@ -405,14 +426,31 @@ contract VotingSystem {
     )
         internal
     {
-        require(!hasClaimedPrize[_participant], "Prize already claimed");
-        require(_isWinner(_participant), "Not a winner");
+        require(
+            hasClaimedPrize[_participant] == false,
+            "Prize already claimed"
+        );
 
-        uint256 prizeAmount = _getPrizeAmount(_participant);
+        require(
+            _isWinner(_participant),
+            "Not a winner"
+        );
+
+        uint256 prizeAmount = _getPrizeAmount(
+            _participant
+        );
+
         hasClaimedPrize[_participant] = true;
-        payable(_participant).transfer(prizeAmount);
 
-        emit PrizeClaimed(_participant, prizeAmount);
+        pyusdToken.safeTransfer(
+            _participant,
+            prizeAmount
+        );
+
+        emit PrizeClaimed(
+            _participant,
+            prizeAmount
+        );
     }
 
     // Getter functions

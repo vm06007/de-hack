@@ -193,4 +193,17 @@ contract JudgingSystem {
     function getDelegateJudge(address _delegate) external view returns (address) {
         return delegateToJudge[_delegate];
     }
+
+
+    /**
+     * @dev Set the judge reward pool (called during hackathon initialization)
+     * @param _rewardPool Amount of ETH available for judge rewards
+     */
+    function _setJudgeRewardPool(
+        uint256 _rewardPool
+    )
+        internal
+    {
+        judgeRewardPool = _rewardPool;
+    }
 }

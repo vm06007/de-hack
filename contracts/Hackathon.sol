@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 import "./StakeSystem.sol";
 import "./VotingSystem.sol";
 import "./JudgingSystem.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
 
@@ -20,6 +21,8 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         address sponsorAddress;
         uint256 contribution;
         bool isActive;
+        uint256 distributedAmount; // Amount this sponsor has already distributed
+        bool isETHSponsor; // true if contributed ETH, false if contributed tokens
     }
 
     uint256 public hackathonId;
@@ -46,6 +49,14 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
     address[] public sponsorList;
     uint256 public totalSponsorContributions;
 
+    // Token sponsor tracking
+    mapping(address => mapping(address => uint256)) public tokenContributions; // sponsor => token => amount
+
+    // Sponsor-specific prize pools
+    mapping(address => uint256) public sponsorPrizePools; // sponsor => amount available for distribution
+    mapping(address => address) public sponsorTokenAddresses; // sponsor => token address (for token sponsors)
+    mapping(address => uint256) public totalTokenContributions; // token => total amount
+
     event ParticipantRegistered(
         address indexed participant
     );
@@ -70,6 +81,12 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
     event SubmissionScored(
         address indexed participant,
         uint256 score
+    );
+
+    event TokenSponsorAdded(
+        address indexed sponsor,
+        address indexed token,
+        uint256 amount
     );
 
     modifier onlyOrganizer() {
@@ -126,7 +143,6 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         uint256 _stakeAmount,
         uint256 _prizeClaimCooldown,
         uint256 _judgingDuration,
-        uint256 _judgeRewardPercentage,
         address[] memory _selectedJudges
     )
         internal
@@ -159,7 +175,10 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         // Validate prize distribution
         uint256 totalDistribution = 0;
         for (uint256 i = 0; i < _prizeDistribution.length; i++) {
-            require(_prizeDistribution[i] > 0, "Each prize distribution must be greater than 0");
+            require(
+                _prizeDistribution[i] > 0,
+                "Each prize distribution must be greater than 0"
+            );
             totalDistribution += _prizeDistribution[i];
         }
 
@@ -194,7 +213,7 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         prizePool = totalDistribution;
 
         // Initialize judging system
-        judgeRewardPercentage = _judgeRewardPercentage;
+        // Judge rewards are now handled via remaining ETH, not percentage
 
         // Add selected judges
         for (uint256 i = 0; i < _selectedJudges.length; i++) {
@@ -218,7 +237,8 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         uint256 _stakeAmount,
         uint256[] memory _prizeDistribution,
         address _factory,
-        address[] memory _selectedJudges
+        address[] memory _selectedJudges,
+        address _pyusdToken
     )
         external
         payable
@@ -239,11 +259,19 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         organizer = _organizer;
         factory = _factory;
 
+        // Set the PYUSD token
+        pyusdToken = IERC20(_pyusdToken);
+        _setPyusdToken(_pyusdToken);
+
         // Set parameters
         minimumSponsorContribution = _minimumSponsorContribution;
         uint256 _prizeClaimCooldown = 1 days; // Default prize claim cooldown
         uint256 _judgingDuration = 1 days; // Default judging duration
-        uint256 _judgeRewardPercentage = 50; // Default 0.5% judge reward
+
+        // Set judge reward pool with the remaining ETH sent to the contract
+        _setJudgeRewardPool(
+            msg.value
+        );
 
         // Initialize the hackathon with the provided parameters
         _initializeHackathon(
@@ -254,7 +282,6 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
             _stakeAmount,
             _prizeClaimCooldown,
             _judgingDuration,
-            _judgeRewardPercentage,
             _selectedJudges
         );
     }
@@ -308,7 +335,7 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         onlyRegistered
     {
         require(
-            !hasSubmitted[msg.sender],
+            hasSubmitted[msg.sender] == false,
             "Already submitted"
         );
 
@@ -398,21 +425,34 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         uint256 _amount
     )
         external
+        onlySponsor
     {
-        require(
-            msg.sender == organizer || sponsors[msg.sender].isActive,
-            "Only organizer or sponsors can distribute prizes"
-        );
-
         require(!isActive || block.timestamp > endTime, "Hackathon is still active");
-        require(_amount <= prizePool, "Amount exceeds prize pool");
         require(_amount > 0, "Amount must be greater than 0");
 
-        prizePool -= _amount;
+        // If organizer is distributing, use main prize pool
+        if (msg.sender == organizer) {
+            require(_amount <= prizePool, "Amount exceeds prize pool");
+            prizePool -= _amount;
+            payable(_winner).transfer(_amount);
+        } else {
+            // If sponsor is distributing, use their specific prize pool
+            require(_amount <= sponsorPrizePools[msg.sender], "Amount exceeds sponsor's available prize pool");
+            require(_amount <= (sponsors[msg.sender].contribution - sponsors[msg.sender].distributedAmount), "Amount exceeds sponsor's remaining contribution");
 
-        payable(_winner).transfer(
-            _amount
-        );
+            // Update sponsor's distributed amount
+            sponsors[msg.sender].distributedAmount += _amount;
+            sponsorPrizePools[msg.sender] -= _amount;
+
+            // Distribute based on sponsor type (ETH or token)
+            if (sponsors[msg.sender].isETHSponsor) {
+                payable(_winner).transfer(_amount);
+            } else {
+                // For token sponsors, transfer tokens
+                address tokenAddress = sponsorTokenAddresses[msg.sender];
+                IERC20(tokenAddress).transfer(_winner, _amount);
+            }
+        }
 
         emit PrizeDistributed(
             _winner,
@@ -512,19 +552,79 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         sponsors[msg.sender] = Sponsor({
             sponsorAddress: msg.sender,
             contribution: msg.value,
-            isActive: true
+            isActive: true,
+            distributedAmount: 0,
+            isETHSponsor: true
         });
 
         sponsorList.push(msg.sender);
         totalSponsorContributions += msg.value;
 
-        // Add judge rewards from sponsor contribution
-        uint256 judgeReward = msg.value * getJudgeRewardPercentage() / 10000;
-        judgeRewardPool += judgeReward;
+        // Set up sponsor-specific prize pool (ETH contribution)
+        sponsorPrizePools[msg.sender] = msg.value;
 
         emit SponsorAdded(
             msg.sender,
             msg.value
+        );
+    }
+
+    /**
+     * @dev Allows anyone to become a sponsor by contributing tokens
+     * @param _tokenAddress Address of the ERC20 token to contribute
+     * @param _tokenAmount Amount of tokens to contribute
+     */
+    function becomeSponsorWithToken(
+        address _tokenAddress,
+        uint256 _tokenAmount
+    )
+        external
+    {
+        require(
+            _tokenAmount >= minimumSponsorContribution,
+            "Contribution below minimum required"
+        );
+
+        require(
+            sponsors[msg.sender].isActive == false,
+            "Already a sponsor"
+        );
+
+        // Transfer tokens from sender to this contract
+        IERC20 token = IERC20(
+            _tokenAddress
+        );
+
+        token.transferFrom(
+            msg.sender,
+            address(this),
+            _tokenAmount
+        );
+
+        // Add sponsor to the list
+        sponsors[msg.sender] = Sponsor({
+            sponsorAddress: msg.sender,
+            contribution: _tokenAmount,
+            isActive: true,
+            distributedAmount: 0,
+            isETHSponsor: false
+        });
+
+        sponsorList.push(msg.sender);
+        totalSponsorContributions += _tokenAmount;
+
+        // Track token contributions
+        tokenContributions[msg.sender][_tokenAddress] = _tokenAmount;
+        sponsorTokenAddresses[msg.sender] = _tokenAddress;
+
+        // Set up sponsor-specific prize pool (token contribution)
+        sponsorPrizePools[msg.sender] = _tokenAmount;
+        totalTokenContributions[_tokenAddress] += _tokenAmount;
+
+        emit TokenSponsorAdded(
+            msg.sender,
+            _tokenAddress,
+            _tokenAmount
         );
     }
 
@@ -610,17 +710,42 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
     function claimJudgeReward()
         external
     {
-        require(isJudgeOrDelegate(msg.sender), "Only judges or their delegates can claim rewards");
-        address actualJudge = isJudge[msg.sender] ? msg.sender : delegateToJudge[msg.sender];
-        require(!hasReceivedJudgeReward[actualJudge], "Already claimed judge reward");
-        require(judgeList.length > 0, "No judges to distribute rewards to");
+        require(
+            isJudgeOrDelegate(msg.sender),
+            "Only judges or their delegates can claim rewards"
+        );
+
+        address actualJudge = isJudge[msg.sender]
+            ? msg.sender
+            : delegateToJudge[msg.sender];
+
+        require(
+            !hasReceivedJudgeReward[actualJudge],
+            "Already claimed judge reward"
+        );
+
+        require(
+            judgeList.length > 0,
+            "No judges to distribute rewards to"
+        );
 
         uint256 rewardPerJudge = judgeRewardPool / judgeList.length;
-        require(rewardPerJudge > 0, "Insufficient reward per judge");
+
+        require(
+            rewardPerJudge > 0,
+            "Insufficient reward per judge"
+        );
 
         hasReceivedJudgeReward[actualJudge] = true;
-        payable(msg.sender).transfer(rewardPerJudge);
-        emit JudgeRewardDistributed(actualJudge, rewardPerJudge);
+
+        payable(msg.sender).transfer(
+            rewardPerJudge
+        );
+
+        emit JudgeRewardDistributed(
+            actualJudge,
+            rewardPerJudge
+        );
     }
 
 
@@ -646,6 +771,73 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
         return minimumSponsorContribution;
     }
 
+    /**
+     * @dev Gets token contribution amount for a specific sponsor and token
+     * @param _sponsor Address of the sponsor
+     * @param _tokenAddress Address of the token
+     */
+    function getTokenContribution(
+        address _sponsor,
+        address _tokenAddress
+    )
+        external
+        view
+        returns (uint256)
+    {
+        return tokenContributions[_sponsor][_tokenAddress];
+    }
+
+    /**
+     * @dev Gets sponsor's available prize pool for distribution
+     * @param _sponsor Address of the sponsor
+     * @return Available amount the sponsor can still distribute
+     */
+    function getSponsorAvailablePrize(address _sponsor) external view returns (uint256) {
+        return sponsorPrizePools[_sponsor];
+    }
+
+    /**
+     * @dev Gets sponsor's total contribution
+     * @param _sponsor Address of the sponsor
+     * @return Total contribution amount
+     */
+    function getSponsorTotalContribution(address _sponsor) external view returns (uint256) {
+        return sponsors[_sponsor].contribution;
+    }
+
+    /**
+     * @dev Gets sponsor's distributed amount
+     * @param _sponsor Address of the sponsor
+     * @return Amount already distributed by this sponsor
+     */
+    function getSponsorDistributedAmount(address _sponsor) external view returns (uint256) {
+        return sponsors[_sponsor].distributedAmount;
+    }
+
+    /**
+     * @dev Gets sponsor's token address (for token sponsors)
+     * @param _sponsor Address of the sponsor
+     * @return Token address used by this sponsor
+     */
+    function getSponsorTokenAddress(address _sponsor) external view returns (address) {
+        return sponsorTokenAddresses[_sponsor];
+    }
+
+    /**
+     * @dev Gets total token contributions for a specific token
+     * @param _tokenAddress Address of the token
+     */
+    function getTotalTokenContributions(
+        address _tokenAddress
+    )
+        external
+        view
+        returns (uint256)
+    {
+        return totalTokenContributions[
+            _tokenAddress
+        ];
+    }
 
 
     // ========== Voting System Functions ==========

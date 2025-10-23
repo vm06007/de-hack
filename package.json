@@ -28,6 +28,7 @@
         "deploy:counter": "hardhat ignition deploy ignition/modules/Counter.ts",
         "deploy:factory": "hardhat ignition deploy ignition/modules/HackathonFactory.ts --network mainnet",
         "deploy:factory:local": "hardhat ignition deploy ignition/modules/HackathonFactory.ts",
+        "deploy:factory:curve": "hardhat ignition deploy ignition/modules/HackathonFactory.ts --network mainnet --reset",
         "verify:factory": "bun run scripts/verify-factory.ts"
     },
     "dependencies": {

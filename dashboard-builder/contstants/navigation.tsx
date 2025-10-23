@@ -1,8 +1,8 @@
 export const navigation = [
     {
-        title: "Dashboard",
-        icon: "dashboard",
-        href: "/",
+        title: "Explore Page",
+        icon: "grid",
+        href: "/explore-page",
     },
     {
         title: "Hackathons",
@@ -57,9 +57,9 @@ export const navigation = [
         ],
     },
     {
-        title: "Explore Page",
-        icon: "grid",
-        href: "/explore-page",
+        title: "Judging Page",
+        icon: "dashboard",
+        href: "/",
     },
 ];
 

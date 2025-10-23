@@ -15,10 +15,10 @@ contract CurveIntegrationTest {
     address constant CURVE_POOL = 0x383E6b4437b59fff47B619CBA855CA29342A8559;
     address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address constant PYUSD = 0x6C3ea9036406852006290770BeDfcAbc0E3ba16C;
-    
+
     // Curve pool indices
-    int128 constant ETH_INDEX = 0;
-    int128 constant PYUSD_INDEX = 1;
+    int128 constant ETH_INDEX = 1;
+    int128 constant PYUSD_INDEX = 0;
 
     // Test parameters
     uint256 constant HACKATHON_ID = 1;
@@ -49,15 +49,15 @@ contract CurveIntegrationTest {
         judge2 = address(0x3);
     }
 
-    function testCurvePoolInfo() public {
+    function testCurvePoolInfo() public view {
         (address pool, int128 ethIdx, int128 pyusdIdx) = factory.getCurvePoolInfo();
-        
+
         assertTrue(pool == CURVE_POOL);
         assertTrue(ethIdx == ETH_INDEX);
         assertTrue(pyusdIdx == PYUSD_INDEX);
     }
 
-    function testFactoryState() public {
+    function testFactoryState() public view {
         assertTrue(factory.curvePool() == CURVE_POOL);
         assertTrue(factory.weth() == WETH);
         assertTrue(factory.pyusd() == PYUSD);
@@ -94,9 +94,10 @@ contract CurveIntegrationTest {
             STAKE_AMOUNT,
             prizeDistribution,
             selectedJudges,
-            votingConfig,
-            MIN_PYUSD_OUT
-        ) returns (address hackathonAddress) {
+            votingConfig
+        )
+            returns (address hackathonAddress)
+        {
             // If successful, verify the hackathon was created
             assertTrue(hackathonAddress != address(0));
             assertTrue(factory.getHackathonCount() == 1);
@@ -106,7 +107,7 @@ contract CurveIntegrationTest {
         }
     }
 
-    function testErrorHandling() public {
+    function testErrorHandling() public view {
         // Test with zero ETH amount
         try factory.estimatePyusdOutput(0) {
             assertTrue(false); // Should not reach here
@@ -117,7 +118,7 @@ contract CurveIntegrationTest {
 
     // Removed testGasUsage as it fails on local network
 
-    function testMultipleOperations() public {
+    function testMultipleOperations() public view {
         // Test multiple estimation calls
         uint256[] memory amounts = new uint256[](5);
         amounts[0] = 0.1 ether;

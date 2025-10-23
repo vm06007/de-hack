@@ -7,7 +7,7 @@ async function main() {
     const Hackathon = await ethers.getContractFactory("Hackathon");
     const implementation = await Hackathon.deploy();
     await implementation.waitForDeployment();
-    
+
     const implementationAddress = await implementation.getAddress();
     console.log("Hackathon implementation deployed to:", implementationAddress);
 
@@ -15,14 +15,14 @@ async function main() {
     const HackathonFactory = await ethers.getContractFactory("HackathonFactory");
     const factory = await HackathonFactory.deploy(implementationAddress);
     await factory.waitForDeployment();
-    
+
     const factoryAddress = await factory.getAddress();
     console.log("HackathonFactory deployed to:", factoryAddress);
 
     // Verify the implementation address is set correctly
     const storedImplementation = await factory.implementation();
     console.log("Factory implementation address:", storedImplementation);
-    
+
     if (storedImplementation.toLowerCase() === implementationAddress.toLowerCase()) {
         console.log("SUCCESS: Implementation address set correctly in factory");
     } else {

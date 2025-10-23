@@ -4,6 +4,7 @@ import Field from "@/components/Field";
 
 type JudgingIncentivesProps = {
     className?: string;
+    onIncentiveChange?: (percentage: number) => void;
 };
 
 const incentiveOptions = [
@@ -15,7 +16,7 @@ const incentiveOptions = [
     { id: 6, value: "custom", label: "Custom" },
 ];
 
-const JudgingIncentives = ({ className }: JudgingIncentivesProps) => {
+const JudgingIncentives = ({ className, onIncentiveChange }: JudgingIncentivesProps) => {
     const [activeId, setActiveId] = useState<number | null>(null);
     const [customValue, setCustomValue] = useState("");
 
@@ -23,7 +24,18 @@ const JudgingIncentives = ({ className }: JudgingIncentivesProps) => {
         setActiveId(id);
         if (value === "custom") {
             setCustomValue("");
+        } else {
+            // Extract percentage from value (e.g., "0.1%" -> 0.1)
+            const percentage = parseFloat(value.replace('%', ''));
+            onIncentiveChange?.(percentage);
         }
+    };
+
+    const handleCustomChange = (value: string) => {
+        setCustomValue(value);
+        // Extract percentage from custom value
+        const percentage = parseFloat(value.replace('%', '')) || 0;
+        onIncentiveChange?.(percentage);
     };
 
     return (
@@ -54,7 +66,7 @@ const JudgingIncentives = ({ className }: JudgingIncentivesProps) => {
                         label="Custom Percentage"
                         placeholder="Enter custom percentage (e.g., 1.5%)"
                         value={customValue}
-                        onChange={(e) => setCustomValue(e.target.value)}
+                        onChange={(e) => handleCustomChange(e.target.value)}
                     />
                 </div>
             )}

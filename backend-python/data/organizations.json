@@ -97,10 +97,10 @@
         "description": "The premier crypto and Web3 conference",
         "logo": "/images/logos/token2049.png",
         "website": "https://token2049.com",
-         "socialLinks": {
-             "twitter": "https://twitter.com/Token2049",
-             "chain": "https://token2049.com"
-         },
+        "socialLinks": {
+            "twitter": "https://twitter.com/Token2049",
+            "chain": "https://token2049.com"
+        },
         "createdBy": 1,
         "createdAt": "2020-01-01T00:00:00Z",
         "updatedAt": "2024-01-01T00:00:00Z",

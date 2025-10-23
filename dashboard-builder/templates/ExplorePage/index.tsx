@@ -40,7 +40,7 @@ const ShopPage = () => {
             <div className="relative z-2 max-w-370 mx-auto pt-25 pb-15 max-[1519px]:max-w-290 max-xl:pt-13 max-xl:pb-8 max-md:pt-5 max-md:pb-0">
                 <div className="max-w-226 mx-auto mb-30 text-center max-xl:mb-18 max-lg:mb-13 max-md:mb-8">
                     <div className="mb-4 text-h1 max-3xl:text-h2 max-lg:text-h3 max-md:mb-2 max-md:text-h4">
-                        1,249 Hackathons online
+                        1,249 Hackathons Online
                     </div>
                     <div className="text-h5 text-t-secondary max-xl:max-w-180 max-xl:mx-auto max-lg:max-w-130 max-lg:text-sub-title-1 max-md:font-normal">
                         Explore thousands of hackathons crafted by the top organizers in the

@@ -17,6 +17,8 @@ import Demos from "./Demos";
 import HackathonTiming from "./HackathonTiming";
 import { useCreateHackathon, VotingConfig } from "@/src/hooks/useCreateHackathon";
 import { useEthPrice, useUsdToEth } from "@/src/hooks/useEthPrice";
+import { getTokenDecimals } from "@/constants/tokenAddresses";
+import { parseUnits } from "viem";
 
 const NewHackathonPage = () => {
     const [totalPrize, setTotalPrize] = useState("");
@@ -40,9 +42,9 @@ const NewHackathonPage = () => {
     // Hackathon Settings
     const [allowSponsors, setAllowSponsors] = useState(false);
     const [sponsorMinContribution, setSponsorMinContribution] = useState("500");
-    const [sponsorCurrency, setSponsorCurrency] = useState({ id: 2, name: "USDC" });
+    const [sponsorCurrency, setSponsorCurrency] = useState({ id: 2, name: "PYUSD" });
     const [requireStaking, setRequireStaking] = useState(false);
-    const [stakingAmount, setStakingAmount] = useState("0.0001");
+    const [stakingAmount, setStakingAmount] = useState("0.01");
     const [stakingCurrency, setStakingCurrency] = useState({ id: 1, name: "ETH" });
     const [automaticStakeReturn, setAutomaticStakeReturn] = useState(false);
     const [depositStrategy, setDepositStrategy] = useState({ id: 1, name: "Plain Deposit" });
@@ -179,12 +181,28 @@ const NewHackathonPage = () => {
 
             // Convert stake amount from ETH to wei using BigInt to avoid scientific notation
             const stakeAmountInWei = (BigInt(Math.floor(parseFloat(stakingAmount) * 1000000000000000000))).toString();
-            const sponsorContributionInWei = (BigInt(Math.floor(parseFloat(sponsorMinContribution) * 1000000000000000000))).toString();
+
+            // Convert sponsor contribution using correct decimal precision based on currency
+            let sponsorContributionInWei: string;
+            if (sponsorCurrency.name === 'ETH') {
+                // ETH uses 18 decimals
+                sponsorContributionInWei = (BigInt(Math.floor(parseFloat(sponsorMinContribution) * 1000000000000000000))).toString();
+            } else {
+                // Token currencies use their specific decimal precision
+                const tokenDecimals = getTokenDecimals(sponsorCurrency.name);
+                if (!tokenDecimals) {
+                    toast.error(`Token decimals not found for ${sponsorCurrency.name}`);
+                    return;
+                }
+                const sponsorAmount = parseUnits(sponsorMinContribution, tokenDecimals);
+                sponsorContributionInWei = sponsorAmount.toString();
+                console.log(`Sponsor contribution: ${sponsorMinContribution} ${sponsorCurrency.name} (${tokenDecimals} decimals) = ${sponsorContributionInWei}`);
+            }
 
             // Use dynamic ETH amount based on prize pool conversion, fallback to 0.0001 for testing
             const finalEthAmount = ethAmount > 0 ? ethAmount : (directEthAmount > 0 ? directEthAmount : 0);
             const baseEthValue = finalEthAmount > 0 ? finalEthAmount : 0.0001;
-            
+
             // Add judging incentives percentage to the base ETH amount
             const incentiveAmount = (baseEthValue * judgingIncentivePercentage) / 100;
             const ethValue = (baseEthValue + incentiveAmount).toString();
@@ -286,9 +304,9 @@ const NewHackathonPage = () => {
                         automaticStakeReturn={automaticStakeReturn}
                         setAutomaticStakeReturn={setAutomaticStakeReturn}
                     />
-                    <CTA 
-                        ethAmount={totalEthAmount} 
-                        totalPrize={totalPrize} 
+                    <CTA
+                        ethAmount={totalEthAmount}
+                        totalPrize={totalPrize}
                         judgingIncentivePercentage={judgingIncentivePercentage}
                     />
                     <Demos />

@@ -68,7 +68,7 @@ const Filters = ({}) => {
                     />
                     <Select
                         classButton="bg-b-surface2"
-                        label="Author rating"
+                        label="Organizer rating"
                         tooltip="Maximum 100 characters. No HTML or emoji allowed"
                         value={rating}
                         onChange={setRating}

@@ -21,14 +21,7 @@ const distributionTypes = [
 
 const currencies = [
     { id: 1, name: "ETH" },
-    { id: 2, name: "PYUSD" },
-    { id: 3, name: "USDT" },
-    { id: 4, name: "USDC" },
-    { id: 5, name: "WETH" },
-    { id: 6, name: "MATIC" },
-    { id: 7, name: "AVAX" },
-    { id: 8, name: "BNB" },
-    { id: 9, name: "DAI" },
+    { id: 2, name: "PYUSD" }
 ];
 
 type HighlightsProps = {

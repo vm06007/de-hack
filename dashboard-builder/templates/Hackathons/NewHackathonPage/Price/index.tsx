@@ -5,17 +5,14 @@ import Icon from "@/components/Icon";
 import Select from "@/components/Select";
 import Switch from "@/components/Switch";
 import { depositStrategies } from "@/constants/depositStrategies";
-
+import { getTokenDecimals, SUPPORTED_CURRENCIES } from "@/constants/tokenAddresses";
 
 const currencies = [
     { id: 1, name: "ETH" },
-    { id: 2, name: "USDC" },
-    { id: 3, name: "USDT" },
-    { id: 4, name: "DAI" },
-    { id: 5, name: "WETH" },
-    { id: 6, name: "MATIC" },
-    { id: 7, name: "AVAX" },
-    { id: 8, name: "BNB" },
+    { id: 2, name: "PYUSD" },
+    { id: 3, name: "USDC" },
+    { id: 4, name: "USDT" },
+    { id: 5, name: "DAI" }
 ];
 
 type PriceProps = {
@@ -71,28 +68,30 @@ const Price = ({
                     </div>
 
                     {allowSponsors && (
-                        <div className="flex gap-3">
-                            <div className="flex-1">
-                                <Field
-                                    label="Minimum Contribution"
-                                    placeholder="100"
-                                    tooltip="Minimum amount sponsors must contribute"
-                                    value={minSponsorContribution}
-                                    onChange={(e) => setMinSponsorContribution(e.target.value)}
-                                    required
-                                />
+                        <>
+                            <div className="flex gap-3">
+                                <div className="flex-1">
+                                    <Field
+                                        label="Minimum Contribution"
+                                        placeholder="100"
+                                        tooltip="Minimum amount sponsors must contribute"
+                                        value={minSponsorContribution}
+                                        onChange={(e) => setMinSponsorContribution(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="flex-1">
+                                    <Select
+                                        label="Sponsor Currency"
+                                        tooltip="Currency sponsors must pay in"
+                                        placeholder="Select currency"
+                                        value={sponsorCurrency}
+                                        onChange={setSponsorCurrency}
+                                        options={currencies}
+                                    />
+                                </div>
                             </div>
-                            <div className="flex-1">
-                                <Select
-                                    label="Sponsor Currency"
-                                    tooltip="Currency sponsors must pay in"
-                                    placeholder="Select currency"
-                                    value={sponsorCurrency}
-                                    onChange={setSponsorCurrency}
-                                    options={currencies}
-                                />
-                            </div>
-                        </div>
+                        </>
                     )}
 
                     <div className="flex items-center justify-between p-4 bg-b-surface1 rounded-2xl">
@@ -132,8 +131,8 @@ const Price = ({
                                     />
                                 </div>
                             </div>
-                            
-                            
+
+
                             <div className="flex items-center justify-between p-4 bg-b-surface1 rounded-2xl">
                                 <div>
                                     <div className="text-body-2 font-medium">Automatic Stake Return</div>

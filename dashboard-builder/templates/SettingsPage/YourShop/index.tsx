@@ -2,28 +2,18 @@ import { useState } from "react";
 import Card from "@/components/Card";
 import FieldImage from "@/components/FieldImage";
 import Field from "@/components/Field";
-// import Select from "@/components/Select";
-
-const customizeProfileOptions = [
-    { id: 1, name: "Recent product first" },
-    { id: 2, name: "Oldest product first" },
-    { id: 3, name: "Random" },
-];
 
 const YourShop = ({}) => {
     const [images, setImages] = useState<File[]>([]);
-    const [xProfileLink, setXProfileLink] = useState("https://x.com/username");
+    const [xProfileLink, setXProfileLink] = useState("https://x.com/ethglobal");
     const [dribbbleLink, setDribbbleLink] = useState(
-        "https://dribbble.com/username"
+        "https://dribbble.com/ethglobal"
     );
     const [instagramLink, setInstagramLink] = useState(
-        "https://www.instagram.com/username/"
+        "https://www.instagram.com/ethglobal/"
     );
     const [threadsLink, setThreadsLink] = useState(
-        "https://www.threads.net/@username"
-    );
-    const [customizeProfile, setCustomizeProfile] = useState(
-        customizeProfileOptions[0]
+        "https://www.threads.net/@ethglobal"
     );
 
     const handleChangePreviews = (file: File) => {

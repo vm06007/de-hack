@@ -11,6 +11,7 @@ import PlusIcon from "@/components/PlusIcon";
 import { useBecomeSponsor } from "@/src/hooks/useBecomeSponsor";
 import { useSponsors } from "@/src/hooks/useSponsors";
 import { depositStrategies } from "@/constants/depositStrategies";
+import { getTokenAddress, getTokenDecimals, isSupportedToken } from "@/constants/tokenAddresses";
 
 type BackendSponsor = {
     id: number;
@@ -47,7 +48,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
     const [internalShowModal, setInternalShowModal] = useState(false);
     const showModal = externalShowModal !== undefined ? externalShowModal : internalShowModal;
     const setShowModal = externalSetShowModal || setInternalShowModal;
-    
+
     console.log('Sponsors component - externalShowModal:', externalShowModal, 'showModal:', showModal);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedSponsor, setSelectedSponsor] = useState<any>(null);
@@ -95,6 +96,13 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                 errors.contributionAmount = "Please enter a valid amount";
             } else if (contributionValue < minimumDeposit) {
                 errors.contributionAmount = `Minimum contribution is $${minimumDeposit} ${hackathon?.sponsorCurrency || 'USDC'}`;
+            }
+        }
+
+        // Validate token support if currency is not ETH
+        if (hackathon?.sponsorCurrency && hackathon.sponsorCurrency !== 'ETH') {
+            if (!isSupportedToken(hackathon.sponsorCurrency)) {
+                errors.sponsorCurrency = `Token ${hackathon.sponsorCurrency} is not supported for sponsorship`;
             }
         }
 
@@ -151,7 +159,14 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
             console.log("Contribution amount (ETH):", contributionAmount);
 
             // First, call the smart contract
-            const contractResult = await becomeSponsor(contributionAmount, async (result) => {
+            // Get token address from lookup
+            const tokenAddress = hackathon?.sponsorCurrency && hackathon.sponsorCurrency !== 'ETH'
+                ? getTokenAddress(hackathon.sponsorCurrency) || undefined
+                : undefined;
+
+            const contractResult = await becomeSponsor(
+                contributionAmount,
+                async (result) => {
                 console.log("Smart contract transaction successful:", result);
 
                 try {
@@ -194,7 +209,10 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                     console.error("Backend call failed after successful contract transaction:", backendError);
                     alert("Smart contract transaction successful, but failed to save to backend. Please contact support.");
                 }
-            });
+            },
+            hackathon?.sponsorCurrency,
+            tokenAddress
+            );
 
             console.log("Smart contract call initiated:", contractResult);
 
@@ -341,7 +359,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                 <Field
                                     label="Contribution Amount"
                                     type="number"
-                                    placeholder={`Minimum: $${hackathon?.sponsorMinContribution || '500'} ${hackathon?.sponsorCurrency || 'USDC'}`}
+                                    placeholder={`Minimum: $${hackathon?.sponsorMinContribution || '500'} ${hackathon?.sponsorCurrency || 'PYUSD'}`}
                                     value={contributionAmount}
                                     onChange={(e) => {
                                         setContributionAmount(e.target.value);
@@ -365,6 +383,28 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                 />
                             </div>
                         </div>
+
+                        {/* Token Information - only show if currency is not ETH */}
+                        {hackathon?.sponsorCurrency && hackathon.sponsorCurrency !== 'ETH' && (
+                            <div>
+                                <div style={{ display: 'none' }} className="p-3 rounded-lg bg-b-surface1 border border-s-stroke2">
+                                    <div className="text-body-2 font-medium mb-1">
+                                        Token: {hackathon.sponsorCurrency}
+                                    </div>
+                                    <div className="text-caption text-t-secondary">
+                                        Contract Address: {getTokenAddress(hackathon.sponsorCurrency) || 'Not supported'}
+                                    </div>
+                                    <div className="text-caption text-t-secondary">
+                                        Decimals: {getTokenDecimals(hackathon.sponsorCurrency) || 'Unknown'}
+                                    </div>
+                                    {!isSupportedToken(hackathon.sponsorCurrency) && (
+                                        <div className="text-red-500 text-sm mt-2">
+                                            This token is not supported for sponsorship
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
 
                         <div>
                             <label className="block text-body-2 mb-2">Prize Distribution Details</label>

@@ -3,6 +3,11 @@ import Card from "@/components/Card";
 import Select from "@/components/Select";
 import { depositStrategies } from "@/constants/depositStrategies";
 
+type CtaProps = {
+    ethAmount?: number;
+    totalPrize?: string;
+};
+
 const ctaButtons = [
     { id: 1, name: "Join Hackathon" },
     { id: 2, name: "Register Now" },
@@ -10,7 +15,7 @@ const ctaButtons = [
     { id: 4, name: "Sign Up for Hackathon" },
 ];
 
-const Cta = () => {
+const Cta = ({ ethAmount = 0, totalPrize = "" }: CtaProps) => {
     const [ctaButton, setCtaButton] = useState(ctaButtons[0]);
     const [depositStrategy, setDepositStrategy] = useState(depositStrategies[0]);
 

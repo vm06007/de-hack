@@ -4,6 +4,7 @@ import Field from "@/components/Field";
 import Icon from "@/components/Icon";
 import Button from "@/components/Button";
 import Select from "@/components/Select";
+import { useEthPrice, useUsdToEth, formatEthAmount, formatUsdAmount } from "@/src/hooks/useEthPrice";
 
 type PrizeDistribution = {
     id: number;
@@ -34,16 +35,21 @@ type HighlightsProps = {
     totalPrize: string;
     setTotalPrize: (value: string) => void;
     onTiersChange?: (tiers: { name: string; amount: string; percentage: number }[]) => void;
+    onEthAmountChange?: (ethAmount: number) => void;
 };
 
-const Highlights = ({ totalPrize, setTotalPrize, onTiersChange }: HighlightsProps) => {
+const Highlights = ({ totalPrize, setTotalPrize, onTiersChange, onEthAmountChange }: HighlightsProps) => {
     const [distributions, setDistributions] = useState<PrizeDistribution[]>([
         { id: 1, name: "1st Place", amount: "", percentage: 50 },
         { id: 2, name: "2nd Place", amount: "", percentage: 30 },
         { id: 3, name: "3rd Place", amount: "", percentage: 20 },
     ]);
     const [distributionType, setDistributionType] = useState(distributionTypes[0]);
-    const [prizeCurrency, setPrizeCurrency] = useState(currencies[1]); // Default to USDC
+    const [prizeCurrency, setPrizeCurrency] = useState(currencies[1]); // Default to PYUSD
+
+    // ETH price conversion
+    const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice();
+    const { ethAmount, isLoading: isConversionLoading } = useUsdToEth(parseFloat(totalPrize) || 0);
 
     const addDistribution = () => {
         const newId = Math.max(...distributions.map(d => d.id)) + 1;
@@ -142,6 +148,30 @@ const Highlights = ({ totalPrize, setTotalPrize, onTiersChange }: HighlightsProp
         onTiersChange && onTiersChange(distributions.map(d => ({ name: d.name, amount: d.amount, percentage: d.percentage })));
     }, [distributions, onTiersChange]);
 
+    // Notify parent component about ETH amount when it changes
+    useEffect(() => {
+        console.log("Highlights - ETH conversion debug:", {
+            totalPrize,
+            prizeCurrency: prizeCurrency.name,
+            ethAmount,
+            isConversionLoading,
+            ethPrice
+        });
+
+        if (onEthAmountChange) {
+            if (prizeCurrency.name === "ETH") {
+                // If currency is ETH, use the total prize amount directly
+                const directEthAmount = parseFloat(totalPrize) || 0;
+                console.log("Using direct ETH amount:", directEthAmount);
+                onEthAmountChange(directEthAmount);
+            } else if (!isConversionLoading && ethAmount > 0) {
+                // If currency is not ETH, use the converted amount
+                console.log("Using converted ETH amount:", ethAmount);
+                onEthAmountChange(ethAmount);
+            }
+        }
+    }, [ethAmount, isConversionLoading, onEthAmountChange, prizeCurrency.name, totalPrize]);
+
     const totalAmount = distributions.reduce((sum, d) => sum + parseFloat(d.amount || "0"), 0);
     const isTotalMatching = Math.abs(totalAmount - parseFloat(totalPrize || "0")) < 0.01;
 
@@ -155,7 +185,7 @@ const Highlights = ({ totalPrize, setTotalPrize, onTiersChange }: HighlightsProp
                         <Field
                             classInput="pl-12.5"
                             label={`Total Prize Pool`}
-                            placeholder="10"
+                            placeholder="1000"
                             tooltip="Total prize pool for the hackathon"
                             value={totalPrize}
                             onChange={(e) => setTotalPrize(e.target.value)}
@@ -240,13 +270,22 @@ const Highlights = ({ totalPrize, setTotalPrize, onTiersChange }: HighlightsProp
                 <div className="mt-4 pt-4 border-t border-s-stroke2">
                     <div className="flex items-center justify-between">
                         <div className="text-body-2 text-t-secondary">
-                            Total: {totalPrize} | Distributed: {totalAmount.toFixed(2)} |
+                            Total: {totalPrize} {prizeCurrency.name} | Distributed: {totalAmount.toFixed(2)} |
                             <span className={isTotalMatching ? "text-green-500" : "text-red-500"}>
                                 {isTotalMatching ? " ✓ Balanced" : " ✗ Imbalanced"}
                             </span>
                         </div>
                         {/* plus button moved to Prize Pool Distribution row */}
                     </div>
+                    {prizeCurrency.name !== "ETH" && totalPrize && (
+                        <div className="mt-2 text-body-2 text-t-secondary">
+                            {isConversionLoading ? (
+                                "Loading ETH equivalent..."
+                            ) : (
+                                `ETH Equivalent: ${formatEthAmount(ethAmount)} ETH ${ethPrice ? `(${formatUsdAmount(ethPrice)}/ETH)` : ""}`
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </Card>

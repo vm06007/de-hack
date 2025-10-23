@@ -16,6 +16,7 @@ import CTA from "./CTA";
 import Demos from "./Demos";
 import HackathonTiming from "./HackathonTiming";
 import { useCreateHackathon, VotingConfig } from "@/src/hooks/useCreateHackathon";
+import { useEthPrice, useUsdToEth } from "@/src/hooks/useEthPrice";
 
 const NewHackathonPage = () => {
     const [totalPrize, setTotalPrize] = useState("");
@@ -24,6 +25,7 @@ const NewHackathonPage = () => {
     const [logoUrl, setLogoUrl] = useState<string | undefined>(undefined);
     const [coverUrl, setCoverUrl] = useState<string | undefined>(undefined);
     const [prizeTiers, setPrizeTiers] = useState<any[]>([]);
+    const [ethAmount, setEthAmount] = useState<number>(0);
     const now = new Date();
     const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes in the future
     const oneWeekFromNow = new Date();
@@ -52,7 +54,9 @@ const NewHackathonPage = () => {
     const { address } = useAccount();
     const { createHackathon, isLoading } = useCreateHackathon();
 
-    // This useEffect is no longer needed since we handle events in the hook
+    // Direct ETH price access for debugging
+    const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice();
+    const { ethAmount: directEthAmount, isLoading: isDirectConversionLoading } = useUsdToEth(parseFloat(totalPrize) || 0);
 
     const callBackendAPI = async (hackathonAddress: string, hackathonId: string) => {
         try {
@@ -167,6 +171,21 @@ const NewHackathonPage = () => {
             const stakeAmountInWei = (BigInt(Math.floor(parseFloat(stakingAmount) * 1000000000000000000))).toString();
             const sponsorContributionInWei = (BigInt(Math.floor(parseFloat(sponsorMinContribution) * 1000000000000000000))).toString();
 
+            // Use dynamic ETH amount based on prize pool conversion, fallback to 0.0001 for testing
+            const finalEthAmount = ethAmount > 0 ? ethAmount : (directEthAmount > 0 ? directEthAmount : 0);
+            const ethValue = finalEthAmount > 0 ? finalEthAmount.toString() : "0.0001";
+            console.log("Prize pool conversion:", {
+                totalPrize,
+                ethAmount,
+                directEthAmount,
+                finalEthAmount,
+                ethValue,
+                ethPrice,
+                isEthPriceLoading,
+                isDirectConversionLoading,
+                timestamp: new Date().toISOString()
+            });
+
             // Call the blockchain transaction with callback for when we get the contract address
             await createHackathon({
                 hackathonId,
@@ -177,7 +196,7 @@ const NewHackathonPage = () => {
                 prizeDistribution,
                 selectedJudges: validJudgeAddresses, // Use only valid judge addresses
                 votingConfig,
-                value: "0.0001" // 0.0001 ETH for testing
+                value: ethValue // Dynamic ETH amount based on prize pool
             }, async (result) => {
                 // This callback is called when we get the contract address from the receipt
                 console.log("Got contract address, calling backend API...");
@@ -227,7 +246,12 @@ const NewHackathonPage = () => {
                 <div className="w-[33.75rem] max-4xl:w-[27.5rem] max-2xl:w-[23rem] max-lg:w-full max-lg:mt-3">
                     {/*<CoverImage />*/}
                     {/*<UploadProductFiles />*/}
-                    <Highlights totalPrize={totalPrize} setTotalPrize={setTotalPrize} onTiersChange={setPrizeTiers} />
+                    <Highlights
+                        totalPrize={totalPrize}
+                        setTotalPrize={setTotalPrize}
+                        onTiersChange={setPrizeTiers}
+                        onEthAmountChange={setEthAmount}
+                    />
                     <Price
                         allowSponsors={allowSponsors}
                         setAllowSponsors={setAllowSponsors}
@@ -244,7 +268,7 @@ const NewHackathonPage = () => {
                         automaticStakeReturn={automaticStakeReturn}
                         setAutomaticStakeReturn={setAutomaticStakeReturn}
                     />
-                    <CTA />
+                    <CTA ethAmount={ethAmount} totalPrize={totalPrize} />
                     <Demos />
                 </div>
             </div>

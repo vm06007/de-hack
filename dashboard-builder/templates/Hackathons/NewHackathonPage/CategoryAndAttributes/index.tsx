@@ -42,7 +42,7 @@ const judges = [
         avatar: "/images/nazarov.jpg",
         role: "Founder",
         company: "Chainlink",
-        wallet: "0x53C61cfb8128ad59244E8c1D26109252ACe23d14",
+        wallet: "0x75aa660720f3dcb5973DA8A81450647C18ae35E4",
     },
     {
         id: 4,
@@ -79,6 +79,7 @@ type CategoryAndAttributesProps = {
     setAllowAIAgentDelegations: (value: boolean) => void;
     votingType: any;
     setVotingType: (value: any) => void;
+    onJudgingIncentiveChange?: (percentage: number) => void;
 };
 
 const CategoryAndAttributes = ({
@@ -90,6 +91,7 @@ const CategoryAndAttributes = ({
     setAllowAIAgentDelegations,
     votingType,
     setVotingType,
+    onJudgingIncentiveChange,
 }: CategoryAndAttributesProps) => {
 
     const toggleJudge = (judgeId: number) => {
@@ -162,7 +164,7 @@ const CategoryAndAttributes = ({
                     </div>
                 </div>
 
-                <JudgingIncentives />
+                <JudgingIncentives onIncentiveChange={onJudgingIncentiveChange} />
 
                 <div className="flex items-center justify-between p-4 bg-b-surface1 rounded-2xl">
                     <div>

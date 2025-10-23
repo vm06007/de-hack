@@ -6,6 +6,7 @@ import { depositStrategies } from "@/constants/depositStrategies";
 type CtaProps = {
     ethAmount?: number;
     totalPrize?: string;
+    judgingIncentivePercentage?: number;
 };
 
 const ctaButtons = [
@@ -15,7 +16,7 @@ const ctaButtons = [
     { id: 4, name: "Sign Up for Hackathon" },
 ];
 
-const Cta = ({ ethAmount = 0, totalPrize = "" }: CtaProps) => {
+const Cta = ({ ethAmount = 0, totalPrize = "", judgingIncentivePercentage = 0 }: CtaProps) => {
     const [ctaButton, setCtaButton] = useState(ctaButtons[0]);
     const [depositStrategy, setDepositStrategy] = useState(depositStrategies[0]);
 
@@ -31,6 +32,19 @@ const Cta = ({ ethAmount = 0, totalPrize = "" }: CtaProps) => {
                         onChange={setDepositStrategy}
                         options={depositStrategies}
                     />
+
+                    {/* ETH Amount Display */}
+                    <div className="p-4 bg-b-surface1 rounded-2xl">
+                        <div className="text-body-2 font-medium mb-2">Total ETH Required</div>
+                        <div className="text-body-1 font-bold text-primary-01">
+                            {ethAmount.toFixed(6)} ETH
+                        </div>
+                        {judgingIncentivePercentage > 0 && (
+                            <div className="text-caption text-t-secondary mt-1">
+                                Includes {judgingIncentivePercentage}% judging incentives
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </Card>

@@ -25,7 +25,7 @@ const judges = [
         avatar: "/images/nazarov.jpg",
         role: "Founder",
         company: "Chainlink",
-        wallet: "0x53C61cfb8128ad59244E8c1D26109252ACe23d14",
+        wallet: "0x75aa660720f3dcb5973DA8A81450647C18ae35E4",
     },
     {
         id: 4,

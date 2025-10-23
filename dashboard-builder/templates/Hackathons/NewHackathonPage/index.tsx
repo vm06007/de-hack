@@ -26,6 +26,7 @@ const NewHackathonPage = () => {
     const [coverUrl, setCoverUrl] = useState<string | undefined>(undefined);
     const [prizeTiers, setPrizeTiers] = useState<any[]>([]);
     const [ethAmount, setEthAmount] = useState<number>(0);
+    const [judgingIncentivePercentage, setJudgingIncentivePercentage] = useState<number>(0);
     const now = new Date();
     const fiveMinutesFromNow = new Date(now.getTime() + 25 * 60 * 1000); // 5 minutes in the future
     const oneWeekFromNow = new Date();
@@ -57,6 +58,15 @@ const NewHackathonPage = () => {
     // Direct ETH price access for debugging
     const { data: ethPrice, isLoading: isEthPriceLoading } = useEthPrice();
     const { ethAmount: directEthAmount, isLoading: isDirectConversionLoading } = useUsdToEth(parseFloat(totalPrize) || 0);
+
+    // Calculate total ETH amount including judging incentives
+    const calculateTotalEthAmount = () => {
+        const baseEthAmount = ethAmount;
+        const incentiveAmount = (baseEthAmount * judgingIncentivePercentage) / 100;
+        return baseEthAmount + incentiveAmount;
+    };
+
+    const totalEthAmount = calculateTotalEthAmount();
 
     const callBackendAPI = async (hackathonAddress: string, hackathonId: string) => {
         try {
@@ -138,7 +148,7 @@ const NewHackathonPage = () => {
             const judgeAddressMap: { [key: number]: string } = {
                 1: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", // Vitalik Buterin
                 2: "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6", // Sandeep Nailwal
-                3: "0x53C61cfb8128ad59244E8c1D26109252ACe23d14", // Sergey Nazarov
+                3: "0x75aa660720f3dcb5973DA8A81450647C18ae35E4", // Sergey Nazarov
                 4: "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3", // Hayden Adams
                 5: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0", // Kartik Talwar
                 6: "0x641AD78BAca220C5BD28b51Ce8e0F495e85Fe689", // Vitalik Marincenko
@@ -173,12 +183,19 @@ const NewHackathonPage = () => {
 
             // Use dynamic ETH amount based on prize pool conversion, fallback to 0.0001 for testing
             const finalEthAmount = ethAmount > 0 ? ethAmount : (directEthAmount > 0 ? directEthAmount : 0);
-            const ethValue = finalEthAmount > 0 ? finalEthAmount.toString() : "0.0001";
+            const baseEthValue = finalEthAmount > 0 ? finalEthAmount : 0.0001;
+            
+            // Add judging incentives percentage to the base ETH amount
+            const incentiveAmount = (baseEthValue * judgingIncentivePercentage) / 100;
+            const ethValue = (baseEthValue + incentiveAmount).toString();
             console.log("Prize pool conversion:", {
                 totalPrize,
                 ethAmount,
                 directEthAmount,
                 finalEthAmount,
+                baseEthValue,
+                judgingIncentivePercentage,
+                incentiveAmount,
                 ethValue,
                 ethPrice,
                 isEthPriceLoading,
@@ -241,6 +258,7 @@ const NewHackathonPage = () => {
                         setAllowAIAgentDelegations={setAllowAIDelegation}
                         votingType={votingType}
                         setVotingType={setVotingType}
+                        onJudgingIncentiveChange={setJudgingIncentivePercentage}
                     />
                 </div>
                 <div className="w-[33.75rem] max-4xl:w-[27.5rem] max-2xl:w-[23rem] max-lg:w-full max-lg:mt-3">
@@ -268,7 +286,11 @@ const NewHackathonPage = () => {
                         automaticStakeReturn={automaticStakeReturn}
                         setAutomaticStakeReturn={setAutomaticStakeReturn}
                     />
-                    <CTA ethAmount={ethAmount} totalPrize={totalPrize} />
+                    <CTA 
+                        ethAmount={totalEthAmount} 
+                        totalPrize={totalPrize} 
+                        judgingIncentivePercentage={judgingIncentivePercentage}
+                    />
                     <Demos />
                 </div>
             </div>

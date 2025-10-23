@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 import toast from "react-hot-toast";
@@ -27,11 +27,11 @@ const NewHackathonPage = () => {
     const [prizeTiers, setPrizeTiers] = useState<any[]>([]);
     const [ethAmount, setEthAmount] = useState<number>(0);
     const now = new Date();
-    const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes in the future
+    const fiveMinutesFromNow = new Date(now.getTime() + 25 * 60 * 1000); // 5 minutes in the future
     const oneWeekFromNow = new Date();
     oneWeekFromNow.setDate(now.getDate() + 7);
 
-    const [startDate, setStartDate] = useState(now);
+    const [startDate, setStartDate] = useState(fiveMinutesFromNow);
     const [startTime, setStartTime] = useState(fiveMinutesFromNow);
     const [endDate, setEndDate] = useState(oneWeekFromNow);
     const [endTime, setEndTime] = useState(oneWeekFromNow);

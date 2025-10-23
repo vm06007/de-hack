@@ -1,17 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Card from "@/components/Card";
-import Field from "@/components/Field";
-import Select from "@/components/Select";
+// import Field from "@/components/Field";
+// import Select from "@/components/Select";
 import DateAndTime from "@/components/DateAndTime";
-
-const durationOptions = [
-    { id: 1, name: "24 hours" },
-    { id: 2, name: "48 hours" },
-    { id: 3, name: "72 hours" },
-    { id: 4, name: "1 week" },
-    { id: 5, name: "2 weeks" },
-    { id: 6, name: "1 month" },
-];
 
 type Props = {
     startDate: Date;
@@ -24,36 +15,36 @@ type Props = {
     setEndTime: (date: Date) => void;
 };
 
-const HackathonTiming = ({ 
-    startDate, setStartDate, 
-    startTime, setStartTime, 
-    endDate, setEndDate, 
-    endTime, setEndTime 
+const HackathonTiming = ({
+    startDate, setStartDate,
+    startTime, setStartTime,
+    endDate, setEndDate,
+    endTime, setEndTime
 }: Props) => {
-    const [duration, setDuration] = useState(durationOptions[1]); // Default to 48 hours
-    const [timezone, setTimezone] = useState("UTC");
+    // const [duration, setDuration] = useState(durationOptions[1]); // Default to 48 hours
+    // const [timezone, setTimezone] = useState("UTC");
 
     // Auto-adjust end date when start date changes
     useEffect(() => {
         const startDateTime = new Date(startDate);
         startDateTime.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
-        
+
         const endDateTime = new Date(endDate);
         endDateTime.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
-        
+
         // Calculate the gap between start and end dates
         const timeDiff = endDateTime.getTime() - startDateTime.getTime();
         const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-        
+
         // If start date is now after end date, adjust end date to maintain the gap
         if (startDateTime >= endDateTime) {
             const newEndDate = new Date(startDateTime);
             newEndDate.setDate(newEndDate.getDate() + Math.max(daysDiff, 7)); // Minimum 7 days gap
-            
+
             // Update end date but keep the same time
             const newEndTime = new Date(newEndDate);
             newEndTime.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
-            
+
             setEndDate(newEndDate);
             setEndTime(newEndTime);
         }

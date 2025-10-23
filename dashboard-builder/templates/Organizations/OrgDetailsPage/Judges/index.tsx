@@ -136,7 +136,7 @@ const Judges = ({ hackathon }: JudgesProps) => {
                 </div>
                 <div className="mt-4 pt-4 border-t border-s-stroke2 text-center">
                     <div className="text-caption text-t-secondary">
-                        Selected from global judge's council.
+                        Selected from global judge's council
                     </div>
                 </div>
             </div>

@@ -1,13 +1,12 @@
-import { useState } from "react";
 import Card from "@/components/Card";
 import Select from "@/components/Select";
 import Switch from "@/components/Switch";
-import Compatibility from "@/components/Compatibility";
+// import Compatibility from "@/components/Compatibility";
 import JudgingIncentives from "@/components/JudgingIncentives";
-import Button from "@/components/Button";
+// import Button from "@/components/Button";
 import Icon from "@/components/Icon";
 import Image from "@/components/Image";
-import { SelectOption } from "@/types/select";
+// import { SelectOption } from "@/types/select";
 
 const judgingModels = [
     { id: 1, name: "Open Voting" },

@@ -33,9 +33,10 @@ export const useCreateHackathon = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
     const callbackRef = useRef<((result: HackathonCreatedResult) => void) | null>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     
     const { address, isConnected } = useAccount();
-    const { writeContract, data: contractWriteData, error } = useWriteContract();
+    const { writeContract, data: contractWriteData, error, isPending } = useWriteContract();
     
     // Wait for transaction receipt
     const { data: txReceipt } = useWaitForTransactionReceipt({
@@ -50,6 +51,38 @@ export const useCreateHackathon = () => {
             toast.loading("Transaction submitted, waiting for confirmation...", { id: "create-hackathon" });
         }
     }, [contractWriteData, txHash]);
+
+    // Cleanup function to reset state
+    const resetState = () => {
+        setIsLoading(false);
+        callbackRef.current = null;
+        setTxHash(undefined);
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    };
+
+    // Handle writeContract errors (including user rejection)
+    useEffect(() => {
+        if (error) {
+            console.error("WriteContract error:", error);
+            toast.dismiss("create-hackathon");
+            
+            // Check if it's a user rejection
+            if (error.message?.includes("User rejected") || 
+                error.message?.includes("User denied") ||
+                error.message?.includes("rejected") ||
+                error.message?.includes("denied")) {
+                toast.error("Transaction cancelled by user");
+            } else {
+                toast.error(`Transaction failed: ${error.message}`);
+            }
+            
+            // Reset loading state
+            resetState();
+        }
+    }, [error]);
 
     // Handle receipt when it arrives
     useEffect(() => {
@@ -91,16 +124,23 @@ export const useCreateHackathon = () => {
                 callbackRef.current(result);
                 
                 // Clean up
-                callbackRef.current = null;
-                setTxHash(undefined);
-                setIsLoading(false);
+                resetState();
             } else {
                 console.error("Could not extract hackathon address from event");
                 toast.error("Could not get contract address from transaction");
-                setIsLoading(false);
+                resetState();
             }
         }
     }, [txReceipt, txHash]);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
 
     const createHackathon = async (
         params: CreateHackathonParams,
@@ -111,6 +151,12 @@ export const useCreateHackathon = () => {
             if (!isConnected || !address) {
                 toast.error("Please connect your wallet first");
                 throw new Error("Wallet not connected");
+            }
+            
+            // Prevent multiple simultaneous transactions
+            if (isLoading) {
+                toast.error("Transaction already in progress. Please wait.");
+                throw new Error("Transaction already in progress");
             }
             
             setIsLoading(true);
@@ -156,13 +202,20 @@ export const useCreateHackathon = () => {
             
             toast.loading("Please confirm transaction in your wallet...", { id: "create-hackathon" });
 
+            // Set a timeout to handle cases where user doesn't respond
+            timeoutRef.current = setTimeout(() => {
+                console.log("Transaction timeout - user may have cancelled or not responded");
+                toast.dismiss("create-hackathon");
+                toast.error("Transaction timed out. Please try again.");
+                resetState();
+            }, 300000); // 5 minutes timeout
+
             // Return empty hash initially - the real hash will come from contractWriteData
             return { hash: "0x" as `0x${string}` };
         } catch (err) {
             console.error("Error creating hackathon:", err);
             toast.error("Failed to create hackathon. Please try again.", { id: "create-hackathon" });
-            setIsLoading(false);
-            callbackRef.current = null;
+            resetState();
             throw err;
         }
     };

@@ -34,15 +34,15 @@ export const useCreateHackathon = () => {
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
     const callbackRef = useRef<((result: HackathonCreatedResult) => void) | null>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-    
+
     const { address, isConnected } = useAccount();
     const { writeContract, data: contractWriteData, error, isPending } = useWriteContract();
-    
+
     // Wait for transaction receipt
     const { data: txReceipt } = useWaitForTransactionReceipt({
         hash: contractWriteData,
     });
-    
+
     // Update txHash when contractWriteData changes
     useEffect(() => {
         if (contractWriteData && contractWriteData !== txHash) {
@@ -68,9 +68,9 @@ export const useCreateHackathon = () => {
         if (error) {
             console.error("WriteContract error:", error);
             toast.dismiss("create-hackathon");
-            
+
             // Check if it's a user rejection
-            if (error.message?.includes("User rejected") || 
+            if (error.message?.includes("User rejected") ||
                 error.message?.includes("User denied") ||
                 error.message?.includes("rejected") ||
                 error.message?.includes("denied")) {
@@ -78,7 +78,7 @@ export const useCreateHackathon = () => {
             } else {
                 toast.error(`Transaction failed: ${error.message}`);
             }
-            
+
             // Reset loading state
             resetState();
         }
@@ -92,13 +92,13 @@ export const useCreateHackathon = () => {
             hasCallback: !!callbackRef.current,
             receiptStatus: txReceipt?.status
         });
-        
+
         if (txReceipt && txHash && callbackRef.current) {
             console.log("Processing transaction receipt...", txReceipt);
-            
+
             // Parse the HackathonCreated event
             const hackathonCreatedEventSignature = "0x526b2cf7f5bb87f9a4c01a6eb8c01bf90405b9726286908ac1dfd93944da0e84";
-            
+
             const hackathonCreatedEvent = txReceipt.logs.find(log => {
                 return log.topics && log.topics[0] === hackathonCreatedEventSignature;
             });
@@ -106,23 +106,23 @@ export const useCreateHackathon = () => {
             if (hackathonCreatedEvent && hackathonCreatedEvent.topics[1]) {
                 // Extract hackathon address from event
                 const hackathonAddress = "0x" + hackathonCreatedEvent.topics[1].slice(26);
-                
+
                 // Parse hackathon ID from data
                 const data = hackathonCreatedEvent.data.slice(2);
                 const hackathonId = BigInt("0x" + data.slice(0, 64)).toString();
-                
+
                 console.log("Extracted contract address:", hackathonAddress);
                 console.log("Extracted hackathon ID:", hackathonId);
-                
+
                 // Call the callback with the extracted data
                 const result: HackathonCreatedResult = {
                     hash: txHash,
                     hackathonAddress,
                     hackathonId
                 };
-                
+
                 callbackRef.current(result);
-                
+
                 // Clean up
                 resetState();
             } else {
@@ -152,20 +152,20 @@ export const useCreateHackathon = () => {
                 toast.error("Please connect your wallet first");
                 throw new Error("Wallet not connected");
             }
-            
+
             // Prevent multiple simultaneous transactions
             if (isLoading) {
                 toast.error("Transaction already in progress. Please wait.");
                 throw new Error("Transaction already in progress");
             }
-            
+
             setIsLoading(true);
             callbackRef.current = onSuccess || null;
-            
+
             console.log("Wallet connected:", { address, isConnected });
             console.log("Contract address:", DEHACK_PLATFORM_ADDRESS);
             console.log("Parameters:", params);
-            
+
             toast.loading("Submitting transaction...", { id: "create-hackathon" });
 
             // Convert ETH value to wei
@@ -174,10 +174,10 @@ export const useCreateHackathon = () => {
             console.log("Value in wei:", valueInWei.toString());
 
             console.log("About to call writeContract...");
-            
+
             // writeContract doesn't return the hash directly - it triggers the wallet
             writeContract({
-                address: DEHACK_PLATFORM_ADDRESS,
+                address: DEHACK_PLATFORM_ADDRESS as `0x${string}`,
                 abi: DEHACK_PLATFORM_ABI,
                 functionName: "createHackathon",
                 args: [
@@ -188,18 +188,18 @@ export const useCreateHackathon = () => {
                     BigInt(params.stakeAmount),
                     params.prizeDistribution.map(p => BigInt(p)),
                     params.selectedJudges as `0x${string}`[],
-                    [
-                        params.votingConfig.systemType,
-                        params.votingConfig.useQuadraticVoting,
-                        BigInt(params.votingConfig.votingPowerPerJudge),
-                        BigInt(params.votingConfig.maxWinners)
-                    ]
+                    {
+                        systemType: params.votingConfig.systemType,
+                        useQuadraticVoting: params.votingConfig.useQuadraticVoting,
+                        votingPowerPerJudge: BigInt(params.votingConfig.votingPowerPerJudge),
+                        maxWinners: BigInt(params.votingConfig.maxWinners)
+                    }
                 ],
                 value: valueInWei
             });
 
             console.log("writeContract called, waiting for user to confirm in wallet...");
-            
+
             toast.loading("Please confirm transaction in your wallet...", { id: "create-hackathon" });
 
             // Set a timeout to handle cases where user doesn't respond

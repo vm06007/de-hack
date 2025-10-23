@@ -801,7 +801,13 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
      * @param _sponsor Address of the sponsor
      * @return Total contribution amount
      */
-    function getSponsorTotalContribution(address _sponsor) external view returns (uint256) {
+    function getSponsorTotalContribution(
+        address _sponsor
+    )
+        external
+        view
+        returns (uint256)
+    {
         return sponsors[_sponsor].contribution;
     }
 
@@ -810,7 +816,13 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
      * @param _sponsor Address of the sponsor
      * @return Amount already distributed by this sponsor
      */
-    function getSponsorDistributedAmount(address _sponsor) external view returns (uint256) {
+    function getSponsorDistributedAmount(
+        address _sponsor
+    )
+        external
+        view
+        returns (uint256)
+    {
         return sponsors[_sponsor].distributedAmount;
     }
 
@@ -819,8 +831,16 @@ contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
      * @param _sponsor Address of the sponsor
      * @return Token address used by this sponsor
      */
-    function getSponsorTokenAddress(address _sponsor) external view returns (address) {
-        return sponsorTokenAddresses[_sponsor];
+    function getSponsorTokenAddress(
+        address _sponsor
+    )
+        external
+        view
+        returns (address)
+    {
+        return sponsorTokenAddresses[
+            _sponsor
+        ];
     }
 
     /**

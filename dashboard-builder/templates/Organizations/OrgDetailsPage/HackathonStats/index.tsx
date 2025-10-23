@@ -1,12 +1,18 @@
 import Card from "@/components/Card";
 import Icon from "@/components/Icon";
 import PlusIcon from "@/components/PlusIcon";
+import { useHackathonStats } from "@/src/hooks/useHackathonStats";
 
 type HackathonStatsProps = {
     hackathon?: any;
 };
 
 const HackathonStats = ({ hackathon }: HackathonStatsProps) => {
+    // Fetch participant count from the hackathon contract
+    const { participantCount, isLoading: statsLoading, error: statsError, refetch } = useHackathonStats(
+        hackathon?.contractAddress || ''
+    );
+
     // Calculate days left until hackathon ends
     const calculateDaysLeft = () => {
         if (!hackathon?.endDate) return "0";
@@ -35,7 +41,7 @@ const HackathonStats = ({ hackathon }: HackathonStatsProps) => {
         {
             id: 1,
             title: "Participants",
-            value: "0",
+            value: statsLoading ? "..." : statsError ? "Error" : participantCount.toString(),
             icon: "profile",
             color: "text-blue-500",
         },
@@ -56,7 +62,7 @@ const HackathonStats = ({ hackathon }: HackathonStatsProps) => {
         {
             id: 4,
             title: "Applications",
-            value: "0",
+            value: statsLoading ? "..." : statsError ? "Error" : participantCount.toString(), // Same as participants for auto-acceptance
             icon: "envelope",
             color: "text-purple-500",
         },
@@ -64,7 +70,10 @@ const HackathonStats = ({ hackathon }: HackathonStatsProps) => {
     return (
         <Card 
             title="Hackathon Stats"
-            headContent={<PlusIcon onClick={() => console.log('Hackathon Stats plus clicked')} />}
+            headContent={<PlusIcon onClick={() => {
+                console.log('Refreshing hackathon stats...');
+                refetch();
+            }} />}
         >
             <div className="p-5 max-lg:p-3">
                 <div className="grid grid-cols-2 gap-4">

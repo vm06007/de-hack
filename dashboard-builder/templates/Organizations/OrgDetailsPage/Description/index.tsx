@@ -33,6 +33,13 @@ const getHighlights = (hackathon: any, sponsorContributions: number = 0) => {
         highlights.push("30-day development period");
     }
 
+    // Add voting model
+    if (hackathon?.judgingModel) {
+        // Strip "Voting" word from judging model to avoid redundancy like "Open Voting voting model"
+        const modelName = hackathon.judgingModel.replace(/\bVoting\b/gi, '').trim();
+        highlights.push(`${modelName} voting model`);
+    }
+
     // Calculate total prize pool including sponsor contributions (same logic as Prize Pool component)
     // Use the same calculation as in OrgDetailsPage: Number(hackathon.totalPrizePool) || 500000
     const basePrizePool = hackathon?.totalPrizePool ? Number(hackathon.totalPrizePool) : 500000;
@@ -45,27 +52,22 @@ const getHighlights = (hackathon: any, sponsorContributions: number = 0) => {
         highlights.push(`${hackathon.stakingAmount} ${hackathon.stakingCurrency} participation stake`);
     }
 
-    // Add voting model
-    if (hackathon?.judgingModel) {
-        highlights.push(`${hackathon.judgingModel} voting model`);
-    }
-
     return highlights;
 };
 
 const Description = ({ description, title, hackathon, onSponsorModalOpen }: Props) => {
     // Use backend sponsor data to calculate contributions
     const { sponsors: backendSponsors, fetchSponsors } = useSponsors(hackathon?.id);
-    
+
     // Get wallet connection status
     const { isConnected } = useAccount();
-    
+
     // Use the registerHacker hook for smart contract interaction
     const { registerHacker, isLoading: registrationLoading, isRegistered } = useRegisterHacker(hackathon?.contractAddress || '');
-    
+
     // Use the submitProject hook for smart contract interaction
     const { submitProject, isLoading: submissionLoading } = useSubmitProject(hackathon?.contractAddress || '');
-    
+
     // Project submission modal state
     const [showProjectModal, setShowProjectModal] = useState(false);
 
@@ -103,7 +105,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
         if (hackathon?.requireStaking && hackathon?.stakingAmount) {
             return hackathon.stakingAmount.toString();
         }
-        return "0.0001"; // Default stake amount in ETH
+        return "0.0002"; // Default stake amount in ETH
     };
 
     // Handle hacker registration
@@ -128,7 +130,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
             // First, call the smart contract
             const contractResult = await registerHacker(stakeAmount, async (result) => {
                 console.log("Smart contract registration successful:", result);
-                
+
                 try {
                     // TODO: Add backend call here when needed
                     // const hackerData = {
@@ -138,7 +140,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
                     //     transactionHash: result.hash,
                     // };
                     // const backendResult = await createHackerRegistration(hackerData);
-                    
+
                     console.log("Complete hacker registration successful:", result);
 
                 } catch (backendError) {
@@ -171,7 +173,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
     // Handle project submission data
     const handleProjectSubmit = async (projectData: any) => {
         console.log("Project data submitted:", projectData);
-        
+
         if (!hackathon?.contractAddress) {
             toast.error("Error: No hackathon contract address found");
             return;
@@ -184,7 +186,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
                 projectData.githubLink,
                 async (result) => {
                     console.log("Smart contract project submission successful:", result);
-                    
+
                     try {
                         // TODO: Call backend API to store full project data including images, description, etc.
                         const backendData = {
@@ -193,15 +195,15 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
                             participantAddress: result.participant,
                             contractAddress: hackathon.contractAddress
                         };
-                        
+
                         console.log("Backend project data:", backendData);
-                        
+
                         // For now, just log the success
                         toast.success("Project submitted successfully on-chain!");
-                        
+
                         // Close the modal only after confirmation
                         setShowProjectModal(false);
-                        
+
                     } catch (backendError) {
                         console.error("Backend call failed after successful contract transaction:", backendError);
                         toast.error("Project submitted on-chain, but failed to save additional data. Please contact support.");
@@ -238,7 +240,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
         <div className="shrink-0 w-91 max-lg:flex max-lg:gap-15 max-lg:w-full max-lg:mt-16 max-md:flex-col max-md:gap-8 max-md:mt-8">
             <div className="max-lg:flex-1">
                 <div className="mb-8 text-h4 max-lg:mb-3 max-lg:text-h5">
-                    Highlights
+                    Summary
                 </div>
                 <ul>
                     {getHighlights(hackathon, sponsorContributions).map((highlight) => (
@@ -255,16 +257,16 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
                     ))}
                 </ul>
                 <div className="flex flex-col gap-3 shrink-0 mt-2">
-                    <Button 
-                        className="w-full" 
+                    <Button
+                        className="w-full"
                         isBlack
                         onClick={isRegistered ? handleProjectSubmission : handleHackerRegistration}
                         disabled={registrationLoading}
                     >
                         {registrationLoading ? "Processing..." : (isRegistered ? "Submit Project" : "Hacker Application")}
                     </Button>
-                    <Button 
-                        className="w-full" 
+                    <Button
+                        className="w-full"
                         isStroke
                         onClick={() => {
                             if (!isConnected) {

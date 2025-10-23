@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import Button from "@/components/Button";
 import Logo from "@/components/Logo";
-import Icon from "@/components/Icon";
-import User from "./User";
+// import Icon from "@/components/Icon";
+// import User from "./User";
 // import Notifications from "./Notifications";
 // import Messages from "./Messages";
 import WalletConnect from "@/components/WalletConnect";
@@ -115,7 +115,7 @@ const Header = ({
                     )}
                     {/*<Notifications />
                     <Messages />*/}
-                    <User />
+                    {/*<User />*/}
                 </div>
                 {newProduct && (
                     <div className="flex items-center gap-3 max-md:gap-0 max-md:w-[calc(100%+0.75rem)] max-md:mt-3 max-md:-mx-1.5">
@@ -127,6 +127,7 @@ const Header = ({
                         >
                             {isLoading ? "Deploying..." : "Deploy Now"}
                         </Button>
+                        <WalletConnect className="max-md:hidden" />
                     </div>
                 )}
             </div>

@@ -1,8 +1,9 @@
-export const navigation = [
+// Base navigation items (always visible)
+export const baseNavigation = [
     {
         title: "Explore Page",
         icon: "grid",
-        href: "/explore-page",
+        href: "/explore",
     },
     {
         title: "Hackathons",
@@ -56,12 +57,24 @@ export const navigation = [
             },
         ],
     },
+];
+
+// Judge-only navigation items
+export const judgeNavigation = [
     {
-        title: "Judging Page",
+        title: "Judging Panel",
         icon: "dashboard",
-        href: "/",
+        href: "/judging",
     },
 ];
+
+// Function to get navigation based on judge status
+export const getNavigation = (isJudge: boolean) => {
+    return isJudge ? [...baseNavigation, ...judgeNavigation] : baseNavigation;
+};
+
+// Default navigation (for backward compatibility)
+export const navigation = baseNavigation;
 
 export const navigationUser = [
     {
@@ -77,6 +90,6 @@ export const navigationUser = [
     {
         title: "Explore Page",
         icon: "grid",
-        href: "/explore-page",
+        href: "/explore",
     },
 ];

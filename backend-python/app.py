@@ -60,7 +60,7 @@ def init_sample_data():
         "users", "organizations", "hackathons", "applications", "analytics",
         "timeSlots", "countries", "faqs", "comments", "messages",
         "notifications", "compatibility", "affiliateCenter", "slider",
-        "charts", "judges", "sponsors", "productActivity", "pricing", "income", "payouts", "payoutStatistics", "statementStatistics", "transactions"
+        "charts", "judges", "sponsors", "productActivity", "pricing", "income", "payouts", "payoutStatistics", "statementStatistics", "transactions", "projects"
     ]
 
     for filename in required_files:
@@ -771,6 +771,182 @@ def update_sponsor(sponsor_id):
     
     save_data('sponsors', sponsors)
     return jsonify(sponsor)
+
+# Projects/Submissions API
+@app.route('/api/projects', methods=['GET'])
+def get_projects():
+    """Get all projects, optionally filtered by hackathon ID"""
+    projects = load_data('projects')
+    hackathon_id = request.args.get('hackathonId')
+    status = request.args.get('status')
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 10))
+    
+    # Filter projects
+    filtered_projects = projects
+    if hackathon_id:
+        hackathon_id = int(hackathon_id)
+        filtered_projects = [p for p in filtered_projects if p.get('hackathonId') == hackathon_id]
+    if status:
+        filtered_projects = [p for p in filtered_projects if p.get('status') == status]
+    
+    # Pagination
+    start = (page - 1) * limit
+    end = start + limit
+    paginated_projects = filtered_projects[start:end]
+    
+    return jsonify({
+        "data": paginated_projects,
+        "pagination": {
+            "page": page,
+            "limit": limit,
+            "total": len(filtered_projects),
+            "pages": (len(filtered_projects) + limit - 1) // limit
+        }
+    })
+
+@app.route('/api/projects', methods=['POST'])
+def create_project():
+    """Create a new project submission"""
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    required_fields = ['hackathonId', 'title', 'description', 'teamMembers', 'selectedTracks']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing required field: {field}"}), 400
+    
+    projects = load_data('projects')
+    
+    new_project = {
+        "id": get_next_id(projects),
+        "hackathonId": int(data['hackathonId']),
+        "title": data['title'],
+        "description": data['description'],
+        "teamMembers": data['teamMembers'],  # Array of team member objects
+        "selectedTracks": data['selectedTracks'],  # Array of selected track IDs
+        "demoUrl": data.get('demoUrl'),
+        "githubUrl": data.get('githubUrl'),
+        "videoUrl": data.get('videoUrl'),
+        "images": data.get('images', []),  # Array of image URLs
+        "technologies": data.get('technologies', []),  # Array of technology strings
+        "submittedBy": data.get('submittedBy'),  # User ID who submitted
+        "submittedByName": data.get('submittedByName'),  # User name for display
+        "status": "submitted",  # submitted, under_review, approved, rejected
+        "judgeScores": {},  # Object with judgeId as key and score as value
+        "totalScore": 0,
+        "rank": None,
+        "prize": None,
+        "createdAt": datetime.now().isoformat(),
+        "updatedAt": datetime.now().isoformat()
+    }
+    
+    projects.append(new_project)
+    save_data('projects', projects)
+    
+    response = jsonify(new_project)
+    response.status_code = 201
+    return response
+
+@app.route('/api/projects/<int:project_id>', methods=['GET'])
+def get_project(project_id):
+    """Get a specific project by ID"""
+    projects = load_data('projects')
+    project = next((p for p in projects if p['id'] == project_id), None)
+    
+    if not project:
+        return jsonify({"error": "Project not found"}), 404
+    
+    return jsonify(project)
+
+@app.route('/api/projects/<int:project_id>', methods=['PUT'])
+def update_project(project_id):
+    """Update project details or status"""
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    projects = load_data('projects')
+    project = next((p for p in projects if p['id'] == project_id), None)
+    
+    if not project:
+        return jsonify({"error": "Project not found"}), 404
+    
+    # Update allowed fields
+    updatable_fields = [
+        'title', 'description', 'teamMembers', 'selectedTracks', 'demoUrl', 
+        'githubUrl', 'videoUrl', 'images', 'technologies', 'status', 
+        'judgeScores', 'totalScore', 'rank', 'prize'
+    ]
+    
+    for field in updatable_fields:
+        if field in data:
+            project[field] = data[field]
+    
+    project['updatedAt'] = datetime.now().isoformat()
+    
+    save_data('projects', projects)
+    return jsonify(project)
+
+@app.route('/api/projects/<int:project_id>/judge', methods=['POST'])
+def judge_project(project_id):
+    """Submit judge scores for a project"""
+    data = request.get_json()
+    
+    if not data or 'judgeId' not in data or 'scores' not in data:
+        return jsonify({"error": "judgeId and scores are required"}), 400
+    
+    projects = load_data('projects')
+    project = next((p for p in projects if p['id'] == project_id), None)
+    
+    if not project:
+        return jsonify({"error": "Project not found"}), 404
+    
+    judge_id = data['judgeId']
+    scores = data['scores']  # Object with criteria as keys and scores as values
+    
+    # Store judge scores
+    if 'judgeScores' not in project:
+        project['judgeScores'] = {}
+    
+    project['judgeScores'][str(judge_id)] = {
+        'scores': scores,
+        'submittedAt': datetime.now().isoformat()
+    }
+    
+    # Calculate total score (average of all judge scores)
+    if project['judgeScores']:
+        total_scores = []
+        for judge_scores in project['judgeScores'].values():
+            if isinstance(judge_scores, dict) and 'scores' in judge_scores:
+                judge_total = sum(judge_scores['scores'].values())
+                total_scores.append(judge_total)
+        
+        if total_scores:
+            project['totalScore'] = sum(total_scores) / len(total_scores)
+    
+    project['updatedAt'] = datetime.now().isoformat()
+    
+    save_data('projects', projects)
+    return jsonify(project)
+
+@app.route('/api/hackathons/<int:hackathon_id>/projects', methods=['GET'])
+def get_hackathon_projects(hackathon_id):
+    """Get all projects for a specific hackathon"""
+    projects = load_data('projects')
+    hackathon_projects = [p for p in projects if p.get('hackathonId') == hackathon_id]
+    
+    # Sort by total score (highest first) if scores exist
+    hackathon_projects.sort(key=lambda x: x.get('totalScore', 0), reverse=True)
+    
+    return jsonify({
+        "hackathonId": hackathon_id,
+        "projects": hackathon_projects,
+        "total": len(hackathon_projects)
+    })
 
 
 if __name__ == '__main__':

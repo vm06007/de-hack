@@ -1,0 +1,116 @@
+[
+  {
+    "id": 1,
+    "hackathonId": 1,
+    "title": "DeFi Yield Optimizer",
+    "description": "An automated yield farming platform that finds the best DeFi opportunities across multiple protocols and automatically rebalances portfolios for maximum returns.",
+    "teamMembers": [
+      {
+        "name": "Alice Johnson",
+        "role": "Lead Developer",
+        "email": "alice@example.com",
+        "github": "alice-dev"
+      },
+      {
+        "name": "Bob Smith",
+        "role": "Smart Contract Developer",
+        "email": "bob@example.com",
+        "github": "bob-smith"
+      }
+    ],
+    "selectedTracks": [1, 2],
+    "demoUrl": "https://demo.defi-optimizer.com",
+    "githubUrl": "https://github.com/team/defi-optimizer",
+    "videoUrl": "https://youtube.com/watch?v=example",
+    "images": [
+      "https://example.com/screenshot1.png",
+      "https://example.com/screenshot2.png"
+    ],
+    "technologies": ["Solidity", "React", "Web3.js", "Node.js"],
+    "submittedBy": 1,
+    "submittedByName": "Alice Johnson",
+    "status": "submitted",
+    "judgeScores": {},
+    "totalScore": 0,
+    "rank": null,
+    "prize": null,
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "hackathonId": 1,
+    "title": "NFT Marketplace with AI Curation",
+    "description": "A next-generation NFT marketplace that uses AI to curate and recommend NFTs based on user preferences and market trends.",
+    "teamMembers": [
+      {
+        "name": "Charlie Brown",
+        "role": "Full Stack Developer",
+        "email": "charlie@example.com",
+        "github": "charlie-brown"
+      }
+    ],
+    "selectedTracks": [1, 3],
+    "demoUrl": "https://demo.nft-ai-marketplace.com",
+    "githubUrl": "https://github.com/team/nft-ai-marketplace",
+    "videoUrl": "https://youtube.com/watch?v=example2",
+    "images": [
+      "https://example.com/nft-screenshot1.png"
+    ],
+    "technologies": ["Next.js", "TypeScript", "OpenAI API", "IPFS"],
+    "submittedBy": 2,
+    "submittedByName": "Charlie Brown",
+    "status": "under_review",
+    "judgeScores": {
+      "1": {
+        "scores": {
+          "innovation": 8,
+          "technical_quality": 7,
+          "market_potential": 9,
+          "presentation": 8
+        },
+        "submittedAt": "2024-01-16T14:20:00Z"
+      }
+    },
+    "totalScore": 8.0,
+    "rank": 1,
+    "prize": "First Place - $5000",
+    "createdAt": "2024-01-15T15:45:00Z",
+    "updatedAt": "2024-01-16T14:20:00Z"
+  },
+  {
+    "id": 3,
+    "hackathonId": 2,
+    "title": "Blockchain Voting System",
+    "description": "A transparent and secure voting system built on blockchain technology for governance and elections.",
+    "teamMembers": [
+      {
+        "name": "Diana Prince",
+        "role": "Blockchain Developer",
+        "email": "diana@example.com",
+        "github": "diana-prince"
+      },
+      {
+        "name": "Eve Wilson",
+        "role": "Frontend Developer",
+        "email": "eve@example.com",
+        "github": "eve-wilson"
+      }
+    ],
+    "selectedTracks": [1],
+    "demoUrl": "https://demo.blockchain-voting.com",
+    "githubUrl": "https://github.com/team/blockchain-voting",
+    "videoUrl": "https://youtube.com/watch?v=example3",
+    "images": [],
+    "technologies": ["Solidity", "React", "Web3.js", "Truffle"],
+    "submittedBy": 3,
+    "submittedByName": "Diana Prince",
+    "status": "submitted",
+    "judgeScores": {},
+    "totalScore": 0,
+    "rank": null,
+    "prize": null,
+    "createdAt": "2024-01-16T09:15:00Z",
+    "updatedAt": "2024-01-16T09:15:00Z"
+  }
+]

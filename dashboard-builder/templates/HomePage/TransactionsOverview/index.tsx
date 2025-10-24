@@ -17,7 +17,7 @@ import "swiper/css/navigation";
 const transactionTypes = {
     hacker_application: {
         icon: "profile",
-        label: "Hacker Application",
+        label: "Join Hackathon",
         color: "bg-blue-500",
         statusColor: "label-blue"
     },

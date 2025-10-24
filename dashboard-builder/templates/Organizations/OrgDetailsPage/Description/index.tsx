@@ -184,6 +184,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
             const contractResult = await submitProject(
                 projectData.projectName,
                 projectData.githubLink,
+                projectData,
                 async (result) => {
                     console.log("Smart contract project submission successful:", result);
 
@@ -263,7 +264,7 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
                         onClick={isRegistered ? handleProjectSubmission : handleHackerRegistration}
                         disabled={registrationLoading}
                     >
-                        {registrationLoading ? "Processing..." : (isRegistered ? "Submit Project" : "Hacker Application")}
+                        {registrationLoading ? "Processing..." : (isRegistered ? "Submit Project" : "Join Hackathon")}
                     </Button>
                     <Button
                         className="w-full"

@@ -6,6 +6,8 @@ import Button from "@/components/Button";
 import Image from "@/components/Image";
 import toast from "react-hot-toast";
 import { useSponsors } from "@/src/hooks/useSponsors";
+import { useSubmitProject, ProjectSubmissionData } from "@/src/hooks/useSubmitProject";
+import CongratsScreen from "@/components/CongratsScreen";
 
 type ProjectSubmissionProps = {
     open: boolean;
@@ -28,6 +30,16 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
 
     // Get sponsors list for sponsor track selection
     const { sponsors: backendSponsors, loading: sponsorsLoading, fetchSponsors } = useSponsors(hackathon?.id);
+
+    // Use the submit project hook
+    const {
+        submitProject,
+        isLoading: isTransactionLoading,
+        error: transactionError,
+        showCongrats,
+        projectId,
+        closeCongrats
+    } = useSubmitProject(hackathon?.contractAddress);
 
     // Reset form when modal opens/closes
     useEffect(() => {
@@ -152,44 +164,71 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
 
             const imageBase64Array = await Promise.all(imageBase64Promises);
 
-            const projectData = {
+            // Create team members array from the team members string
+            const teamMembersArray = teamMembers.trim()
+                ? teamMembers.split(',').map(member => ({
+                    name: member.trim(),
+                    role: 'Team Member',
+                    email: '',
+                    github: ''
+                }))
+                : [];
+
+            // Create selected tracks array
+            const selectedTracks = [];
+            if (applyForMainTrack) {
+                selectedTracks.push(1); // Main track ID
+            }
+            selectedTracks.push(...selectedSponsors.map(id => parseInt(id)));
+
+            // Create project data for backend API
+            const fullProjectData: ProjectSubmissionData = {
                 hackathonId: hackathon?.id,
-                projectName: projectName.trim(),
-                githubLink: githubLink.trim(),
+                title: projectName.trim(),
                 description: description,
-                teamMembers: teamMembers.trim(),
+                teamMembers: teamMembersArray,
+                selectedTracks: selectedTracks,
+                githubUrl: githubLink.trim(),
                 images: imageBase64Array,
-                applyForMainTrack,
-                selectedSponsors: selectedSponsors,
-                submittedAt: new Date().toISOString()
+                technologies: [], // Could be extracted from description or added as a field
+                submittedByName: "Anonymous" // Could be fetched from user context
             };
 
-            console.log("Submitting project:", projectData);
+            console.log("Submitting project:", fullProjectData);
 
-            // Call the onSubmit callback if provided
-            // The parent component will handle closing the modal after transaction confirmation
-            if (onSubmit) {
-                await onSubmit(projectData);
-            }
+            // Submit to blockchain and backend
+            await submitProject(
+                projectName.trim(),
+                githubLink.trim(),
+                fullProjectData,
+                (result) => {
+                    console.log("Project submission successful:", result);
+                    // The congrats screen will be shown automatically by the hook
+                    // Don't close the modal here - let the congrats screen handle it
+                }
+            );
 
-            // Don't close the modal here - let the parent handle it after transaction confirmation
-            // Only reset form after successful transaction (handled by parent)
+            // Don't close the modal here - keep it open during transaction
+            // The modal will be closed when the congrats screen is closed
 
         } catch (error) {
             console.error("Failed to submit project:", error);
-            // Don't show error toast here - the parent component handles it
+            toast.error("Failed to submit project. Please try again.");
             setIsSubmitting(false);
         }
     };
 
     return (
-        <Modal 
-            open={open} 
-            onClose={onClose} 
+        <>
+        <Modal
+            open={open}
+            onClose={onClose}
             classWrapper="max-w-3xl"
         >
             <div className="max-h-[80vh] overflow-y-auto">
-                <h3 className="text-h4 mb-6">Submit Your Project</h3>
+                {!showCongrats ? (
+                    <>
+                        <h3 className="text-h4 mb-6">Submit Your Project</h3>
 
                 <div className="space-y-6">
                     {/* Project Name */}
@@ -404,14 +443,81 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                         <Button
                             onClick={handleSubmit}
                             className="flex-1"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || isTransactionLoading}
                         >
-                            {isSubmitting ? "Processing Transaction..." : "Submit Project"}
+                            {isSubmitting || isTransactionLoading ? "Processing Transaction..." : "Submit Project"}
                         </Button>
                     </div>
                 </div>
+                    </>
+                ) : (
+                    /* Congrats Screen Content */
+                    <div className="relative text-center py-8 px-6">
+                        {/* Confetti Background */}
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                            <Image
+                                src="/images/confetti.png"
+                                alt="Confetti"
+                                width={400}
+                                height={400}
+                                className="absolute inset-0 w-full h-full object-cover opacity-60"
+                            />
+                        </div>
+
+                        {/* Congrats Image */}
+                        <div className="relative z-10 mb-6">
+                            <Image
+                                src="/images/congrats.png"
+                                alt="Congratulations"
+                                width={200}
+                                height={200}
+                                className="mx-auto"
+                            />
+                        </div>
+
+                        {/* Content */}
+                        <div className="relative z-10">
+                            <h2 className="text-h3 font-bold text-t-primary mb-4">
+                                Congrats!
+                            </h2>
+
+                            <div className="text-body-1 text-t-secondary mb-2">
+                                You've successfully submitted your project!
+                            </div>
+
+                            {projectName && (
+                                <div className="text-body-2 text-t-primary font-medium mb-2">
+                                    "{projectName}"
+                                </div>
+                            )}
+
+                            <div className="text-caption text-t-secondary mb-6">
+                                Your project is now under review by our judges.
+                            </div>
+
+                            {/* Project ID for reference */}
+                            {projectId && (
+                                <div className="text-caption text-t-secondary mb-6">
+                                    Project ID: #{projectId}
+                                </div>
+                            )}
+
+                            {/* Close Button */}
+                            <Button
+                                onClick={() => {
+                                    closeCongrats();
+                                    onClose();
+                                }}
+                                className="w-full"
+                            >
+                                Close
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
         </Modal>
+    </>
     );
 };
 

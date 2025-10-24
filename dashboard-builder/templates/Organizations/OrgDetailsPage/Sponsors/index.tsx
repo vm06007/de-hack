@@ -63,7 +63,12 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
     const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor, fetchSponsors } = useSponsors(hackathon?.id);
 
     // Use the becomeSponsor hook for smart contract interaction
-    const { becomeSponsor, isLoading: contractLoading } = useBecomeSponsor(hackathon?.contractAddress || '');
+    const {
+        becomeSponsor,
+        isLoading: contractLoading,
+        walletCapabilities,
+        transactionStrategy
+    } = useBecomeSponsor(hackathon?.contractAddress || '');
 
     // Fetch sponsors when component mounts
     useEffect(() => {
@@ -406,6 +411,64 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                             </div>
                         )}
 
+                        {/* Wallet Capability Information */}
+                        {walletCapabilities && (
+                            <div style={{ display: 'none' }} className="bg-b-surface1 border border-s-stroke2 rounded-lg p-4">
+                                <h4 className="text-body-2 font-medium mb-3">Wallet Capabilities</h4>
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-caption text-t-secondary">EIP-7702 Support:</span>
+                                        <span className={`text-caption font-medium ${
+                                            walletCapabilities.supportsEIP7702 ? 'text-green-500' : 'text-red-500'
+                                        }`}>
+                                            {walletCapabilities.supportsEIP7702 ? 'Supported' : 'Not Supported'}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-caption text-t-secondary">Transaction Batching:</span>
+                                        <span className={`text-caption font-medium ${
+                                            walletCapabilities.supportsBatching ? 'text-green-500' : 'text-red-500'
+                                        }`}>
+                                            {walletCapabilities.supportsBatching ? 'Supported' : 'Not Supported'}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-caption text-t-secondary">Smart Wallets:</span>
+                                        <span className={`text-caption font-medium ${
+                                            walletCapabilities.supportsSmartWallets ? 'text-green-500' : 'text-red-500'
+                                        }`}>
+                                            {walletCapabilities.supportsSmartWallets ? 'Supported' : 'Not Supported'}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-caption text-t-secondary">Transaction Strategy:</span>
+                                        <span className="text-caption font-medium text-blue-500 capitalize">
+                                            {transactionStrategy.replace('-', ' ')}
+                                        </span>
+                                    </div>
+                                    {walletCapabilities.walletName && (
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-caption text-t-secondary">Wallet:</span>
+                                            <span className="text-caption font-medium">
+                                                {walletCapabilities.walletName}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="mt-3 p-2 bg-b-surface2 rounded text-caption text-t-secondary">
+                                    {transactionStrategy === 'legacy' && (
+                                        <span>Your wallet will require separate approval and sponsor transactions.</span>
+                                    )}
+                                    {transactionStrategy === 'batched' && (
+                                        <span>Your wallet supports batched transactions for optimal efficiency.</span>
+                                    )}
+                                    {transactionStrategy === 'smart-wallet' && (
+                                        <span>Your wallet supports smart wallet features for enhanced functionality.</span>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         <div>
                             <label className="block text-body-2 mb-2">Prize Distribution Details</label>
                             <div className="text-caption text-t-secondary mb-3">
@@ -440,7 +503,11 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                 className="flex-1"
                                 disabled={isSubmitting || contractLoading}
                             >
-                                {isSubmitting || contractLoading ? "Processing..." : "Proceed"}
+                                {isSubmitting || contractLoading ? "Processing..." :
+                                 transactionStrategy === 'legacy' ? "Proceed (2 Transactions)" :
+                                 transactionStrategy === 'batched' ? "Proceed (Batched)" :
+                                 transactionStrategy === 'smart-wallet' ? "Proceed (Smart Wallet)" :
+                                 "Proceed"}
                             </Button>
                         </div>
                     </div>

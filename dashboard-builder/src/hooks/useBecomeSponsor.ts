@@ -7,6 +7,30 @@ import { getTokenDecimals } from '@/constants/tokenAddresses';
 import { detectWalletCapabilities, getTransactionStrategy, WalletCapabilities } from '../lib/walletCapabilities';
 import { config } from '../lib/wagmi';
 
+// ERC20 Token ABI for approval transactions
+const ERC20_ABI = [
+    {
+        "inputs": [
+            {"internalType": "address", "name": "spender", "type": "address"},
+            {"internalType": "uint256", "name": "amount", "type": "uint256"}
+        ],
+        "name": "approve",
+        "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {"internalType": "address", "name": "owner", "type": "address"},
+            {"internalType": "address", "name": "spender", "type": "address"}
+        ],
+        "name": "allowance",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function"
+    }
+] as const;
+
 // Hackathon contract ABI - both becomeSponsor and becomeSponsorWithToken functions
 const HACKATHON_ABI = [
     {
@@ -115,6 +139,38 @@ export const useBecomeSponsor = (contractAddress: string) => {
             toast.loading("Transaction submitted, waiting for confirmation...", { id: "become-sponsor" });
         }
     }, [contractWriteData, txHash]);
+
+    // Cleanup function to reset state
+    const resetState = () => {
+        setIsLoading(false);
+        callbackRef.current = null;
+        setTxHash(undefined);
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    };
+
+    // Handle writeContract errors (including user rejection)
+    useEffect(() => {
+        if (error) {
+            console.error("WriteContract error:", error);
+            toast.dismiss("become-sponsor");
+
+            // Check if it's a user rejection
+            if (error.message?.includes("User rejected") ||
+                error.message?.includes("User denied") ||
+                error.message?.includes("rejected") ||
+                error.message?.includes("denied")) {
+                toast.error("Transaction cancelled by user");
+            } else {
+                toast.error(`Transaction failed: ${error.message}`);
+            }
+
+            // Reset loading state
+            resetState();
+        }
+    }, [error]);
 
     // Handle receipt when it arrives
     useEffect(() => {
@@ -742,6 +798,16 @@ export const useBecomeSponsor = (contractAddress: string) => {
             }
 
             console.log("writeContract called, waiting for user to confirm in wallet...");
+
+            toast.loading("Please confirm transaction in your wallet...", { id: "become-sponsor" });
+
+            // Set a timeout to handle cases where user doesn't respond
+            timeoutRef.current = setTimeout(() => {
+                console.log("Transaction timeout - user may have cancelled or not responded");
+                toast.dismiss("become-sponsor");
+                toast.error("Transaction timed out. Please try again.");
+                resetState();
+            }, 300000); // 5 minutes timeout
 
             // Return empty hash initially - the real hash will come from contractWriteData
             return { hash: "0x" as `0x${string}` };

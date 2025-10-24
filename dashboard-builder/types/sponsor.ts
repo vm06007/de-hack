@@ -3,7 +3,8 @@ export interface Sponsor {
     name: string;
     company: string;
     email: string;
-    avatar: string;
+    logo: string;
+    tier: string;
     totalContributions: number;
     hackathonsSponsored: number;
     successRate: number;

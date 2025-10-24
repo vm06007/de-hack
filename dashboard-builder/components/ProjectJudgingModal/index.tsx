@@ -28,7 +28,7 @@ interface ProjectJudgingModalProps {
 }
 
 const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudgingModalProps) => {
-    const [score, setScore] = useState(0);
+    const [score, setScore] = useState(1.0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState<'judge' | 'ai-agent'>('judge');
     const [aiMessage, setAiMessage] = useState('');
@@ -86,12 +86,35 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
     };
 
     return (
-        <Modal open={open} onClose={onClose} classWrapper="max-w-[67.5vw] w-full">
+        <>
+        <style jsx>{`
+            .slider::-webkit-slider-thumb {
+                appearance: none;
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background: #3B82F6;
+                cursor: pointer;
+                border: 2px solid #ffffff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            .slider::-moz-range-thumb {
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background: #3B82F6;
+                cursor: pointer;
+                border: 2px solid #ffffff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+        `}</style>
+        <Modal open={open} onClose={onClose} classWrapper="max-w-[67.5vw] w-full !p-0">
             <div className="h-[80vh] flex flex-col">
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-s-stroke2">
                     <div>
-                        <h2 className="text-h3 font-bold">{project.title}</h2>
+                        <h2 className="text-h4 font-bold">{project.title}</h2>
                         <div className="flex items-center gap-4 mt-2">
                             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(project.status)} bg-opacity-20`}>
                                 {project.status.replace('_', ' ').toUpperCase()}
@@ -229,6 +252,16 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                                             : 'bg-b-surface2 text-t-secondary hover:text-t-primary'
                                     }`}
                                 >
+                                    Scanner
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('ai-agent')}
+                                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-r-lg transition-colors ${
+                                        activeTab === 'ai-agent'
+                                            ? 'bg-b-highlight text-t-primary'
+                                            : 'bg-b-surface2 text-t-secondary hover:text-t-primary'
+                                    }`}
+                                >
                                     AI Agent
                                 </button>
                             </div>
@@ -259,19 +292,72 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                                     <div>
                                         <h4 className="text-h6 font-semibold mb-2">Your Score</h4>
                                         <div className="space-y-3">
+                                            {/* Star Rating Display */}
+                                            <div className="flex justify-center gap-1 mb-3">
+                                                {Array.from({ length: 10 }, (_, index) => {
+                                                    const starNumber = index + 1;
+                                                    const isActive = starNumber <= Math.round(score);
+
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className="w-5 h-5 transition-all duration-200 cursor-pointer hover:scale-110"
+                                                            style={{
+                                                                filter: isActive
+                                                                    ? 'contrast(0) hue-rotate(-45deg) sepia(1) brightness(1.5)'
+                                                                    : 'grayscale(100%) brightness(0.5)'
+                                                            }}
+                                                            onClick={() => setScore(starNumber)}
+                                                        >
+                                                            <Icon
+                                                                name="star-fill"
+                                                                className="w-5 h-5"
+                                                            />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            {/* Input Field */}
                                             <div>
-                                                <label className="block text-sm font-medium mb-1">
+                                                <label className="block text-sm font-medium mb-2">
                                                     Score (1-10)
                                                 </label>
                                                 <input
                                                     type="number"
                                                     min="1"
                                                     max="10"
-                                                    value={score}
-                                                    onChange={(e) => setScore(parseInt(e.target.value) || 0)}
-                                                    className="w-full px-2 py-1 border border-s-stroke2 rounded bg-b-surface2 text-t-primary focus:outline-none focus:border-blue-500 text-sm"
-                                                    placeholder="Enter score 1-10"
+                                                    value={Math.round(score)}
+                                                    onChange={(e) => {
+                                                        const value = parseInt(e.target.value) || 1;
+                                                        setScore(Math.max(1, Math.min(10, value)));
+                                                    }}
+                                                    className="w-full px-3 py-2 border border-s-stroke2 rounded-lg bg-b-surface2 text-t-primary focus:outline-none focus:border-blue-500 text-center text-lg font-semibold"
                                                 />
+                                            </div>
+
+                                            {/* Slider */}
+                                            <div>
+                                                <label className="block text-sm font-medium mb-2">
+                                                    Adjust Score
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    min="1"
+                                                    max="10"
+                                                    step="0.1"
+                                                    value={score}
+                                                    onChange={(e) => setScore(parseFloat(e.target.value))}
+                                                    className="w-full h-2 bg-b-surface2 rounded-lg appearance-none cursor-pointer slider"
+                                                    style={{
+                                                        background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${(score - 1) * 11.11}%, #374151 ${(score - 1) * 11.11}%, #374151 100%)`
+                                                    }}
+                                                />
+                                                <div className="flex justify-between text-xs text-t-secondary mt-1">
+                                                    <span>1</span>
+                                                    <span>5</span>
+                                                    <span>10</span>
+                                                </div>
                                             </div>
 
                                             <Button
@@ -347,6 +433,7 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                 </div>
             </div>
         </Modal>
+        </>
     );
 };
 

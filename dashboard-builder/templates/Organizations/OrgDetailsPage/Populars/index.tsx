@@ -23,7 +23,17 @@ const Populars = ({}) => {
                 {(Array.isArray(hackathons) ? hackathons.slice(0, 3) : []).map((hackathon) => (
                     <ShopItem
                         className="w-[calc(33.333%-1.5rem)] mt-6 mx-3 max-lg:w-[calc(50%-1.5rem)] max-lg:nth-3:hidden max-md:shrink-0 max-md:w-79 max-md:m-0 max-md:mr-3 max-md:nth-3:flex max-md:last:mr-0"
-                        value={hackathon}
+                        value={{
+                            id: hackathon.id,
+                            name: hackathon.title || hackathon.name,
+                            title: hackathon.title,
+                            image: hackathon.logoUrl || hackathon.image || "/images/hackathons/default.png",
+                            startDate: hackathon.startDate,
+                            endDate: hackathon.endDate,
+                            price: hackathon.totalPrizePool ? parseFloat(hackathon.totalPrizePool) : undefined,
+                            rating: hackathon.rating,
+                            category: hackathon.category
+                        }}
                         key={hackathon.id}
                     />
                 ))}

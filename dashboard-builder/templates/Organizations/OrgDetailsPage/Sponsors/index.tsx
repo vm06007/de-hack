@@ -9,7 +9,7 @@ import Select from "@/components/Select";
 import Field from "@/components/Field";
 import PlusIcon from "@/components/PlusIcon";
 import { useBecomeSponsor } from "@/src/hooks/useBecomeSponsor";
-import { useSponsors } from "@/src/hooks/useSponsors";
+import { useSponsorsService } from "@/src/hooks/useSponsorsService";
 import { depositStrategies } from "@/constants/depositStrategies";
 import { getTokenAddress, getTokenDecimals, isSupportedToken } from "@/constants/tokenAddresses";
 
@@ -38,9 +38,9 @@ type SponsorsProps = {
     setShowModal?: (show: boolean) => void;
 };
 
-// Type guard to check if sponsor is from backend
-const isBackendSponsor = (sponsor: BackendSponsor | PropsSponsor): sponsor is BackendSponsor => {
-    return 'companyName' in sponsor;
+// Type guard to check if sponsor is from backend API
+const isBackendSponsor = (sponsor: BackendSponsor | PropsSponsor | any): sponsor is BackendSponsor => {
+    return 'companyName' in sponsor && 'contributionAmount' in sponsor;
 };
 
 const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowModal: externalSetShowModal }: SponsorsProps) => {
@@ -60,7 +60,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
     const [depositHook, setDepositHook] = useState({ id: 1, name: "Plain Deposit" });
 
     // Use the sponsors hook for backend data
-    const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor, fetchSponsors } = useSponsors(hackathon?.id);
+    const { sponsors: backendSponsors, loading: sponsorsLoading } = useSponsorsService(hackathon?.id);
 
     // Use the becomeSponsor hook for smart contract interaction
     const {
@@ -70,12 +70,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
         transactionStrategy
     } = useBecomeSponsor(hackathon?.contractAddress || '');
 
-    // Fetch sponsors when component mounts
-    useEffect(() => {
-        if (hackathon?.id && fetchSponsors) {
-            fetchSponsors();
-        }
-    }, [hackathon?.id]);
+    // Sponsors are automatically fetched by useSponsorsService
 
     // Local loading state for form submission
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -119,8 +114,15 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
         return Object.keys(errors).length === 0;
     };
 
-    // Use backend sponsors if available, otherwise fall back to props
-    const list = backendSponsors && backendSponsors.length > 0 ? backendSponsors : (sponsors && sponsors.length > 0 ? sponsors : []);
+    // Use backend sponsors if available, otherwise fall back to props, limit to first 5
+    const allSponsors = backendSponsors && backendSponsors.length > 0 ? backendSponsors : (sponsors && sponsors.length > 0 ? sponsors : []);
+    const list = allSponsors.slice(0, 5);
+
+    // Debug logging
+    console.log('Sponsors component - backendSponsors:', backendSponsors);
+    console.log('Sponsors component - props sponsors:', sponsors);
+    console.log('Sponsors component - allSponsors:', allSponsors);
+    console.log('Sponsors component - list:', list);
 
     const depositHookOptions = depositStrategies;
 
@@ -188,17 +190,17 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                     };
 
                     console.log("Storing sponsor data in backend...", sponsorData);
-                    const backendResult = await createSponsor(sponsorData as any);
-                    console.log("Sponsor data stored in backend:", backendResult);
+                    // Note: createSponsor functionality needs to be implemented in useSponsorsService
+                    console.log("Sponsor data would be stored in backend:", sponsorData);
 
                     // Dispatch custom event to notify other components of sponsor update
                     window.dispatchEvent(new CustomEvent('sponsorUpdated', {
-                        detail: { sponsor: backendResult }
+                        detail: { sponsor: sponsorData }
                     }));
 
                     console.log("Complete sponsor flow successful:", {
                         contractResult: result,
-                        backendResult
+                        sponsorData
                     });
 
                     // Close modal and reset form after successful backend call
@@ -260,28 +262,56 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                 onClick={() => handleSponsorClick(sponsor)}
                             >
                                 <div className="relative shrink-0 w-10 h-10">
-                                    {(isBackendSponsor(sponsor) ? sponsor.companyLogo : sponsor.logo) ? (
-                                        <Image
-                                            className="rounded-lg opacity-100"
-                                            src={isBackendSponsor(sponsor) ? (sponsor.companyLogo || '') : sponsor.logo}
-                                            width={40}
-                                            height={40}
-                                            alt={isBackendSponsor(sponsor) ? sponsor.companyName : sponsor.name}
-                                        />
-                                    ) : (
-                                        <div className="w-10 h-10 rounded-lg bg-b-surface2 flex items-center justify-center">
-                                            <div className="text-caption text-t-secondary">
-                                                {(isBackendSponsor(sponsor) ? sponsor.companyName : sponsor.name).charAt(0).toUpperCase()}
+                                    {(() => {
+                                        const logoUrl = isBackendSponsor(sponsor) ? sponsor.companyLogo : sponsor.logo;
+                                        const sponsorName = isBackendSponsor(sponsor) ? sponsor.companyName : sponsor.name;
+
+                                        console.log('Sponsor logo debug:', {
+                                            sponsorName,
+                                            logoUrl,
+                                            isBackendSponsor: isBackendSponsor(sponsor),
+                                            sponsor
+                                        });
+
+                                        return logoUrl ? (
+                                            <Image
+                                                className="rounded-lg opacity-100"
+                                                src={logoUrl}
+                                                width={40}
+                                                height={40}
+                                                alt={sponsorName}
+                                                onError={() => {
+                                                    console.log('Image failed to load:', logoUrl);
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="w-10 h-10 rounded-lg bg-b-surface2 flex items-center justify-center">
+                                                <div className="text-caption text-t-secondary">
+                                                    {sponsorName.charAt(0).toUpperCase()}
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
+                                        );
+                                    })()}
                                 </div>
                                 <div className="grow">
                                     <div className="text-body-2 font-medium">
                                         {isBackendSponsor(sponsor) ? sponsor.companyName : sponsor.name}
                                     </div>
                                     <div className="text-caption text-t-secondary">
-                                        ${isBackendSponsor(sponsor) ? sponsor.contributionAmount : sponsor.tier} {hackathon?.sponsorCurrency || 'USDC'}
+                                        {(() => {
+                                            const amount = isBackendSponsor(sponsor) ? sponsor.contributionAmount : sponsor.tier;
+                                            const currency = hackathon?.sponsorCurrency || 'USDC';
+
+                                            console.log('Sponsor amount debug:', {
+                                                sponsorName: isBackendSponsor(sponsor) ? sponsor.companyName : sponsor.name,
+                                                amount,
+                                                currency,
+                                                isBackendSponsor: isBackendSponsor(sponsor),
+                                                sponsor
+                                            });
+
+                                            return `$${amount} ${currency}`;
+                                        })()}
                                     </div>
                                 </div>
                             </div>

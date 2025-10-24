@@ -496,6 +496,216 @@ const ProjectJudgingModal = ({
 
                                         </div>
                                     </div>
+
+                                    {/* Submit Button - Outside collapsible area */}
+                                    <div className="mt-6">
+                                        <Button
+                                            onClick={handleScoreSubmit}
+                                            disabled={isSubmitting || score < 1 || score > 10}
+                                            className="w-full text-sm"
+                                        >
+                                            {isSubmitting ? "Submitting..." : "Submit Score"}
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Scanner Tab */}
+                            {activeTab === 'scanner' && (
+                                <div className="space-y-4">
+                                    {/* Scanner Description - Collapsible */}
+                                    <div className="bg-b-surface1 rounded-lg border border-s-stroke2">
+                                        <button
+                                            onClick={() => setIsScannerExpanded(!isScannerExpanded)}
+                                            className="w-full p-4 flex items-center justify-between hover:bg-b-surface2 transition-colors"
+                                        >
+                                            <span className="text-t-primary font-medium">Project Scanner</span>
+                                            <Icon
+                                                name="chevron"
+                                                className={`w-4 h-4 text-t-secondary transition-transform ${
+                                                    isScannerExpanded ? 'rotate-180' : ''
+                                                }`}
+                                            />
+                                        </button>
+
+                                        {isScannerExpanded && (
+                                            <div className="px-4 pb-4 border-t border-s-stroke2">
+                                                <div className="pt-4">
+                                                    <p className="text-sm text-t-secondary mb-4">
+                                                        Perform quick scan to check authenticity of the project and detect signs of plagiarism or previously submitted projects.
+                                                    </p>
+                                                    <div className="mb-4">
+                                                        <div className="text-xs text-t-secondary mb-2">Scan Features:</div>
+                                                        <div className="space-y-1 text-xs text-t-secondary">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                                                <span>Authenticity verification</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                                                <span>Plagiarism detection</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                                                <span>AI usage & mock data</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                                                                <span>Genius level assessment</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Scan Button - Outside collapsible area */}
+                                    <div>
+                                        <Button
+                                            onClick={handleScan}
+                                            disabled={isScanning}
+                                            className="w-full text-sm mb-4"
+                                        >
+                                            {isScanning ? "Scanning..." : "Start Scan"}
+                                        </Button>
+                                    </div>
+
+                                    {/* Scan Results */}
+                                    {scanResults && (
+                                        <div className="space-y-6 mt-2">
+                                            <div className="flex items-center justify-between">
+                                                <h3 className="text-lg font-semibold text-t-primary">Scan Results</h3>
+                                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
+                                                    scanResults.authenticity === 'green' && scanResults.plagiarism === 'green'
+                                                        ? 'bg-green-500/20 text-green-500'
+                                                        : 'bg-red-500/20 text-red-500'
+                                                }`}>
+                                                    <div className={`w-2 h-2 rounded-full ${
+                                                        scanResults.authenticity === 'green' && scanResults.plagiarism === 'green'
+                                                            ? 'bg-green-500'
+                                                            : 'bg-red-500'
+                                                    }`}></div>
+                                                    {scanResults.authenticity === 'green' && scanResults.plagiarism === 'green'
+                                                        ? 'All Checks Passed'
+                                                        : 'Issues Detected'}
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                {/* Authenticity */}
+                                                <div className="flex items-center justify-between py-3 border-b border-b-surface1">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-3 h-3 rounded-full ${
+                                                            scanResults.authenticity === 'green' ? 'bg-green-500' : 'bg-red-500'
+                                                        }`}></div>
+                                                        <span className="text-t-primary font-medium">Authenticity</span>
+                                                    </div>
+                                                    <div className={`text-sm font-medium ${
+                                                        scanResults.authenticity === 'green' ? 'text-green-400' : 'text-red-400'
+                                                    }`}>
+                                                        {scanResults.authenticity === 'green' ? 'PASS' : 'FAIL'}
+                                                    </div>
+                                                </div>
+
+                                                {/* Plagiarism */}
+                                                <div className="flex items-center justify-between py-3 border-b border-b-surface1">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-3 h-3 rounded-full ${
+                                                            scanResults.plagiarism === 'green' ? 'bg-green-500' : 'bg-red-500'
+                                                        }`}></div>
+                                                        <span className="text-t-primary font-medium">Plagiarism</span>
+                                                    </div>
+                                                    <div className={`text-sm font-medium ${
+                                                        scanResults.plagiarism === 'green' ? 'text-green-400' : 'text-red-400'
+                                                    }`}>
+                                                        {scanResults.plagiarism === 'green' ? 'PASS' : 'DETECTED'}
+                                                    </div>
+                                                </div>
+
+                                                {/* AI Detection */}
+                                                <div className="flex items-center justify-between py-3 border-b border-b-surface1">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-3 h-3 rounded-full ${
+                                                            scanResults.aiDetection === 'green' ? 'bg-green-500' : 'bg-red-500'
+                                                        }`}></div>
+                                                        <span className="text-t-primary font-medium">AI Detection</span>
+                                                    </div>
+                                                    <div className={`text-sm font-medium ${
+                                                        scanResults.aiDetection === 'green' ? 'text-green-400' : 'text-red-400'
+                                                    }`}>
+                                                        {scanResults.aiDetection === 'green' ? 'LOW' : 'HIGH'}
+                                                    </div>
+                                                </div>
+
+                                                {/* Genius Level */}
+                                                <div className="flex items-center justify-between py-3 border-b border-b-surface1">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                                                        <span className="text-t-primary font-medium">Genius Level</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm text-t-primary font-medium">
+                                                            {scanResults.geniusLevel}/10
+                                                        </span>
+                                                        <div className="flex gap-1">
+                                                            {Array.from({ length: 10 }, (_, i) => (
+                                                                <div
+                                                                    key={i}
+                                                                    className={`w-1.5 h-1.5 rounded-full ${
+                                                                        i < scanResults.geniusLevel ? 'bg-yellow-400' : 'bg-b-surface1'
+                                                                    }`}
+                                                                ></div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Flags */}
+                                            {scanResults.flags.length > 0 && (
+                                                <div className="space-y-3">
+                                                    <h4 className="text-t-primary font-medium">Flags</h4>
+                                                    <div className="space-y-2">
+                                                        {scanResults.flags.map((flag, index) => (
+                                                            <div key={index} className="text-sm text-red-400 flex items-center gap-2">
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-red-400"></div>
+                                                                {flag}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Duplicate Detection */}
+                                            {scanResults.duplicateFound && (
+                                                <div className="space-y-3">
+                                                    <h4 className="text-t-primary font-medium">Possible Duplicate Found</h4>
+                                                    <div className="text-sm text-red-400 mb-2">
+                                                        Similar project detected - needs manual review
+                                                    </div>
+                                                    <a
+                                                        href={scanResults.duplicateRepo}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-sm text-blue-400 hover:text-blue-300 underline"
+                                                    >
+                                                        {scanResults.duplicateRepo}
+                                                    </a>
+                                                </div>
+                                            )}
+
+                                            {/* Scan Summary */}
+                                            <div className="space-y-3">
+                                                <h4 className="text-t-primary font-medium">Scan Summary</h4>
+                                                <div className="text-sm text-t-secondary">
+                                                    {scanResults.authenticity === 'green' && scanResults.plagiarism === 'green'
+                                                        ? 'Project appears authentic with no major issues detected.'
+                                                        : 'Project requires manual review due to detected issues.'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

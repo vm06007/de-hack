@@ -26,8 +26,8 @@
     "githubUrl": "https://github.com/team/defi-optimizer",
     "videoUrl": "https://youtube.com/watch?v=example",
     "images": [
-      "https://example.com/screenshot1.png",
-      "https://example.com/screenshot2.png"
+      "https://via.placeholder.com/400x300/3B82F6/FFFFFF?text=DeFi+Optimizer",
+      "https://via.placeholder.com/400x300/10B981/FFFFFF?text=Yield+Farming"
     ],
     "technologies": [
       "Solidity",
@@ -48,7 +48,7 @@
   {
     "id": 2,
     "hackathonId": 1,
-    "title": "NFT Marketplace with AI Curation",
+    "title": "NFT Marketplace",
     "description": "A next-generation NFT marketplace that uses AI to curate and recommend NFTs based on user preferences and market trends.",
     "teamMembers": [
       {
@@ -66,7 +66,7 @@
     "githubUrl": "https://github.com/team/nft-ai-marketplace",
     "videoUrl": "https://youtube.com/watch?v=example2",
     "images": [
-      "https://example.com/nft-screenshot1.png"
+      "https://via.placeholder.com/400x300/8B5CF6/FFFFFF?text=NFT+Marketplace"
     ],
     "technologies": [
       "Next.js",
@@ -157,6 +157,79 @@
     "technologies": [],
     "submittedBy": null,
     "submittedByName": null,
+    "status": "submitted",
+    "judgeScores": {},
+    "totalScore": 0,
+    "rank": null,
+    "prize": null,
+    "createdAt": "2025-10-24T20:38:51.971289",
+    "updatedAt": "2025-10-24T20:38:51.971313"
+  },
+  {
+    "id": 5,
+    "hackathonId": 1,
+    "title": "Multi-Issue Project",
+    "description": "A project with multiple scanning issues including AI usage, plagiarism, and authenticity concerns.",
+    "teamMembers": [
+      {
+        "name": "John Doe",
+        "role": "Developer",
+        "github": "https://github.com/johndoe"
+      }
+    ],
+    "selectedTracks": [
+      1
+    ],
+    "demoUrl": "https://demo.multi-issue.com",
+    "githubUrl": "https://github.com/team/multi-issue",
+    "videoUrl": "https://youtube.com/watch?v=example5",
+    "images": [
+      "https://via.placeholder.com/400x300/EF4444/FFFFFF?text=Multiple+Issues"
+    ],
+    "technologies": [
+      "React",
+      "Node.js",
+      "AI Tools"
+    ],
+    "submittedBy": "0x1234567890123456789012345678901234567890",
+    "submittedByName": "John Doe",
+    "status": "submitted",
+    "judgeScores": {},
+    "totalScore": 0,
+    "rank": null,
+    "prize": null,
+    "createdAt": "2025-10-24T20:38:51.971289",
+    "updatedAt": "2025-10-24T20:38:51.971313"
+  },
+  {
+    "id": 6,
+    "hackathonId": 1,
+    "title": "High Genius Project",
+    "description": "An exceptional project with innovative solutions and high-quality implementation.",
+    "teamMembers": [
+      {
+        "name": "Jane Smith",
+        "role": "Lead Developer",
+        "github": "https://github.com/janesmith"
+      }
+    ],
+    "selectedTracks": [
+      1
+    ],
+    "demoUrl": "https://demo.high-genius.com",
+    "githubUrl": "https://github.com/team/high-genius",
+    "videoUrl": "https://youtube.com/watch?v=example6",
+    "images": [
+      "https://via.placeholder.com/400x300/10B981/FFFFFF?text=High+Genius"
+    ],
+    "technologies": [
+      "Solidity",
+      "React",
+      "Web3.js",
+      "TypeScript"
+    ],
+    "submittedBy": "0x1234567890123456789012345678901234567890",
+    "submittedByName": "Jane Smith",
     "status": "submitted",
     "judgeScores": {},
     "totalScore": 0,

@@ -20,6 +20,7 @@ const SubmittedProjects = () => {
     const [transformedProjects, setTransformedProjects] = useState<any[]>([]);
     const [filteredProjects, setFilteredProjects] = useState<any[]>([]);
     const [selectedProject, setSelectedProject] = useState<any>(null);
+    const [selectedProjectIndex, setSelectedProjectIndex] = useState<number>(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedHackathon, setSelectedHackathon] = useState<string>("all");
     const { data: projects, loading, error } = useProjects();
@@ -30,14 +31,31 @@ const SubmittedProjects = () => {
         setIsLastSlide(swiper.progress >= 0.99);
     };
 
-    const handleProjectClick = (project: any) => {
+    const handleProjectClick = (project: any, index: number) => {
         setSelectedProject(project);
+        setSelectedProjectIndex(index);
         setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedProject(null);
+    };
+
+    const handleNextProject = () => {
+        if (selectedProjectIndex < filteredProjects.length - 1) {
+            const nextIndex = selectedProjectIndex + 1;
+            setSelectedProjectIndex(nextIndex);
+            setSelectedProject(filteredProjects[nextIndex]);
+        }
+    };
+
+    const handlePrevProject = () => {
+        if (selectedProjectIndex > 0) {
+            const prevIndex = selectedProjectIndex - 1;
+            setSelectedProjectIndex(prevIndex);
+            setSelectedProject(filteredProjects[prevIndex]);
+        }
     };
 
     const handleScoreSubmit = async (projectId: number, score: number) => {
@@ -61,7 +79,7 @@ const SubmittedProjects = () => {
                     // Map status to appropriate colors
                     const statusColors = {
                         'submitted': 'label-blue',
-                        'under_review': 'label-yellow', 
+                        'under_review': 'label-yellow',
                         'approved': 'label-green',
                         'rejected': 'label-red'
                     };
@@ -94,7 +112,7 @@ const SubmittedProjects = () => {
         if (selectedHackathon === "all") {
             setFilteredProjects(transformedProjects);
         } else {
-            const filtered = transformedProjects.filter(project => 
+            const filtered = transformedProjects.filter(project =>
                 project.hackathonId === parseInt(selectedHackathon)
             );
             setFilteredProjects(filtered);
@@ -129,7 +147,7 @@ const SubmittedProjects = () => {
                             </option>
                         ))}
                     </select>
-                    
+
                     {/* Navigation Arrows */}
                     <div className="flex items-center gap-1">
                         <Button
@@ -166,11 +184,11 @@ const SubmittedProjects = () => {
                     onProgress={handleSlideChange}
                     className="mySwiper !overflow-visible"
                 >
-                    {filteredProjects.map((project) => (
+                    {filteredProjects.map((project, index) => (
                         <SwiperSlide className="!w-51.5" key={project.id}>
                             <div
                                 className="!flex flex-col !h-59 p-4.5 border border-s-stroke2 rounded-3xl bg-b-highlight transition-all hover:bg-b-surface2 hover:shadow-depth cursor-pointer"
-                                onClick={() => handleProjectClick(project)}
+                                onClick={() => handleProjectClick(project, index)}
                             >
                                 <div
                                     className="flex justify-center items-center w-16 h-16 mb-auto rounded-full"
@@ -214,7 +232,7 @@ const SubmittedProjects = () => {
                 </Swiper>
             </div>
         </Card>
-        
+
         {/* Project Judging Modal */}
         {selectedProject && (
             <ProjectJudgingModal
@@ -222,6 +240,10 @@ const SubmittedProjects = () => {
                 onClose={handleCloseModal}
                 project={selectedProject.project}
                 onScore={handleScoreSubmit}
+                onNextProject={handleNextProject}
+                onPrevProject={handlePrevProject}
+                hasNextProject={selectedProjectIndex < filteredProjects.length - 1}
+                hasPrevProject={selectedProjectIndex > 0}
             />
         )}
     </>

@@ -76,18 +76,30 @@ const SubmittedProjects = () => {
             const transformed = projects
                 .sort((a, b) => b.id - a.id) // Sort by ID descending (highest ID first)
                 .map((project) => {
-                    // Map status to appropriate colors
+                    // Map status to appropriate colors and display text
                     const statusColors = {
-                        'submitted': 'label-blue',
+                        'submitted': 'label-green',
                         'under_review': 'label-yellow',
                         'approved': 'label-green',
                         'rejected': 'label-red'
                     };
 
+                    const statusDisplay = {
+                        'submitted': 'Ready',
+                        'under_review': 'Ongoing',
+                        'approved': 'Ready',
+                        'rejected': 'Rejected'
+                    };
+
                     // Get the first team member's info for avatar and name
                     const firstTeamMember = project.teamMembers && project.teamMembers.length > 0 ? project.teamMembers[0] : null;
                     const avatar = firstTeamMember?.github ? `https://github.com/${firstTeamMember.github}.png` : "/images/avatars/avatar-1.jpg";
-                    const submittedBy = project.submittedByName || (firstTeamMember?.name) || "Anonymous";
+                    // Truncate wallet address to 0x123...321 format
+                    const truncateAddress = (address: any) => {
+                        if (!address || typeof address !== 'string' || address.length < 10) return "0x0000...0000";
+                        return `${address.slice(0, 5)}...${address.slice(-3)}`;
+                    };
+                    const submittedBy = truncateAddress(project.submittedBy) || "0x0000...0000";
 
                     return {
                         id: project.id,
@@ -95,9 +107,15 @@ const SubmittedProjects = () => {
                         icon: "product-think",
                         backgroundImage: "linear-gradient(135deg, #3B82F6, #3B82F6CC)",
                         avatar: avatar,
-                        time: project.createdAt ? new Date(project.createdAt).toLocaleString() : "Just now",
-                        status: project.status || "submitted",
-                        statusColor: statusColors[project.status as keyof typeof statusColors] || "label-blue",
+                        time: project.createdAt ? (() => {
+                            const date = new Date(project.createdAt);
+                            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                            const day = date.getDate().toString().padStart(2, '0');
+                            const year = date.getFullYear();
+                            return `${month}/${day}/${year}`;
+                        })() : "Today",
+                        status: statusDisplay[project.status as keyof typeof statusDisplay] || "Ready",
+                        statusColor: statusColors[project.status as keyof typeof statusColors] || "label-green",
                         project: project,
                         submittedBy: submittedBy,
                         hackathonId: project.hackathonId
@@ -205,15 +223,6 @@ const SubmittedProjects = () => {
                                     {project.title}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="">
-                                        <Image
-                                            className="size-5 opacity-100 rounded-full"
-                                            src={project.avatar}
-                                            width={20}
-                                            height={20}
-                                            alt=""
-                                        />
-                                    </div>
                                     <div className="mr-auto text-caption text-t-tertiary">
                                         {project.time}
                                     </div>
@@ -225,6 +234,9 @@ const SubmittedProjects = () => {
                                 </div>
                                 <div className="mt-2 text-caption text-t-tertiary">
                                     by {project.submittedBy}
+                                </div>
+                                <div className="mt-1 text-caption text-t-tertiary">
+                                    {hackathons?.find(h => h.id === project.hackathonId)?.title || 'Unknown Hackathon'}
                                 </div>
                             </div>
                         </SwiperSlide>

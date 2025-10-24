@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import Button from "@/components/Button";
 import Image from "@/components/Image";
@@ -25,16 +25,49 @@ interface ProjectJudgingModalProps {
         totalScore: number;
     };
     onScore?: (projectId: number, score: number) => void;
+    onNextProject?: () => void;
+    onPrevProject?: () => void;
+    hasNextProject?: boolean;
+    hasPrevProject?: boolean;
 }
 
-const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudgingModalProps) => {
+const ProjectJudgingModal = ({
+    open,
+    onClose,
+    project,
+    onScore,
+    onNextProject,
+    onPrevProject,
+    hasNextProject = false,
+    hasPrevProject = false
+}: ProjectJudgingModalProps) => {
+    // Utility function to filter out invalid image URLs
+    const getValidImages = (images: string[]) => {
+        return images.filter(image =>
+            image &&
+            !image.includes('example.com') &&
+            !image.includes('picsum.photos') &&
+            !image.includes('via.placeholder.com') &&
+            !image.includes('localhost') &&
+            (image.startsWith('http') || image.startsWith('/'))
+        );
+    };
     const [score, setScore] = useState(1.0);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [activeTab, setActiveTab] = useState<'judge' | 'ai-agent'>('judge');
+    const [activeTab, setActiveTab] = useState<'judge' | 'scanner' | 'ai-agent'>('judge');
     const [aiMessage, setAiMessage] = useState('');
     const [delegateAddress, setDelegateAddress] = useState('');
     const [isDelegating, setIsDelegating] = useState(false);
+    const [isScanning, setIsScanning] = useState(false);
+    const [scanResults, setScanResults] = useState<any>(null);
+    const [isRulesExpanded, setIsRulesExpanded] = useState(false);
+    const [isScannerExpanded, setIsScannerExpanded] = useState(false);
     const { address } = useAccount();
+
+    // Reset scan results when project changes
+    useEffect(() => {
+        setScanResults(null);
+    }, [project.id]);
 
     const handleScoreSubmit = async () => {
         if (score < 1 || score > 10) {
@@ -110,35 +143,72 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
             }
         `}</style>
         <Modal open={open} onClose={onClose} classWrapper="max-w-[67.5vw] w-full !p-0">
-            <div className="h-[80vh] flex flex-col">
-                {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-s-stroke2">
-                    <div>
-                        <h2 className="text-h4 font-bold">{project.title}</h2>
-                        <div className="flex items-center gap-4 mt-2">
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(project.status)} bg-opacity-20`}>
-                                {project.status.replace('_', ' ').toUpperCase()}
-                            </span>
-                            <span className="text-t-secondary">
-                                by {project.submittedByName}
-                            </span>
-                        </div>
-                    </div>
-                    <Button onClick={onClose} isStroke>
-                        <Icon name="close" className="w-5 h-5" />
-                    </Button>
-                </div>
-
+            <div className="h-[80vh] flex rounded-2xl overflow-hidden">
                 {/* Main Content */}
                 <div className="flex flex-1 overflow-hidden">
                     {/* Main Content Area - 50% */}
-                    <div className="flex-1 overflow-y-auto p-4">
+                    <div className="flex-1 overflow-y-auto p-8 rounded-l-2xl">
+                        {/* Project Header */}
+                        <div className="mb-4">
+                            <div className="flex items-center justify-between mb-2">
+                                <h2 className="text-h4 font-bold">{project.title}</h2>
+                                <div className="flex items-center gap-2 relative z-10">
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            console.log('Previous clicked', { hasPrevProject, onPrevProject });
+                                            if (onPrevProject) onPrevProject();
+                                        }}
+                                        disabled={!hasPrevProject}
+                                        className={`p-2 rounded-lg transition-colors relative z-10 ${
+                                            hasPrevProject
+                                                ? 'bg-b-surface2 hover:bg-b-surface1 text-t-primary cursor-pointer hover:scale-105'
+                                                : 'bg-b-surface2 text-t-secondary cursor-not-allowed'
+                                        }`}
+                                        title="Previous Project"
+                                        style={{ pointerEvents: 'auto' }}
+                                    >
+                                        <Icon name="chevron" className="w-4 h-4 rotate-90 text-white" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            console.log('Next clicked', { hasNextProject, onNextProject });
+                                            if (onNextProject) onNextProject();
+                                        }}
+                                        disabled={!hasNextProject}
+                                        className={`p-2 rounded-lg transition-colors relative z-10 ${
+                                            hasNextProject
+                                                ? 'bg-b-surface2 hover:bg-b-surface1 text-t-primary cursor-pointer hover:scale-105'
+                                                : 'bg-b-surface2 text-t-secondary cursor-not-allowed'
+                                        }`}
+                                        title="Next Project"
+                                        style={{ pointerEvents: 'auto' }}
+                                    >
+                                        <Icon name="chevron" className="w-4 h-4 -rotate-90 text-white" />
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(project.status)} bg-opacity-20`}>
+                                    {project.status.replace('_', ' ').toUpperCase()}
+                                </span>
+                                <span className="text-t-secondary">
+                                    SUBMITTED by {project.submittedByName}
+                                </span>
+                            </div>
+                        </div>
+
                         {/* Project Screenshots */}
-                        {project.images && project.images.length > 0 && (
+                        {project.images && getValidImages(project.images).length > 0 && (
                             <div className="mb-4">
                                 <h3 className="text-h6 font-semibold mb-2">Project Screenshots</h3>
                                 <div className="grid grid-cols-2 gap-2">
-                                    {project.images.slice(0, 4).map((image, index) => (
+                                    {getValidImages(project.images)
+                                        .slice(0, 4)
+                                        .map((image, index) => (
                                         <Image
                                             key={index}
                                             src={image}
@@ -146,12 +216,16 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                                             width={200}
                                             height={120}
                                             className="rounded-lg w-full"
+                                            onError={(e) => {
+                                                console.warn(`Failed to load image: ${image}`);
+                                                e.currentTarget.style.display = 'none';
+                                            }}
                                         />
                                     ))}
                                 </div>
-                                {project.images.length > 4 && (
+                                {getValidImages(project.images).length > 4 && (
                                     <div className="text-xs text-t-secondary mt-2 text-center">
-                                        +{project.images.length - 4} more screenshots
+                                        +{getValidImages(project.images).length - 4} more screenshots
                                     </div>
                                 )}
                             </div>
@@ -177,8 +251,7 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                             <div className="bg-b-surface2 rounded-lg p-3">
                                 {project.demoUrl ? (
                                     <a href={project.demoUrl} target="_blank" rel="noopener noreferrer"
-                                       className="flex items-center gap-2 text-blue-500 hover:text-blue-400 transition-colors">
-                                        <Icon name="external-link" className="w-4 h-4" />
+                                        className="flex items-center gap-2 text-blue-500 hover:text-blue-400 transition-colors">
                                         <span className="text-sm font-medium truncate">{project.demoUrl}</span>
                                     </a>
                                 ) : (
@@ -193,7 +266,6 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                             <div className="bg-b-surface2 rounded-lg p-3">
                                 <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
                                    className="flex items-center gap-2 text-blue-500 hover:text-blue-400 transition-colors">
-                                    <Icon name="github" className="w-4 h-4" />
                                     <span className="text-sm font-medium truncate">{project.githubUrl}</span>
                                 </a>
                             </div>
@@ -206,13 +278,17 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                             <div className="grid grid-cols-5 gap-2">
                                 {Array.from({ length: 5 }, (_, index) => (
                                     <div key={index} className="aspect-square bg-b-surface2 rounded-lg border-2 border-s-stroke2 flex items-center justify-center">
-                                        {project.images && project.images[index] ? (
+                                        {project.images && project.images[index] && getValidImages([project.images[index]]).length > 0 ? (
                                             <Image
                                                 src={project.images[index]}
                                                 alt={`Project screenshot ${index + 1}`}
                                                 width={100}
                                                 height={100}
                                                 className="rounded-lg w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    console.warn(`Failed to load image: ${project.images[index]}`);
+                                                    e.currentTarget.style.display = 'none';
+                                                }}
                                             />
                                         ) : (
                                             <div className="text-center">
@@ -224,14 +300,14 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                                 ))}
                             </div>
                             <div style={{ display: 'none' }} className="text-xs text-t-secondary mt-2 text-center">
-                                {project.images ? `${project.images.length}/5 screenshots submitted` : "0/5 screenshots submitted"}
+                                {project.images ? `${getValidImages(project.images).length}/5 screenshots submitted` : "0/5 screenshots submitted"}
                             </div>
                         </div>
                     </div>
 
                     {/* Sidebar - 50% */}
-                    <div className="w-80 flex-1 border-l border-s-stroke2 bg-b-surface2 overflow-y-auto">
-                        <div className="p-4">
+                    <div className="w-80 flex-1 border-l border-s-stroke2 bg-b-surface2 overflow-y-auto h-full rounded-r-2xl">
+                        <div className="p-8">
                             {/* Tab Navigation */}
                             <div className="flex mb-4">
                                 <button
@@ -245,9 +321,9 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                                     Judge
                                 </button>
                                 <button
-                                    onClick={() => setActiveTab('ai-agent')}
-                                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-r-lg transition-colors ${
-                                        activeTab === 'ai-agent'
+                                    onClick={() => setActiveTab('scanner')}
+                                    className={`flex-1 py-2 px-3 text-sm font-medium transition-colors ${
+                                        activeTab === 'scanner'
                                             ? 'bg-b-highlight text-t-primary'
                                             : 'bg-b-surface2 text-t-secondary hover:text-t-primary'
                                     }`}
@@ -269,17 +345,75 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                             {/* Judge Tab */}
                             {activeTab === 'judge' && (
                                 <div className="space-y-4">
+                                    {/* Judging Rules */}
+                                    <div className="bg-b-surface1 rounded-lg border border-s-stroke2">
+                                        <button
+                                            onClick={() => setIsRulesExpanded(!isRulesExpanded)}
+                                            className="w-full p-4 flex items-center justify-between hover:bg-b-surface2 transition-colors"
+                                        >
+                                            <span className="text-t-primary font-medium">Judging Rules & Info</span>
+                                            <Icon
+                                                name="chevron"
+                                                className={`w-4 h-4 text-t-secondary transition-transform ${
+                                                    isRulesExpanded ? 'rotate-180' : ''
+                                                }`}
+                                            />
+                                        </button>
+
+                                        {isRulesExpanded && (
+                                            <div className="px-4 pb-4 border-t border-s-stroke2">
+                                                <div className="space-y-2 text-sm pt-4">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-t-secondary">Hackathon:</span>
+                                                        <span className="text-t-primary font-medium">DeFi Innovation Challenge</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-t-secondary">Submitted Projects:</span>
+                                                        <span className="text-t-primary font-medium">12 projects</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-t-secondary">Remaining Points:</span>
+                                                        <span className="text-t-primary font-medium">85/100 points</span>
+                                                    </div>
+                                                    <div className="mt-3 pt-3 border-t border-s-stroke2">
+                                                        <div className="text-t-secondary text-xs">
+                                                            <strong className="text-t-primary">Scoring Rules:</strong>
+                                                        </div>
+                                                        <div className="text-t-secondary text-xs mt-1">
+                                                            • Total budget: 100 points
+                                                        </div>
+                                                        <div className="text-t-secondary text-xs">
+                                                            • Max 10 points per project
+                                                        </div>
+                                                        <div className="text-t-secondary text-xs">
+                                                        •  Unused points are forfeited
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
                                     {/* Current Scores */}
                                     {Object.keys(project.judgeScores).length > 0 && (
                                         <div>
                                             <h4 className="text-h6 font-semibold mb-2">Current Scores</h4>
                                             <div className="space-y-1">
-                                                {Object.entries(project.judgeScores).map(([judgeId, score]) => (
-                                                    <div key={judgeId} className="flex justify-between items-center p-2 bg-b-surface2 rounded text-sm">
-                                                        <span>Judge {judgeId}</span>
-                                                        <span className="font-medium">{score}/10</span>
-                                                    </div>
-                                                ))}
+                                                {Object.entries(project.judgeScores).map(([judgeId, judgeData]) => {
+                                                    // Handle both old format (number) and new format (object with scores)
+                                                    const score = typeof judgeData === 'number'
+                                                        ? judgeData
+                                                        : judgeData.scores
+                                                            ? Object.values(judgeData.scores).reduce((sum: number, val: any) => sum + val, 0) / Object.keys(judgeData.scores).length
+                                                            : 0;
+
+                                                    return (
+                                                        <div key={judgeId} className="flex justify-between items-center p-2 bg-b-surface2 rounded text-sm">
+                                                            <span>Judge {judgeId}</span>
+                                                            <span className="font-medium">{Math.round(score * 10) / 10}/10</span>
+                                                        </div>
+                                                    );
+                                                })}
                                                 <div className="flex justify-between items-center p-2 bg-b-highlight rounded font-semibold text-sm">
                                                     <span>Total Score</span>
                                                     <span>{project.totalScore}/10</span>
@@ -360,13 +494,6 @@ const ProjectJudgingModal = ({ open, onClose, project, onScore }: ProjectJudging
                                                 </div>
                                             </div>
 
-                                            <Button
-                                                onClick={handleScoreSubmit}
-                                                disabled={isSubmitting || score < 1 || score > 10}
-                                                className="w-full text-sm"
-                                            >
-                                                {isSubmitting ? "Submitting..." : "Submit Score"}
-                                            </Button>
                                         </div>
                                     </div>
                                 </div>

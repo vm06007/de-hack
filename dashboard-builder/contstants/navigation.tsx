@@ -62,7 +62,7 @@ export const baseNavigation = [
 // Judge-only navigation items
 export const judgeNavigation = [
     {
-        title: "Judging Panel",
+        title: "Judging Council",
         icon: "dashboard",
         href: "/judging",
     },

@@ -61,15 +61,15 @@ export const useSubmitProject = (contractAddress: string) => {
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
     const callbackRef = useRef<((result: SubmitProjectResult) => void) | null>(null);
     const projectDataRef = useRef<{ name: string; url: string }>({ name: '', url: '' });
-    
+
     const { address, isConnected } = useAccount();
     const { writeContract, data: contractWriteData, error } = useWriteContract();
-    
+
     // Wait for transaction receipt
     const { data: txReceipt } = useWaitForTransactionReceipt({
         hash: contractWriteData,
     });
-    
+
     // Update txHash when contractWriteData changes
     useEffect(() => {
         if (contractWriteData && contractWriteData !== txHash) {
@@ -79,6 +79,31 @@ export const useSubmitProject = (contractAddress: string) => {
         }
     }, [contractWriteData, txHash]);
 
+    // Handle writeContract errors (like user cancellation)
+    useEffect(() => {
+        if (error) {
+            console.log("Project submission writeContract error:", error);
+
+            // Check if it's a user rejection/cancellation
+            const errorMessage = error.message || error.toString();
+            if (errorMessage.includes('User rejected') ||
+                errorMessage.includes('User denied') ||
+                errorMessage.includes('cancelled') ||
+                errorMessage.includes('rejected')) {
+                console.log("User cancelled the transaction");
+                toast.error("Transaction cancelled by user", { id: "submit-project" });
+            } else {
+                // console.error("Project submission transaction error:", error);
+                toast.error(`Project submission failed: ${errorMessage}`, { id: "submit-project" });
+            }
+
+            // Reset loading state and cleanup
+            setIsLoading(false);
+            callbackRef.current = null;
+            setTxHash(undefined);
+        }
+    }, [error]);
+
     // Handle receipt when it arrives
     useEffect(() => {
         console.log("Project submission useEffect triggered:", {
@@ -87,13 +112,13 @@ export const useSubmitProject = (contractAddress: string) => {
             hasCallback: !!callbackRef.current,
             receiptStatus: txReceipt?.status
         });
-        
+
         if (txReceipt && txHash && callbackRef.current) {
             console.log("Processing project submission transaction receipt...", txReceipt);
-            
+
             if (txReceipt.status === 'success') {
                 toast.success("Project submitted successfully!", { id: "submit-project" });
-                
+
                 // Create the result object with known data
                 const result: SubmitProjectResult = {
                     hash: txHash,
@@ -101,14 +126,14 @@ export const useSubmitProject = (contractAddress: string) => {
                     projectName: projectDataRef.current.name,
                     projectUrl: projectDataRef.current.url
                 };
-                
+
                 console.log("Calling project submission success callback...", result);
                 callbackRef.current(result);
             } else {
                 console.error("Project submission transaction failed!");
                 toast.error("Project submission transaction failed!", { id: "submit-project" });
             }
-            
+
             // Clean up
             callbackRef.current = null;
             setTxHash(undefined);
@@ -132,19 +157,19 @@ export const useSubmitProject = (contractAddress: string) => {
                 toast.error("Please connect your wallet first");
                 throw new Error("Wallet not connected");
             }
-            
+
             setIsLoading(true);
             callbackRef.current = onSuccess || null;
             projectDataRef.current = { name: projectName, url: projectUrl };
-            
+
             console.log("Wallet connected:", { address, isConnected });
             console.log("Contract address:", contractAddress);
             console.log("Project data:", { projectName, projectUrl });
-            
+
             toast.loading("Please confirm transaction in your wallet...", { id: "submit-project" });
 
             console.log("About to call writeContract for submitProject...");
-            
+
             // writeContract doesn't return the hash directly - it triggers the wallet
             writeContract({
                 address: contractAddress as `0x${string}`,

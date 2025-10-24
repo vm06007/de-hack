@@ -66,7 +66,7 @@ export const useCreateHackathon = () => {
     // Handle writeContract errors (including user rejection)
     useEffect(() => {
         if (error) {
-            console.error("WriteContract error:", error);
+            // console.error("WriteContract error:", error);
             toast.dismiss("create-hackathon");
 
             // Check if it's a user rejection

@@ -223,8 +223,18 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
 
         } catch (error) {
             console.error("Failed to submit sponsor application:", error);
-            alert("Failed to submit sponsor application. Please try again.");
-            // Don't close modal on error so user can retry
+
+            // Check if it's a user cancellation
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            if (errorMessage.includes('User rejected') ||
+                errorMessage.includes('User denied') ||
+                errorMessage.includes('cancelled') ||
+                errorMessage.includes('rejected')) {
+                console.log("User cancelled the sponsor transaction");
+                // Don't show alert for user cancellation, just reset state
+            } else {
+                alert("Failed to submit sponsor application. Please try again.");
+            }
         } finally {
             setIsSubmitting(false);
         }

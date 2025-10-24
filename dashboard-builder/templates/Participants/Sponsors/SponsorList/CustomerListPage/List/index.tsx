@@ -48,7 +48,7 @@ const List = ({
                     </th>
                 ))}
             >
-                {items.map((item) => (
+                {(items || []).map((item) => (
                     <TableRow
                         selectedRows={selectedRows.includes(item.id)}
                         onRowSelect={() => onRowSelect(item.id)}
@@ -60,7 +60,7 @@ const List = ({
                                 <div className="relative z-2 shrink-0">
                                     <Image
                                         className="size-16 rounded-full opacity-100 object-cover"
-                                        src={item.avatar}
+                                        src={item.logo}
                                         width={64}
                                         height={64}
                                         alt=""
@@ -131,6 +131,7 @@ const List = ({
                                     value={item.totalContributions}
                                     thousandSeparator=","
                                     fixedDecimalScale
+                                    decimalScale={0}
                                     displayType="text"
                                     prefix="$"
                                 />
@@ -142,19 +143,16 @@ const List = ({
                         </td>
                         <td className="max-lg:hidden">
                             <div className="flex flex-wrap gap-1">
-                                {item.categories.slice(0, 2).map((category, index) => (
                                     <span
-                                        key={index}
                                         className="px-2 py-1 text-caption-2 bg-n-3 rounded-full"
                                     >
-                                        {category}
+                                        DeFi
                                     </span>
-                                ))}
-                                {item.categories.length > 2 && (
-                                    <span className="px-2 py-1 text-caption-2 bg-n-3 rounded-full">
-                                        +{item.categories.length - 2}
+                                    <span
+                                        className="px-2 py-1 text-caption-2 bg-n-3 rounded-full"
+                                    >
+                                        Web3
                                     </span>
-                                )}
                             </div>
                         </td>
                     </TableRow>

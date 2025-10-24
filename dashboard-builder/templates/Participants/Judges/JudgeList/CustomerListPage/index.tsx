@@ -2,26 +2,19 @@
 
 import { useState } from "react";
 import Layout from "@/components/Layout";
-import Tabs from "@/components/Tabs";
+// import Tabs from "@/components/Tabs";
 import Button from "@/components/Button";
 import DeleteItems from "@/components/DeleteItems";
-import Dropdown from "@/components/Dropdown";
+// import Dropdown from "@/components/Dropdown";
 import List from "./List";
 import { Judge } from "@/types/judge";
 import { useSelection } from "@/hooks/useSelection";
 
-import { useUsers } from "@/src/hooks/useApiData";
-
-const views = [
-    { id: 1, name: "All Judges" },
-    { id: 2, name: "Most Experienced" },
-    { id: 3, name: "Most Active" },
-];
+import { useJudges } from "@/src/hooks/useApiData";
 
 const JudgeListPage = () => {
     const [search, setSearch] = useState("");
-    const [view, setView] = useState(views[0]);
-    const { data: judges, loading, error } = useUsers();
+    const { data: judges, loading, error } = useJudges();
     const {
         selectedRows,
         selectAll,
@@ -40,27 +33,12 @@ const JudgeListPage = () => {
                         </div>
                         <input
                             type="text"
+                            style={{ visibility: 'hidden' }}
                             className="w-70 ml-6 mr-auto max-md:hidden px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search by name or expertise"
                         />
-                        {search === "" && (
-                            <>
-                                <Tabs
-                                    className="max-md:hidden"
-                                    items={views}
-                                    value={view}
-                                    setValue={setView}
-                                />
-                                <Dropdown
-                                    className="hidden max-md:block"
-                                    items={views}
-                                    value={view}
-                                    setValue={setView}
-                                />
-                            </>
-                        )}
                     </div>
                 ) : (
                     <div className="flex items-center">

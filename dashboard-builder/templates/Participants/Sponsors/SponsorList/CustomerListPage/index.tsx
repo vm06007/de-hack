@@ -9,7 +9,7 @@ import Dropdown from "@/components/Dropdown";
 import List from "./List";
 import { Sponsor } from "@/types/sponsor";
 import { useSelection } from "@/hooks/useSelection";
-import { useSponsors } from "@/src/hooks/useSponsors";
+import { useSponsorsList } from "@/src/hooks/useSponsorsService";
 
 const views = [
     { id: 1, name: "All Sponsors" },
@@ -20,7 +20,7 @@ const views = [
 const SponsorListPage = () => {
     const [search, setSearch] = useState("");
     const [view, setView] = useState(views[0]);
-    const { data: sponsors, loading, error } = useSponsors();
+    const { sponsors, loading, error } = useSponsorsList();
     const {
         selectedRows,
         selectAll,
@@ -46,6 +46,7 @@ const SponsorListPage = () => {
                             Sponsors
                         </div>
                         <input
+                            style={{ visibility: 'hidden' }}
                             type="text"
                             className="w-70 ml-6 mr-auto max-md:hidden px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             value={search}

@@ -13,7 +13,7 @@ const NewCustomers = ({ className, percentage }: NewCustomersProps) => {
     const { data: hackersData, loading, error } = useHackers();
 
     if (loading) {
-        return <div className={className || ""}>Loading hackers...</div>;
+        return <div className={className || ""}>Loading judges...</div>;
     }
 
     if (error) {
@@ -36,7 +36,7 @@ const NewCustomers = ({ className, percentage }: NewCustomersProps) => {
                 )}
             </div>
             <div className="text-body-2 text-t-secondary">
-                Decide if to add new judges to the judging panel or not.
+                Decide if to add new judges to the judging council or not.
             </div>
         </div>
         <div className="relative before:hidden after:hidden before:absolute before:-left-6 before:top-0 before:bottom-0 before:z-3 before:w-10 before:bg-linear-to-r before:from-b-surface2 before:to-transparent before:pointer-events-none after:absolute after:-right-6 after:top-0 after:bottom-0 after:z-3 after:w-10 after:bg-linear-to-l after:from-b-surface2 after:to-transparent after:pointer-events-none max-md:before:block max-md:after:block">

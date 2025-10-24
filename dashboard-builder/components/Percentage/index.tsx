@@ -22,7 +22,7 @@ const Percentage = ({ className, value, large }: PercentageProps) => (
             }`}
             name="arrow-percent"
         />
-        {value > 0 ? `${value}` : `${Math.abs(value)}`}%
+        {value > 0 ? `${value.toFixed(2)}` : `${Math.abs(value).toFixed(2)}`}%
     </div>
 );
 

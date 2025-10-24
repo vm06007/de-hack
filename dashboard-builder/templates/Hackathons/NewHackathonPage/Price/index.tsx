@@ -1,18 +1,15 @@
-import { useState } from "react";
+// import { useState } from "react";
 import Card from "@/components/Card";
 import Field from "@/components/Field";
-import Icon from "@/components/Icon";
+// import Icon from "@/components/Icon";
 import Select from "@/components/Select";
 import Switch from "@/components/Switch";
-import { depositStrategies } from "@/constants/depositStrategies";
-import { getTokenDecimals, SUPPORTED_CURRENCIES } from "@/constants/tokenAddresses";
+// import { depositStrategies } from "@/constants/depositStrategies";
+// import { getTokenDecimals, SUPPORTED_CURRENCIES } from "@/constants/tokenAddresses";
 
 const currencies = [
-    { id: 1, name: "ETH" },
+    { id: 1, name: "USDC" },
     { id: 2, name: "PYUSD" },
-    { id: 3, name: "USDC" },
-    { id: 4, name: "USDT" },
-    { id: 5, name: "DAI" }
 ];
 
 type PriceProps = {

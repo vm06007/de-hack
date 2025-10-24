@@ -20,7 +20,7 @@ const distributionTypes = [
 ];
 
 const currencies = [
-    { id: 1, name: "ETH" },
+    { id: 1, name: "USDC" },
     { id: 2, name: "PYUSD" }
 ];
 

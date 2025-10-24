@@ -18,7 +18,10 @@
         "github": "bob-smith"
       }
     ],
-    "selectedTracks": [1, 2],
+    "selectedTracks": [
+      1,
+      2
+    ],
     "demoUrl": "https://demo.defi-optimizer.com",
     "githubUrl": "https://github.com/team/defi-optimizer",
     "videoUrl": "https://youtube.com/watch?v=example",
@@ -26,7 +29,12 @@
       "https://example.com/screenshot1.png",
       "https://example.com/screenshot2.png"
     ],
-    "technologies": ["Solidity", "React", "Web3.js", "Node.js"],
+    "technologies": [
+      "Solidity",
+      "React",
+      "Web3.js",
+      "Node.js"
+    ],
     "submittedBy": 1,
     "submittedByName": "Alice Johnson",
     "status": "submitted",
@@ -50,14 +58,22 @@
         "github": "charlie-brown"
       }
     ],
-    "selectedTracks": [1, 3],
+    "selectedTracks": [
+      1,
+      3
+    ],
     "demoUrl": "https://demo.nft-ai-marketplace.com",
     "githubUrl": "https://github.com/team/nft-ai-marketplace",
     "videoUrl": "https://youtube.com/watch?v=example2",
     "images": [
       "https://example.com/nft-screenshot1.png"
     ],
-    "technologies": ["Next.js", "TypeScript", "OpenAI API", "IPFS"],
+    "technologies": [
+      "Next.js",
+      "TypeScript",
+      "OpenAI API",
+      "IPFS"
+    ],
     "submittedBy": 2,
     "submittedByName": "Charlie Brown",
     "status": "under_review",
@@ -97,12 +113,19 @@
         "github": "eve-wilson"
       }
     ],
-    "selectedTracks": [1],
+    "selectedTracks": [
+      1
+    ],
     "demoUrl": "https://demo.blockchain-voting.com",
     "githubUrl": "https://github.com/team/blockchain-voting",
     "videoUrl": "https://youtube.com/watch?v=example3",
     "images": [],
-    "technologies": ["Solidity", "React", "Web3.js", "Truffle"],
+    "technologies": [
+      "Solidity",
+      "React",
+      "Web3.js",
+      "Truffle"
+    ],
     "submittedBy": 3,
     "submittedByName": "Diana Prince",
     "status": "submitted",
@@ -112,5 +135,34 @@
     "prize": null,
     "createdAt": "2024-01-16T09:15:00Z",
     "updatedAt": "2024-01-16T09:15:00Z"
+  },
+  {
+    "id": 4,
+    "hackathonId": 1,
+    "title": "Test Project",
+    "description": "Test description",
+    "teamMembers": [
+      {
+        "name": "Test User",
+        "role": "Developer"
+      }
+    ],
+    "selectedTracks": [
+      1
+    ],
+    "demoUrl": null,
+    "githubUrl": "https://github.com/test/test",
+    "videoUrl": null,
+    "images": [],
+    "technologies": [],
+    "submittedBy": null,
+    "submittedByName": null,
+    "status": "submitted",
+    "judgeScores": {},
+    "totalScore": 0,
+    "rank": null,
+    "prize": null,
+    "createdAt": "2025-10-24T20:38:51.971289",
+    "updatedAt": "2025-10-24T20:38:51.971313"
   }
 ]

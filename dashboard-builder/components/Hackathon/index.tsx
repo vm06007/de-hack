@@ -15,7 +15,7 @@ type HackathonProps = {
 const Hackathon = ({ value }: HackathonProps) => (
     <Link
         className="group relative flex items-center p-3 cursor-pointer"
-        href="/hackathons/details"
+        href={`/hackathons/${value.id}`}
     >
         <div className="box-hover"></div>
         <div className="relative z-2 shrink-0">

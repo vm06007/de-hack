@@ -93,10 +93,10 @@ export const useSubmitProject = (contractAddress: string) => {
     const saveProjectToBackend = async (projectData: ProjectSubmissionData, txHash: string) => {
         try {
             console.log('Saving project to backend:', projectData);
-            
-            const savedProject = await apiClient.post('/projects', projectData);
+
+            const savedProject = await apiClient.post('/projects', projectData) as { id: number };
             console.log('Project saved to backend:', savedProject);
-            
+
             return savedProject.id;
         } catch (error) {
             console.error('Failed to save project to backend:', error);

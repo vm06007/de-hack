@@ -32,8 +32,9 @@ export const useApiData = (endpoint: string, fallback: any[] = []) => {
 };
 
 // Specific hooks for common data
-export const useHackathons = () => useApiData('/hackathons');
+export const useHackathons = () => useApiData('/hackathons?limit=100');
 export const useUsers = () => useApiData('/users');
+export const useProjects = () => useApiData('/projects');
 export const useOrganizations = () => useApiData('/organizations');
 export const useCountries = () => useApiData('/countries');
 export const useComments = () => useApiData('/comments');

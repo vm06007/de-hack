@@ -829,41 +829,79 @@ const ProjectJudgingModal = ({
                                     {/* AI Chat */}
                                     <div>
                                         <h4 className="text-h6 font-semibold mb-2">AI Agent Chat</h4>
-                                        <div className="space-y-2">
-                                            <textarea
+
+                                        {/* Chat Display Area */}
+                                        <div className="bg-b-surface2 border border-s-stroke2 rounded-lg p-4 h-64 mb-3 overflow-y-auto">
+                                            <div className="space-y-3">
+                                                {/* AI Welcome Message */}
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                                        AI
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="bg-b-surface1 rounded-lg p-3 text-sm text-t-primary">
+                                                            Hello! I'm your AI assistant for this project. I can help you analyze the project details, provide insights, and answer questions about the submission. What would you like to know?
+                                                        </div>
+                                                        <div className="text-xs text-t-secondary mt-1">Just now</div>
+                                                    </div>
+                                                </div>
+
+                                                {/* User Message (if any) */}
+                                                {aiMessage && (
+                                                    <div className="flex items-start gap-3 justify-end">
+                                                        <div className="flex-1 max-w-xs">
+                                                            <div className="bg-blue-500 text-white rounded-lg p-3 text-sm">
+                                                                {aiMessage}
+                                                            </div>
+                                                            <div className="text-xs text-t-secondary mt-1 text-right">Just now</div>
+                                                        </div>
+                                                        <div className="w-8 h-8 bg-b-surface1 rounded-full flex items-center justify-center text-t-primary text-sm font-bold">
+                                                            You
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Input Area */}
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
                                                 value={aiMessage}
                                                 onChange={(e) => setAiMessage(e.target.value)}
                                                 placeholder="Ask AI agent about this project..."
-                                                className="w-full h-40 px-2 py-1 border border-s-stroke2 rounded bg-b-surface2 text-t-primary focus:outline-none focus:border-blue-500 resize-y text-sm"
-                                                rows={10}
+                                                className="flex-1 px-3 py-2 border border-s-stroke2 rounded-lg bg-b-surface2 text-t-primary focus:outline-none focus:border-blue-500 text-sm"
+                                                onKeyPress={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        // Handle send message
+                                                    }
+                                                }}
                                             />
-                                            <Button className="w-full text-sm" isStroke>
-                                                Send to AI Agent
+                                            <Button className="px-4 text-sm" isStroke>
+                                                Send
                                             </Button>
                                         </div>
                                     </div>
 
                                     {/* Delegate Voting */}
                                     <div>
-                                        <h4 className="text-h6 font-semibold mb-2">Delegate Voting</h4>
                                         <div className="space-y-2">
                                             <div>
                                                 <label className="block text-sm font-medium mb-1">
-                                                    Delegate Address
+                                                    AI Agent Address (with Github MCP)
                                                 </label>
                                                 <input
                                                     type="text"
                                                     value={delegateAddress}
                                                     onChange={(e) => setDelegateAddress(e.target.value)}
-                                                    placeholder="0x..."
-                                                    className="w-full px-2 py-1 border border-s-stroke2 rounded bg-b-surface2 text-t-primary focus:outline-none focus:border-blue-500 text-sm"
+                                                    placeholder="0x19bF54d64bc776532fF03937b662226E4af59517"
+                                                    className="w-full mt-2 px-2 py-1 rounded-lg border border-s-stroke2 rounded bg-b-surface2 text-t-primary focus:outline-none focus:border-blue-500 text-sm"
                                                 />
                                             </div>
-
                                             <Button
                                                 onClick={handleAiDelegation}
                                                 disabled={isDelegating || !delegateAddress}
-                                                className="w-full text-sm"
+                                                className="w-full text-sm mt-2"
                                             >
                                                 {isDelegating ? "Delegating..." : "Delegate to AI Agent"}
                                             </Button>
@@ -871,7 +909,7 @@ const ProjectJudgingModal = ({
                                     </div>
 
                                     {/* Current Wallet */}
-                                    <div className="p-2 bg-b-surface2 rounded">
+                                    <div style={{ display: 'none' }} className="p-2 bg-b-surface2 rounded">
                                         <div className="text-xs text-t-secondary mb-1">Your Wallet</div>
                                         <div className="font-mono text-xs text-t-primary break-all">
                                             {address || "Not connected"}

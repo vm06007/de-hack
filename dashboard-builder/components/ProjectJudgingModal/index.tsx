@@ -118,6 +118,120 @@ const ProjectJudgingModal = ({
         }
     };
 
+    const handleScan = async () => {
+        setIsScanning(true);
+        try {
+            // Simulate scanning process
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Deterministic results based on project ID
+            const projectId = project.id;
+            let mockResults;
+
+            switch (projectId) {
+                case 1:
+                    mockResults = {
+                        authenticity: 'green',
+                        plagiarism: 'green',
+                        aiDetection: 'green',
+                        geniusLevel: 8,
+                        duplicateFound: false,
+                        duplicateRepo: '',
+                        flags: []
+                    };
+                    break;
+                case 2:
+                    mockResults = {
+                        authenticity: 'green',
+                        plagiarism: 'red',
+                        aiDetection: 'green',
+                        geniusLevel: 5,
+                        duplicateFound: true,
+                        duplicateRepo: 'https://github.com/example/duplicate-project',
+                        flags: [
+                            'High AI usage detected',
+                            'Possible code reuse',
+                            'Similar project found'
+                        ]
+                    };
+                    break;
+                case 3:
+                    mockResults = {
+                        authenticity: 'green',
+                        plagiarism: 'green',
+                        aiDetection: 'red',
+                        geniusLevel: 6,
+                        duplicateFound: false,
+                        duplicateRepo: '',
+                        flags: [
+                            'High AI usage detected',
+                            'Generated content detected'
+                        ]
+                    };
+                    break;
+                case 4:
+                    mockResults = {
+                        authenticity: 'red',
+                        plagiarism: 'green',
+                        aiDetection: 'green',
+                        geniusLevel: 4,
+                        duplicateFound: true,
+                        duplicateRepo: 'https://github.com/example/suspicious-project',
+                        flags: [
+                            'Suspicious code patterns',
+                            'Unusual development timeline'
+                        ]
+                    };
+                    break;
+                case 5:
+                    mockResults = {
+                        authenticity: 'red',
+                        plagiarism: 'red',
+                        aiDetection: 'red',
+                        geniusLevel: 3,
+                        duplicateFound: true,
+                        duplicateRepo: 'https://github.com/example/multiple-issues',
+                        flags: [
+                            'High AI usage detected',
+                            'Possible code reuse',
+                            'Suspicious code patterns',
+                            'Generated content detected',
+                            'Similar project found'
+                        ]
+                    };
+                    break;
+                case 6:
+                    mockResults = {
+                        authenticity: 'green',
+                        plagiarism: 'green',
+                        aiDetection: 'green',
+                        geniusLevel: 9,
+                        duplicateFound: false,
+                        duplicateRepo: '',
+                        flags: []
+                    };
+                    break;
+                default:
+                    mockResults = {
+                        authenticity: 'green',
+                        plagiarism: 'green',
+                        aiDetection: 'green',
+                        geniusLevel: 7,
+                        duplicateFound: false,
+                        duplicateRepo: '',
+                        flags: []
+                    };
+            }
+
+            setScanResults(mockResults);
+        } catch (error) {
+            console.error("Scan failed:", error);
+            alert("Scan failed. Please try again.");
+        } finally {
+            setIsScanning(false);
+        }
+    };
+
     return (
         <>
         <style jsx>{`

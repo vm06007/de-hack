@@ -27,7 +27,7 @@ const HomePage = () => {
     const transformedHackathons = allTransformedHackathons.slice(0, 8);
 
     return (
-        <Layout title="Judging Statistics">
+        <Layout title="Judging Council">
             <div className="flex max-lg:block">
                 <div className="col-left">
                     <Overview />

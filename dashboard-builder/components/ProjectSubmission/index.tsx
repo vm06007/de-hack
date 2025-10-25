@@ -262,7 +262,7 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                     <div>
                         <Field
                             label="Project Demo"
-                            placeholder="https://your-demo-url.com or https://youtube.com/watch?v=..."
+                            placeholder="https://youtube.com/watch?v=..."
                             value={demoUrl}
                             onChange={(e) => setDemoUrl(e.target.value)}
                         />
@@ -406,36 +406,41 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                             <div>
                                 <div className="text-body-2 mb-2">Sponsor Tracks</div>
                                 <div className="space-y-2">
-                                    {backendSponsors.map((sponsor: any) => (
-                                        <label
-                                            key={sponsor.id}
-                                            className="flex items-center gap-3 p-3 rounded-lg bg-b-surface1 cursor-pointer hover:bg-b-surface2 transition-colors"
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedSponsors.includes(sponsor.id.toString())}
-                                                onChange={() => toggleSponsorSelection(sponsor.id.toString())}
-                                                className="w-5 h-5 rounded"
-                                            />
-                                            <div className="flex items-center gap-3 flex-1">
-                                                {sponsor.companyLogo && (
-                                                    <Image
-                                                        src={sponsor.companyLogo}
-                                                        alt={sponsor.companyName}
-                                                        width={32}
-                                                        height={32}
-                                                        className="rounded"
-                                                    />
-                                                )}
-                                                <div>
-                                                    <div className="text-body-2 font-medium">{sponsor.companyName}</div>
-                                                    <div className="text-caption text-t-secondary">
-                                                        ${sponsor.contributionAmount} in prizes
+                                    {backendSponsors.map((sponsor: any) => {
+                                        console.log('Rendering sponsor:', sponsor);
+                                        return (
+                                            <label
+                                                key={sponsor.id}
+                                                className="flex items-center gap-3 p-3 rounded-lg bg-b-surface1 cursor-pointer hover:bg-b-surface2 transition-colors"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedSponsors.includes(sponsor.id.toString())}
+                                                    onChange={() => toggleSponsorSelection(sponsor.id.toString())}
+                                                    className="w-5 h-5 rounded"
+                                                />
+                                                <div className="flex items-center gap-3 flex-1">
+                                                    {(sponsor.logo || sponsor.companyLogo) && (
+                                                        <Image
+                                                            src={sponsor.logo || sponsor.companyLogo}
+                                                            alt={sponsor.name || sponsor.companyName || 'Sponsor'}
+                                                            width={32}
+                                                            height={32}
+                                                            className="rounded"
+                                                        />
+                                                    )}
+                                                    <div>
+                                                        <div className="text-body-2 font-medium">
+                                                            {sponsor.name || sponsor.companyName || 'Unknown Sponsor'}
+                                                        </div>
+                                                        <div className="text-caption text-t-secondary">
+                                                            ${sponsor.totalContributions || sponsor.contributionAmount || '0'} in prizes
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </label>
-                                    ))}
+                                            </label>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         ) : (

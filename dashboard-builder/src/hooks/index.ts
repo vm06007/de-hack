@@ -10,3 +10,4 @@ export { useOrganizations } from './useOrganizations';
 export { useTimeSlots } from './useTimeSlots';
 export { useAffiliateCenter } from './useAffiliateCenter';
 export { useDelegateToAgent } from './useDelegateToAgent';
+export { useScoreSubmission } from './useScoreSubmission';

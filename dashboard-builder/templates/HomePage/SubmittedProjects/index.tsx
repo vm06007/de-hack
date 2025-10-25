@@ -250,7 +250,11 @@ const SubmittedProjects = () => {
             <ProjectJudgingModal
                 open={isModalOpen}
                 onClose={handleCloseModal}
-                project={selectedProject.project}
+                project={{
+                    ...selectedProject.project,
+                    participantAddress: selectedProject.submittedBy,
+                    submittedBy: selectedProject.submittedBy
+                }}
                 onScore={handleScoreSubmit}
                 onNextProject={handleNextProject}
                 onPrevProject={handlePrevProject}

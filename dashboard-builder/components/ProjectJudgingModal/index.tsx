@@ -5,6 +5,7 @@ import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import { useAccount } from "wagmi";
 import { useDelegateToAgent } from "@/src/hooks/useDelegateToAgent";
+import { useScoreSubmission } from "@/src/hooks/useScoreSubmission";
 
 interface ProjectJudgingModalProps {
     open: boolean;
@@ -18,6 +19,7 @@ interface ProjectJudgingModalProps {
         images: string[];
         submittedBy?: string;
         submittedByName: string;
+        participantAddress?: string;
         ensName?: string;
         status: string;
         createdAt: string;
@@ -68,6 +70,7 @@ const ProjectJudgingModal = ({
     // Default hackathon contract address
     const HACKATHON_CONTRACT_ADDRESS = "0x553284c5b8A83905f29545132F7043cC34EAFca1";
     const { delegateToAgent, isLoading: isDelegatingToAgent } = useDelegateToAgent(HACKATHON_CONTRACT_ADDRESS);
+    const { scoreSubmission, isLoading: isSubmittingScore } = useScoreSubmission(HACKATHON_CONTRACT_ADDRESS);
 
     // Reset scan results when project changes
     useEffect(() => {
@@ -80,15 +83,31 @@ const ProjectJudgingModal = ({
             return;
         }
 
+        // Use participant address if available, otherwise fall back to submittedBy
+        const participantAddress = project.participantAddress || project.submittedBy;
+        if (!participantAddress) {
+            alert("Participant address is required to submit score");
+            return;
+        }
+
         setIsSubmitting(true);
         try {
-            if (onScore) {
-                await onScore(project.id, score);
-            }
-            onClose();
+            console.log(`Submitting score ${score} for participant ${participantAddress}`);
+
+            // Convert score from 1-10 scale to 0-100 scale for the contract
+            const contractScore = Math.round((score / 10) * 100);
+
+            await scoreSubmission(participantAddress, contractScore, (result) => {
+                console.log("Score submission successful:", result);
+                // Call the original onScore callback if provided
+                if (onScore) {
+                    onScore(project.id, score);
+                }
+                onClose();
+            });
         } catch (error) {
             console.error("Failed to submit score:", error);
-            alert("Failed to submit score. Please try again.");
+            // Error handling is done in the hook with toast notifications
         } finally {
             setIsSubmitting(false);
         }
@@ -312,11 +331,8 @@ const ProjectJudgingModal = ({
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
-                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(project.status)} bg-opacity-20`}>
-                                    {project.status.replace('_', ' ').toUpperCase()}
-                                </span>
                                 <span className="text-t-secondary">
-                                    SUBMITTED by {project.submittedByName}
+                                    Submitted by {project.participantAddress || project.submittedBy || project.submittedByName}
                                 </span>
                             </div>
                         </div>
@@ -621,10 +637,10 @@ const ProjectJudgingModal = ({
                                     <div className="mt-6">
                                         <Button
                                             onClick={handleScoreSubmit}
-                                            disabled={isSubmitting || score < 1 || score > 10}
+                                            disabled={isSubmitting || isSubmittingScore || score < 1 || score > 10}
                                             className="w-full text-sm"
                                         >
-                                            {isSubmitting ? "Submitting..." : "Submit Score"}
+                                            {isSubmitting || isSubmittingScore ? "Submitting..." : "Submit Score"}
                                         </Button>
                                     </div>
                                 </div>

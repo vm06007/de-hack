@@ -2,7 +2,7 @@ import Icon from "@/components/Icon";
 import Link from "next/link";
 import Button from "@/components/Button";
 import Image from "@/components/Image";
-import { useSponsors } from "@/src/hooks/useSponsors";
+import { useSponsorsService } from "@/src/hooks/useSponsorsService";
 import { useRegisterHacker } from "@/src/hooks/useRegisterHacker";
 import { useSubmitProject } from "@/src/hooks/useSubmitProject";
 import { useEffect, useState } from "react";
@@ -57,7 +57,7 @@ const getHighlights = (hackathon: any, sponsorContributions: number = 0) => {
 
 const Description = ({ description, title, hackathon, onSponsorModalOpen }: Props) => {
     // Use backend sponsor data to calculate contributions
-    const { sponsors: backendSponsors, fetchSponsors } = useSponsors(hackathon?.id);
+    const { sponsors: backendSponsors, refreshSponsors } = useSponsorsService(hackathon?.id);
 
     // Get wallet connection status
     const { isConnected } = useAccount();
@@ -80,8 +80,8 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
     // Listen for sponsor updates via custom events
     useEffect(() => {
         const handleSponsorUpdate = () => {
-            if (hackathon?.id && fetchSponsors) {
-                fetchSponsors();
+            if (hackathon?.id && refreshSponsors) {
+                refreshSponsors();
             }
         };
 
@@ -91,14 +91,21 @@ const Description = ({ description, title, hackathon, onSponsorModalOpen }: Prop
         return () => {
             window.removeEventListener('sponsorUpdated', handleSponsorUpdate);
         };
-    }, [hackathon?.id, fetchSponsors]);
+    }, [hackathon?.id, refreshSponsors]);
 
-    // Fetch sponsor data when component mounts
+    // Add polling mechanism to refresh sponsor data every 2 seconds
     useEffect(() => {
-        if (hackathon?.id && fetchSponsors) {
-            fetchSponsors();
-        }
-    }, [hackathon?.id]);
+        if (!hackathon?.id || !refreshSponsors) return;
+
+        const pollInterval = setInterval(() => {
+            console.log('Summary - Polling for sponsor updates...');
+            refreshSponsors();
+        }, 2000); // Poll every 2 seconds
+
+        return () => {
+            clearInterval(pollInterval);
+        };
+    }, [hackathon?.id, refreshSponsors]);
 
     // Extract stake amount from hackathon data
     const getStakeAmount = () => {

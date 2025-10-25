@@ -462,7 +462,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                         </div>
 
                         {/* Transaction Type Selection */}
-                        <div>
+                        <div style={{ display: 'none' }}>
                             <label className="block text-body-2 mb-2">Transaction Type</label>
                             <div className="text-caption text-t-secondary mb-3">
                                 Choose how you want to execute the sponsorship transaction

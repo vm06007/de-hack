@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import { RemoveScroll } from "react-remove-scroll";
 import NavLink from "@/components/NavLink";
@@ -20,12 +20,15 @@ const Sidebar = ({
     onCloseSidebar,
 }: SidebarProps) => {
     const { isJudge, isLoading } = useIsJudge();
-    const navigation = getNavigation(isJudge);
-
-    // Force re-render when judge status changes
+    const [isClient, setIsClient] = useState(false);
+    
+    // Ensure client-side rendering to prevent hydration mismatch
     useEffect(() => {
-        console.log('Judge status changed:', { isJudge });
-    }, [isJudge]);
+        setIsClient(true);
+    }, []);
+
+    // Use default navigation during SSR to prevent hydration mismatch
+    const navigation = isClient ? getNavigation(isJudge) : getNavigation(false);
 
     return (
         <div

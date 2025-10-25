@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Icon from "@/components/Icon";
@@ -15,10 +15,16 @@ type NavLinkProps = {
 
 const NavLink = ({ value, onClick }: NavLinkProps) => {
     const pathname = usePathname();
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const isActive = useMemo(() => {
+        if (!isClient) return false; // Prevent hydration mismatch
         if (pathname === value.href) return true;
-    }, [pathname, value.href, value.title]);
+    }, [pathname, value.href, value.title, isClient]);
 
     return (
         <Link

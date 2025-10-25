@@ -61,7 +61,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
     const [selectedTransactionType, setSelectedTransactionType] = useState<'legacy' | 'batched'>('legacy');
 
     // Use the sponsors hook for backend data
-    const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor, isCreating: isCreatingSponsor } = useSponsorsService(hackathon?.id);
+    const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor, isCreating: isCreatingSponsor, refreshSponsors } = useSponsorsService(hackathon?.id);
 
     // Use the becomeSponsor hook for smart contract interaction
     const {
@@ -70,6 +70,23 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
         walletCapabilities,
         transactionStrategy
     } = useBecomeSponsor(hackathon?.contractAddress || '');
+
+    // Listen for sponsor updates to auto-refresh
+    useEffect(() => {
+        const handleSponsorUpdate = () => {
+            console.log('Sponsor updated, refreshing sponsors data...');
+            if (refreshSponsors) {
+                refreshSponsors();
+            }
+        };
+
+        // Listen for custom sponsor update events
+        window.addEventListener('sponsorUpdated', handleSponsorUpdate);
+
+        return () => {
+            window.removeEventListener('sponsorUpdated', handleSponsorUpdate);
+        };
+    }, [refreshSponsors]);
 
     // Sponsors are automatically fetched by useSponsorsService
 
@@ -191,7 +208,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                     };
 
                     console.log("Storing sponsor data in backend...", sponsorData);
-                    
+
                     // Call the backend API to create the sponsor
                     const createdSponsor = await createSponsor(sponsorData);
                     console.log("Sponsor created successfully in backend:", createdSponsor);
@@ -240,7 +257,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                 console.log("User cancelled the sponsor transaction");
                 // Don't show alert for user cancellation, just reset state
             } else {
-                alert("Failed to submit sponsor application. Please try again.");
+                // alert("Failed to submit sponsor application. Please try again.");
             }
         } finally {
             setIsSubmitting(false);
@@ -451,10 +468,10 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                 Choose how you want to execute the sponsorship transaction
                             </div>
                             <div className="grid grid-cols-1 gap-3">
-                                <div 
+                                <div
                                     className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                                        selectedTransactionType === 'legacy' 
-                                            ? 'border-blue-500 bg-blue-50' 
+                                        selectedTransactionType === 'legacy'
+                                            ? 'border-blue-500 bg-blue-50'
                                             : 'border-s-stroke2 bg-b-surface1 hover:bg-b-surface2'
                                     }`}
                                     onClick={() => setSelectedTransactionType('legacy')}
@@ -467,8 +484,8 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                             </div>
                                         </div>
                                         <div className={`w-4 h-4 rounded-full border-2 ${
-                                            selectedTransactionType === 'legacy' 
-                                                ? 'border-blue-500 bg-blue-500' 
+                                            selectedTransactionType === 'legacy'
+                                                ? 'border-blue-500 bg-blue-500'
                                                 : 'border-s-stroke2'
                                         }`}>
                                             {selectedTransactionType === 'legacy' && (
@@ -479,10 +496,10 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                 </div>
 
                                 {walletCapabilities?.supportsBatching && (
-                                    <div 
+                                    <div
                                         className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                                            selectedTransactionType === 'batched' 
-                                                ? 'border-blue-500 bg-blue-50' 
+                                            selectedTransactionType === 'batched'
+                                                ? 'border-blue-500 bg-blue-50'
                                                 : 'border-s-stroke2 bg-b-surface1 hover:bg-b-surface2'
                                         }`}
                                         onClick={() => setSelectedTransactionType('batched')}
@@ -495,8 +512,8 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                                 </div>
                                             </div>
                                             <div className={`w-4 h-4 rounded-full border-2 ${
-                                                selectedTransactionType === 'batched' 
-                                                    ? 'border-blue-500 bg-blue-500' 
+                                                selectedTransactionType === 'batched'
+                                                    ? 'border-blue-500 bg-blue-500'
                                                     : 'border-s-stroke2'
                                             }`}>
                                                 {selectedTransactionType === 'batched' && (

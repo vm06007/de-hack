@@ -52,47 +52,50 @@ export const useSponsorsService = (hackathonId?: number) => {
     const [error, setError] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
 
-    useEffect(() => {
-        const fetchSponsors = async () => {
-            try {
-                setLoading(true);
-                setError(null);
+    const fetchSponsors = async () => {
+        try {
+            setLoading(true);
+            setError(null);
 
-                const endpoint = hackathonId
-                    ? `/sponsors?hackathonId=${hackathonId}`
-                    : '/sponsors';
+            const endpoint = hackathonId
+                ? `/sponsors?hackathonId=${hackathonId}`
+                : '/sponsors';
 
-                console.log('useSponsorsService - Fetching from endpoint:', endpoint);
-                const apiResponse = await apiClient.get(endpoint);
-                console.log('useSponsorsService - API Response:', apiResponse);
+            console.log('useSponsorsService - Fetching from endpoint:', endpoint);
+            const apiResponse = await apiClient.get(endpoint);
+            console.log('useSponsorsService - API Response:', apiResponse);
 
-                const sponsorsData = (apiResponse as any)?.sponsors;
-                if (!sponsorsData || !Array.isArray(sponsorsData)) {
-                    console.log('useSponsorsService - No sponsors data found');
-                    setSponsors([]);
-                    return;
-                }
-
-                const apiSponsors: ApiSponsor[] = sponsorsData;
-                console.log('useSponsorsService - API Sponsors count:', apiSponsors.length);
-
-                // Return raw API data instead of transforming it
-                // Limit to 5 sponsors
-                const limitedSponsors = apiSponsors.slice(0, 5);
-                console.log('useSponsorsService - Limited sponsors count:', limitedSponsors.length);
-
-                setSponsors(limitedSponsors);
-            } catch (err) {
-                console.error('useSponsorsService - Error fetching sponsors:', err);
-                setError(err instanceof Error ? err.message : 'Unknown error');
+            const sponsorsData = (apiResponse as any)?.sponsors;
+            if (!sponsorsData || !Array.isArray(sponsorsData)) {
+                console.log('useSponsorsService - No sponsors data found');
                 setSponsors([]);
-            } finally {
-                setLoading(false);
+                return;
             }
-        };
 
+            const apiSponsors: ApiSponsor[] = sponsorsData;
+            console.log('useSponsorsService - API Sponsors count:', apiSponsors.length);
+
+            // Return raw API data instead of transforming it
+            // Limit to 5 sponsors
+            const limitedSponsors = apiSponsors.slice(0, 5);
+            console.log('useSponsorsService - Limited sponsors count:', limitedSponsors.length);
+
+            setSponsors(limitedSponsors);
+        } catch (err) {
+            console.error('useSponsorsService - Error fetching sponsors:', err);
+            setError(err instanceof Error ? err.message : 'Unknown error');
+            setSponsors([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchSponsors();
     }, [hackathonId]);
+
+    // Expose fetchSponsors function for manual refresh
+    const refreshSponsors = fetchSponsors;
 
     const createSponsor = async (sponsorData: {
         hackathonId: number;
@@ -133,6 +136,7 @@ export const useSponsorsService = (hackathonId?: number) => {
         error,
         isCreating,
         createSponsor,
+        refreshSponsors,
     };
 };
 

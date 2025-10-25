@@ -24,7 +24,7 @@ const HackathonTiming = ({
     // const [duration, setDuration] = useState(durationOptions[1]); // Default to 48 hours
     // const [timezone, setTimezone] = useState("UTC");
 
-    // Auto-adjust end date when start date changes
+    // Auto-adjust end date/time when start date/time changes or when end date/time is manually changed
     useEffect(() => {
         const startDateTime = new Date(startDate);
         startDateTime.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
@@ -32,21 +32,28 @@ const HackathonTiming = ({
         const endDateTime = new Date(endDate);
         endDateTime.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
 
-        // Calculate the gap between start and end dates
-        const timeDiff = endDateTime.getTime() - startDateTime.getTime();
-        const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        // Check if dates are the same day
+        const isSameDay = startDate.toDateString() === endDate.toDateString();
 
-        // If start date is now after end date, adjust end date to maintain the gap
+        // If start date/time is after or equal to end date/time (invalid state)
         if (startDateTime >= endDateTime) {
-            const newEndDate = new Date(startDateTime);
-            newEndDate.setDate(newEndDate.getDate() + Math.max(daysDiff, 7)); // Minimum 7 days gap
+            if (isSameDay) {
+                // Same day: adjust end time to be after start time
+                const newEndTime = new Date(startTime);
+                newEndTime.setHours(startTime.getHours() + 1); // Add 1 hour to start time
+                setEndTime(newEndTime);
+            } else {
+                // Different days: adjust end date to be after start date
+                const newEndDate = new Date(startDateTime);
+                newEndDate.setDate(newEndDate.getDate() + 1); // Minimum 1 day gap
 
-            // Update end date but keep the same time
-            const newEndTime = new Date(newEndDate);
-            newEndTime.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
+                // Update end date but keep the same time
+                const newEndTime = new Date(newEndDate);
+                newEndTime.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
 
-            setEndDate(newEndDate);
-            setEndTime(newEndTime);
+                setEndDate(newEndDate);
+                setEndTime(newEndTime);
+            }
         }
     }, [startDate, startTime, endDate, endTime, setEndDate, setEndTime]);
 

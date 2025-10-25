@@ -131,9 +131,29 @@ const NewHackathonPage = () => {
         }
 
         try {
-            // Convert dates to Unix timestamps
-            const startTimestamp = Math.floor(startDate.getTime() / 1000);
-            const endTimestamp = Math.floor(endDate.getTime() / 1000);
+            // Convert dates and times to Unix timestamps
+            // Combine date and time for accurate timestamps
+            const startDateTime = new Date(startDate);
+            startDateTime.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
+            
+            const endDateTime = new Date(endDate);
+            endDateTime.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
+            
+            const startTimestamp = Math.floor(startDateTime.getTime() / 1000);
+            const endTimestamp = Math.floor(endDateTime.getTime() / 1000);
+            
+            // Debug logging to verify timestamps include time
+            console.log('Date/Time conversion:', {
+                startDate: startDate.toISOString(),
+                startTime: startTime.toISOString(),
+                startDateTime: startDateTime.toISOString(),
+                startTimestamp,
+                endDate: endDate.toISOString(),
+                endTime: endTime.toISOString(),
+                endDateTime: endDateTime.toISOString(),
+                endTimestamp,
+                timeDifference: endTimestamp - startTimestamp
+            });
 
             // Generate a unique hackathon ID using timestamp + random component
             const timestamp = Math.floor(Date.now() / 1000);

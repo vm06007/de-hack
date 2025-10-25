@@ -3,7 +3,7 @@ import Icon from "@/components/Icon";
 import PlusIcon from "@/components/PlusIcon";
 import { NumericFormat } from "react-number-format";
 import { useSponsorsService } from "@/src/hooks/useSponsorsService";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 type PrizePoolProps = {
     totalPrize?: number;
@@ -15,9 +15,10 @@ type PrizePoolProps = {
 const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackathon }: PrizePoolProps) => {
     const ethPrice = 2500; // ETH price in USD
     const [refreshKey, setRefreshKey] = useState(0);
+    const isRefreshing = useRef(false);
 
     // Use backend sponsor data (prioritize backend data over static props)
-    const { sponsors: backendSponsors } = useSponsorsService(hackathon?.id);
+    const { sponsors: backendSponsors, refreshSponsors } = useSponsorsService(hackathon?.id);
     const sponsorData = backendSponsors || sponsors;
 
     // Listen for sponsor updates via custom events
@@ -34,7 +35,41 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
         return () => {
             window.removeEventListener('sponsorUpdated', handleSponsorUpdate);
         };
-    }, [hackathon?.id]);
+    }, [hackathon?.id]); // Remove refreshSponsors from dependencies
+
+    // Polling mechanism to refresh sponsor data
+    useEffect(() => {
+        if (!hackathon?.id || !refreshSponsors) return;
+
+        const safeRefresh = async () => {
+            if (isRefreshing.current) {
+                console.log('Prize Pool - Refresh already in progress, skipping...');
+                return;
+            }
+            
+            isRefreshing.current = true;
+            try {
+                console.log('Prize Pool - Refreshing sponsor data...');
+                await refreshSponsors();
+            } catch (error) {
+                console.error('Prize Pool - Error refreshing:', error);
+            } finally {
+                isRefreshing.current = false;
+            }
+        };
+
+        // Initial refresh when component mounts or hackathon changes
+        safeRefresh();
+
+        // Simple polling every 2 seconds
+        const pollInterval = setInterval(() => {
+            safeRefresh();
+        }, 2000); // Poll every 2 seconds
+
+        return () => {
+            clearInterval(pollInterval);
+        };
+    }, [hackathon?.id]); // Remove refreshSponsors from dependencies to prevent infinite loop
 
     // Calculate sponsor contributions from backend data
     const sponsorContributions = sponsorData?.reduce((sum, sponsor) => {

@@ -259,7 +259,7 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                     </div>
 
                     {/* Project Demo */}
-                    <div>
+                    <div style={{ display: 'none' }}>
                         <Field
                             label="Project Demo"
                             placeholder="https://youtube.com/watch?v=..."
@@ -294,26 +294,6 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                         onChange={(e) => setTeamMembers(e.target.value)}
                     />*/}
 
-                    {/* Project Description */}
-                    <div>
-                        <label className="block text-body-2 mb-2">Project Description</label>
-                        <div className="text-caption text-t-secondary mb-3">
-                            Describe your project, its features, and the problem it solves
-                        </div>
-                        <Editor
-                            content={description}
-                            onChange={(content) => {
-                                setDescription(content);
-                                if (validationErrors.description) {
-                                    setValidationErrors(prev => ({ ...prev, description: '' }));
-                                }
-                            }}
-                            className="min-h-32"
-                        />
-                        {validationErrors.description && (
-                            <div className="text-red-500 text-sm mt-1">{validationErrors.description}</div>
-                        )}
-                    </div>
 
                     {/* Project Images */}
                     <div>
@@ -375,6 +355,27 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                         )}
                     </div>
 
+
+                    {/* Project Description */}
+                    <div>
+                        <label className="block text-body-2 mb-2">Project Description</label>
+                        <div className="text-caption text-t-secondary mb-3">
+                            Describe your project, its features, and the problem it solves
+                        </div>
+                        <Editor
+                            content={description}
+                            onChange={(content) => {
+                                setDescription(content);
+                                if (validationErrors.description) {
+                                    setValidationErrors(prev => ({ ...prev, description: '' }));
+                                }
+                            }}
+                            className="min-h-32"
+                        />
+                        {validationErrors.description && (
+                            <div className="text-red-500 text-sm mt-1">{validationErrors.description}</div>
+                        )}
+                    </div>
                     {/* Track Selection */}
                     <div>
                         <label className="block text-body-2 mb-3">Select Tracks</label>

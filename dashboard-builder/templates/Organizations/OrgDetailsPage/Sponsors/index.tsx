@@ -71,6 +71,15 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
         transactionStrategy
     } = useBecomeSponsor(hackathon?.contractAddress || '');
 
+    // Set default transaction type based on wallet capabilities
+    useEffect(() => {
+        if (walletCapabilities?.supportsBatching) {
+            setSelectedTransactionType('batched');
+        } else {
+            setSelectedTransactionType('legacy');
+        }
+    }, [walletCapabilities]);
+
     // Listen for sponsor updates to auto-refresh
     useEffect(() => {
         const handleSponsorUpdate = () => {

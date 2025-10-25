@@ -4,7 +4,7 @@
     "title": "New Hackathon",
     "icon": "/images/icons/hackathon.svg",
     "backgroundImage": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "avatar": "/images/avatars/1.png",
+    "avatar": "/images/avatars/jordan.jpeg",
     "time": "2 hours ago",
     "status": "new"
   },
@@ -13,7 +13,7 @@
     "title": "Voting System",
     "icon": "/images/icons/voting.svg",
     "backgroundImage": "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    "avatar": "/images/avatars/2.png",
+    "avatar": "/images/avatars/kim.webp",
     "time": "4 hours ago",
     "status": "active"
   },

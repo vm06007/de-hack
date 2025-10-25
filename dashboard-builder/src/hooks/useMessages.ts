@@ -11,7 +11,7 @@ export const useMessages = () => {
             try {
                 setLoading(true);
                 const result = await apiClient.get('/messages');
-                setData(result);
+                setData(result as any[]);
                 setError(null);
             } catch (err) {
                 console.error('Failed to fetch messages:', err);
@@ -20,16 +20,16 @@ export const useMessages = () => {
                 setData([
                     {
                         id: 1,
-                        sender: "Alex Chen",
-                        avatar: "/images/avatars/1.png",
+                        sender: "Jordan Stojanovski",
+                        avatar: "/images/avatars/jordan.jpeg",
                         content: "Hey! Are you participating in the ETHGlobal hackathon?",
                         timestamp: "2024-01-15T14:30:00Z",
                         unread: false
                     },
                     {
                         id: 2,
-                        sender: "Sarah Kim",
-                        avatar: "/images/avatars/2.png",
+                        sender: "Comrade Kim",
+                        avatar: "/images/avatars/kim.webp",
                         content: "Yes! I'm really excited about it. The prize pool is huge!",
                         timestamp: "2024-01-15T14:35:00Z",
                         unread: true

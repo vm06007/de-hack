@@ -74,9 +74,14 @@ const ProjectJudgingModal = ({
     };
 
     // Default hackathon contract address
-    const HACKATHON_CONTRACT_ADDRESS = "0x553284c5b8A83905f29545132F7043cC34EAFca1";
-    const { delegateToAgent, isLoading: isDelegatingToAgent } = useDelegateToAgent(HACKATHON_CONTRACT_ADDRESS);
-    const { scoreSubmission, isLoading: isSubmittingScore } = useScoreSubmission(HACKATHON_CONTRACT_ADDRESS);
+    const HACKATHON_CONTRACT_ADDRESS = "0x8034154DeD30a8E2560d8807BE4a78bb89fb5993";
+    const { delegateToAgent, isLoading: isDelegatingToAgent } = useDelegateToAgent(
+        HACKATHON_CONTRACT_ADDRESS
+    );
+
+    const { scoreSubmission, isLoading: isSubmittingScore } = useScoreSubmission(
+        HACKATHON_CONTRACT_ADDRESS
+    );
 
     // Reset scan results when project changes
     useEffect(() => {

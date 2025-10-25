@@ -15,14 +15,14 @@ const tabs = [
     {
         id: 1,
         icon: "profile",
-        label: "Hackers",
+        label: "Project Submissions",
         value: "1,293",
         percent: 16.8,
     },
     {
         id: 2,
         icon: "wallet",
-        label: "Protocol Balance",
+        label: "Council Balance",
         value: "$9,500",
         percent: 36.8,
     },

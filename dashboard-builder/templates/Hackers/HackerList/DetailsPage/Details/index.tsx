@@ -40,7 +40,7 @@ const Details = ({ onBack }: DetailsProps) => {
                 <div className="shrink-0">
                     <Image
                         className="size-20 rounded-full opacity-100 object-cover"
-                        src="/images/avatars/2.png"
+                        src="/images/avatars/kim.webp"
                         width={80}
                         height={80}
                         alt=""

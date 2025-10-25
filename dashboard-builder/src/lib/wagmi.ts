@@ -210,6 +210,16 @@ export const DEHACK_PLATFORM_ABI = [
     },
     {
         "inputs": [
+            {"internalType": "address", "name": "_participant", "type": "address"},
+            {"internalType": "uint256", "name": "_score", "type": "uint256"}
+        ],
+        "name": "scoreSubmission",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
             {"internalType": "address", "name": "", "type": "address"}
         ],
         "name": "delegateToJudge",

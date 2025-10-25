@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Link from "next/link";
+// import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { Swiper as SwiperType } from "swiper";
@@ -168,8 +168,8 @@ const SubmittedProjects = () => {
                 <div className="flex items-center gap-3">
                     {/* Hackathon Filter Dropdown */}
                     <Select
-                        value={selectedHackathon}
-                        onChange={setSelectedHackathon}
+                        value={selectedHackathon as any}
+                        onChange={setSelectedHackathon as any}
                         options={hackathonOptions}
                         placeholder="Select hackathon"
                         className="min-w-64"

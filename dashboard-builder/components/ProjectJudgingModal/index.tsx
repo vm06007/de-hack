@@ -343,46 +343,13 @@ const ProjectJudgingModal = ({
                             </div>
                         </div>
 
-                        {/* Project Screenshots */}
-                        {project.images && getValidImages(project.images).length > 0 && (
-                            <div className="mb-4">
-                                <h3 className="text-h6 font-semibold mb-2">Project Screenshots</h3>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {getValidImages(project.images)
-                                        .slice(0, 4)
-                                        .map((image, index) => (
-                                        <Image
-                                            key={index}
-                                            src={image}
-                                            alt={`Project screenshot ${index + 1}`}
-                                            width={200}
-                                            height={120}
-                                            className="rounded-lg w-full"
-                                            onError={(e) => {
-                                                console.warn(`Failed to load image: ${image}`);
-                                                e.currentTarget.style.display = 'none';
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-                                {getValidImages(project.images).length > 4 && (
-                                    <div className="text-xs text-t-secondary mt-2 text-center">
-                                        +{getValidImages(project.images).length - 4} more screenshots
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
                         {/* Description */}
                         <div className="mb-4">
                             <h3 className="text-h6 font-semibold mb-2">Project Description</h3>
                             <div className="bg-b-surface2 rounded-lg p-3">
-                                <textarea
-                                    value={project.description}
-                                    readOnly
-                                    className="w-full h-20 px-2 py-1 border border-s-stroke2 rounded bg-b-surface2 text-t-primary resize-none text-sm"
-                                    rows={5}
-                                    placeholder="Project description will appear here..."
+                                <div
+                                    className="w-full min-h-20 px-2 py-1 text-t-primary text-sm prose prose-invert max-w-none"
+                                    dangerouslySetInnerHTML={{ __html: project.description || "No description provided." }}
                                 />
                             </div>
                         </div>

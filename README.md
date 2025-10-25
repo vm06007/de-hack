@@ -1,259 +1,448 @@
-# DeHack Platform
+# DeHack Platform - Decentralized Hackathon System
 
-A decentralized hackathon platform built on Ethereum that enables organizers to create hackathons, participants to register and submit projects, judges to evaluate submissions, and winners to claim prizes. The platform uses a factory pattern with cloning for gas-efficient hackathon creation and implements a comprehensive governance system for judge management.
+## Overview
 
-## 🏗️ Architecture
+DeHack is a comprehensive decentralized hackathon platform built on Ethereum that enables organizers to create hackathons, participants to register and submit projects, judges to evaluate submissions, and winners to claim prizes. The platform uses a factory pattern with cloning for gas-efficient hackathon creation and implements multiple voting systems for fair judging.
 
-The platform uses a modular, gas-optimized architecture:
+## System Architecture
 
-1. **Factory Pattern with Cloning**: `HackathonFactory` creates hackathon instances using OpenZeppelin's cloning pattern
-2. **Inheritance-Based Design**: `Hackathon` inherits from `StakeSystem`, `VotingSystem`, and `JudgingSystem`
-3. **Timestamp-Based Phase Management**: Automatic progression through submission → voting → claiming phases
-4. **Global Judge Governance**: `JudgeCouncil` manages the global judge ecosystem
+### Core Components
 
-## 📋 Smart Contracts
+The DeHack platform consists of several key smart contracts working together:
+
+1. **HackathonFactory** - Factory contract for creating new hackathons
+2. **Hackathon** - Individual hackathon contract managing the lifecycle
+3. **Voting Systems** - Multiple voting mechanisms (Open, Commit-Reveal, ZK-SNARK, Quadratic)
+4. **Stake System** - Participant stake management
+5. **Judge Council** - Global judge governance
+6. **Curve Integration** - ETH to PYUSD conversion for prizes
+
+### System Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "DeHack Platform"
+        HF[HackathonFactory]
+        JC[JudgeCouncil]
+        CS[Curve System]
+        
+        subgraph "Individual Hackathon"
+            H[Hackathon Contract]
+            SS[StakeSystem]
+            VS[VotingSystem]
+            JS[JudgingSystem]
+            
+            subgraph "Voting Systems"
+                OV[OpenVoting]
+                CRV[CommitRevealVoting]
+                ZKV[ZKVotingSystem]
+                QV[QuadraticVoting]
+            end
+        end
+        
+        subgraph "External Integrations"
+            CR[Curve Router]
+            WETH[WETH Token]
+            PYUSD[PYUSD Token]
+        end
+    end
+    
+    subgraph "User Roles"
+        O[Organizer]
+        S[Sponsor]
+        P[Participant/Hacker]
+        J[Judge]
+    end
+    
+    HF --> H
+    HF --> JC
+    HF --> CS
+    H --> SS
+    H --> VS
+    H --> JS
+    VS --> OV
+    VS --> CRV
+    VS --> ZKV
+    VS --> QV
+    
+    CS --> CR
+    CS --> WETH
+    CS --> PYUSD
+    
+    O --> HF
+    S --> H
+    P --> H
+    J --> H
+```
+
+## User Roles and Interactions
+
+### 1. Organizer Role
+
+**Responsibilities:**
+- Create hackathons using the factory
+- Set hackathon parameters (timing, prizes, judges)
+- Configure voting systems
+- Manage hackathon lifecycle
+
+**Key Interactions:**
+```mermaid
+sequenceDiagram
+    participant O as Organizer
+    participant HF as HackathonFactory
+    participant H as Hackathon
+    participant CR as Curve Router
+    
+    O->>HF: createHackathon()
+    Note over O,HF: Send ETH for prize pool
+    HF->>CR: Convert ETH to PYUSD
+    CR-->>HF: Return PYUSD
+    HF->>H: Deploy & Initialize
+    HF-->>O: Return hackathon address
+    O->>H: Configure judges & parameters
+```
+
+**Organizer Flow:**
+1. **Hackathon Creation**: Call `createHackathon()` with parameters
+2. **Prize Pool Setup**: ETH is automatically converted to PYUSD via Curve
+3. **Judge Selection**: Choose judges from global registry
+4. **Voting Configuration**: Select voting system type
+5. **Hackathon Management**: Monitor and manage hackathon lifecycle
+
+### 2. Sponsor Role
+
+**Responsibilities:**
+- Contribute to hackathon prize pools
+- Support specific hackathons with ETH or tokens
+- Distribute prizes to winners
+
+**Key Interactions:**
+```mermaid
+sequenceDiagram
+    participant S as Sponsor
+    participant H as Hackathon
+    participant W as Winner
+    
+    S->>H: becomeSponsor() or becomeSponsorWithToken()
+    H-->>S: Sponsor registered
+    Note over S,H: Sponsor can contribute ETH or ERC20 tokens
+    S->>H: distributePrize(winner, amount)
+    H->>W: Transfer prize
+```
+
+**Sponsor Flow:**
+1. **Contribution**: Send ETH or ERC20 tokens to become sponsor
+2. **Prize Pool**: Sponsor's contribution creates separate prize pool
+3. **Distribution**: Sponsor can distribute prizes to winners
+4. **Tracking**: Monitor distributed vs. available amounts
+
+### 3. Participant/Hacker Role
+
+**Responsibilities:**
+- Register for hackathons
+- Submit projects during submission phase
+- Claim prizes if winning
+
+**Key Interactions:**
+```mermaid
+sequenceDiagram
+    participant P as Participant
+    participant H as Hackathon
+    participant SS as StakeSystem
+    
+    P->>H: register()
+    Note over P,H: Must stake required amount
+    H->>SS: Deposit stake
+    P->>H: submitProject(name, url)
+    SS->>P: Return stake
+    Note over P,H: During submission phase
+    P->>H: claimPrize()
+    H->>P: Transfer prize
+```
+
+**Participant Flow:**
+1. **Registration**: Pay stake to register for hackathon
+2. **Development**: Work on project during hackathon period
+3. **Submission**: Submit project details before deadline
+4. **Stake Return**: Receive stake back upon submission
+5. **Prize Claiming**: Claim prizes if winning (after cooldown)
+
+### 4. Judge Role
+
+**Responsibilities:**
+- Evaluate submissions during voting phase
+- Vote on projects using selected voting system
+- Receive judge rewards
+
+**Key Interactions:**
+```mermaid
+sequenceDiagram
+    participant J as Judge
+    participant H as Hackathon
+    participant VS as VotingSystem
+    
+    J->>H: voteForSubmission(participant, points)
+    H->>VS: Record vote
+    Note over J,H: During voting phase
+    J->>H: claimJudgeReward()
+    H->>J: Transfer reward
+```
+
+**Judge Flow:**
+1. **Voting Phase**: Judge submissions during designated period
+2. **Point Allocation**: Allocate points to participants
+3. **Voting System**: Use configured voting mechanism
+4. **Reward Claiming**: Claim judge rewards after hackathon
+
+## Voting Systems
+
+The platform supports multiple voting mechanisms:
+
+### 1. Open Voting
+- Transparent voting system
+- All votes are publicly visible
+- Simple point allocation
+
+### 2. Commit-Reveal Voting
+- Hidden voting until reveal phase
+- Prevents strategic voting
+- Two-phase process: commit then reveal
+
+### 3. Zero-Knowledge (ZK-SNARK) Voting
+- Private voting with cryptographic proofs
+- Maintains anonymity while ensuring validity
+- Advanced cryptographic implementation
+
+### 4. Quadratic Voting
+- Participants get voting credits
+- Cost increases quadratically with votes
+- Prevents vote buying and promotes fair distribution
+
+## Hackathon Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Registration: Organizer creates hackathon
+    Registration --> Submission: Start time reached
+    Submission --> Voting: End time reached
+    Voting --> Claiming: Voting period ends
+    Claiming --> [*]: All prizes claimed
+    
+    state Registration {
+        [*] --> ParticipantsRegister
+        ParticipantsRegister --> StakeDeposited
+    }
+    
+    state Submission {
+        [*] --> ProjectsSubmitted
+        ProjectsSubmitted --> StakeReturned
+    }
+    
+    state Voting {
+        [*] --> JudgesVote
+        JudgesVote --> WinnersDetermined
+    }
+    
+    state Claiming {
+        [*] --> CooldownPeriod
+        CooldownPeriod --> PrizesClaimed
+    }
+```
+
+## Technical Features
+
+### Gas Optimization
+- **Clone Pattern**: Uses OpenZeppelin's cloning for gas-efficient hackathon creation
+- **Batch Operations**: Supports batch voting and operations
+- **Efficient Storage**: Optimized data structures for scalability
+
+### Security Features
+- **Stake System**: Participants must stake to prevent spam
+- **Judge Validation**: Global judge registry with validation
+- **Time-based Phases**: Automatic phase progression
+- **Access Controls**: Role-based permissions
+
+### Integration Features
+- **Curve Finance**: Automatic ETH to PYUSD conversion
+- **Multi-token Support**: Support for ETH and ERC20 tokens
+- **Flexible Voting**: Multiple voting system options
+- **Sponsor System**: Independent sponsor prize pools
+
+## Smart Contract Architecture
 
 ### Core Contracts
 
-#### 1. **HackathonFactory.sol**
-Factory contract for creating new hackathon instances using gas-efficient cloning.
-
-**Key Features**:
-- Gas-efficient hackathon creation via OpenZeppelin cloning
-- Global judge governance management
-- Judge validation against global registry
-- Inherits from JudgeCouncil for governance functionality
-
-**Main Function**:
+#### HackathonFactory.sol
 ```solidity
-function createHackathon(
-    string memory _name,
-    string memory _description,
-    uint256 _startTime,
-    uint256 _endTime,
-    uint256 _stakeAmount,
-    uint256 _prizeClaimCooldown,
-    uint256 _judgingDuration,
-    uint256[] memory _prizeDistribution,
-    address[] memory _judges
-) external payable returns (address)
+contract HackathonFactory is JudgeCouncil {
+    function createHackathon(
+        uint256 _hackathonId,
+        uint256 _startTime,
+        uint256 _endTime,
+        uint256 _minimumSponsorContribution,
+        uint256 _stakeAmount,
+        uint256[] memory _prizeDistribution,
+        address[] memory _selectedJudges,
+        VotingConfig memory _votingConfig
+    ) external payable returns (address hackathonAddress)
+}
 ```
 
-#### 2. **Hackathon.sol**
-Main hackathon contract that manages the entire hackathon lifecycle.
+#### Hackathon.sol
+```solidity
+contract Hackathon is StakeSystem, VotingSystem, JudgingSystem {
+    // Manages entire hackathon lifecycle
+    // Inherits stake, voting, and judging functionality
+}
+```
 
-**Inheritance Chain**:
-- `Hackathon` inherits from `StakeSystem`, `VotingSystem`, and `JudgingSystem`
+### Inheritance Hierarchy
 
-**Key Features**:
-- Participant registration and project submission
-- Automatic phase progression based on timestamps
-- Prize distribution and claiming
-- Judge management and delegation
-- Sponsor contributions
+```mermaid
+graph TD
+    H[Hackathon]
+    SS[StakeSystem]
+    VS[VotingSystem]
+    JS[JudgingSystem]
+    
+    H --> SS
+    H --> VS
+    H --> JS
+    
+    subgraph "Voting Systems"
+        OV[OpenVoting]
+        CRV[CommitRevealVoting]
+        ZKV[ZKVotingSystem]
+        QV[QuadraticVoting]
+    end
+    
+    VS --> OV
+    VS --> CRV
+    VS --> ZKV
+    VS --> QV
+```
 
-**Phase Management**:
-- **Submission Phase**: `startTime` to `endTime`
-- **Voting Phase**: `votingStartTime` to `votingEndTime` 
-- **Claiming Phase**: `claimingStartTime` onwards
-
-#### 3. **StakeSystem.sol**
-Manages participant stakes and stake-related operations.
-
-**Features**:
-- Participant stake deposits
-- Automatic stake refunds upon project submission
-- Stake tracking and management
-
-#### 4. **VotingSystem.sol**
-Handles voting, winner determination, and prize distribution.
-
-**Key Features**:
-- Dynamic winner tracking (O(1) lookups)
-- Prize distribution based on exact amounts
-- Winner determination through voting or random selection
-- Prize claiming with cooldown periods
-
-**Scalability Features**:
-- No large arrays that could hit gas limits
-- Efficient winner tracking without sorting all participants
-- Gas-optimized prize calculations
-
-#### 5. **JudgingSystem.sol**
-Manages hackathon-specific judge operations and delegation.
-
-**Features**:
-- Judge addition and removal
-- Judge delegation system
-- Judge reward management
-- Judge validation
-
-#### 6. **JudgeCouncil.sol**
-Global judge governance system for managing the judge ecosystem.
-
-**Features**:
-- Global judge registry
-- Judge addition/removal through voting
-- Governance parameter management
-- Judge reward distribution
-
-### Legacy Contracts
-
-#### **DeHackPlatform.sol**
-The original monolithic contract (legacy, not used in current architecture).
-
-#### **Counter.sol**
-Simple counter contract for testing and demonstration purposes.
-
-## 🚀 Key Features
-
-### Gas Optimization
-- **Cloning Pattern**: Reduces deployment costs by ~90%
-- **Efficient Data Structures**: Mappings instead of arrays where possible
-- **Minimal State Variables**: Packed structs and optimized storage
-
-### Scalability
-- **No Gas Limit Issues**: Avoids large arrays that could clog blocks
-- **Dynamic Winner Tracking**: O(1) lookups without sorting all participants
-- **Batch Operations**: Single transaction for multiple operations
-
-### Security
-- **Access Control**: Role-based permissions with modifiers
-- **Input Validation**: Comprehensive validation for all inputs
-- **Reentrancy Protection**: Protected external calls
-- **Stake Protection**: Automatic stake refunds and locking mechanisms
-
-### Automatic Progression
-- **Timestamp-Based Phases**: No complex state progression logic
-- **Simple Modifiers**: Clean phase checking with `onlyDuringX` modifiers
-- **Pre-calculated Timestamps**: All phase boundaries calculated at initialization
-
-## 🔄 Usage Flow
-
-1. **Organizers**: Create hackathons with prize pools using `HackathonFactory`
-2. **Participants**: Register for hackathons before they start (with stake deposit)
-3. **Development**: Submit projects during submission phase
-4. **Judging**: Judges vote on submissions during voting phase
-5. **Claiming**: Winners claim prizes after claiming phase begins
-
-## 🛠️ Development
+## Getting Started
 
 ### Prerequisites
-- Node.js and Bun package manager
-- Hardhat development environment
-- Ethereum network access
+- Node.js and Bun
+- Ethereum development environment
+- Understanding of smart contracts
 
 ### Installation
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd de-hack
-
 # Install dependencies
 bun install
-```
 
-### Commands
-```bash
 # Compile contracts
-bun hardhat compile
+bun run compile
 
 # Run tests
-bun hardhat test
-
-# Run specific test file
-bun hardhat test test/HackathonBasic.t.sol
-
-# Deploy to network
-bun hardhat run scripts/deploy-and-verify.ts --network <network>
+bun run test
 ```
 
-### Testing
-The system includes comprehensive test coverage with **68 tests passing**:
+### Deployment
+```bash
+# Deploy to local network
+bun run deploy:local
 
-- **HackathonBasic.t.sol**: Core functionality tests
-- **HackathonJudge.t.sol**: Judge management tests  
-- **HackathonDelegation.t.sol**: Delegation system tests
-- **HackathonPrize.t.sol**: Prize distribution tests
-- **HackathonFactoryBasic.t.sol**: Factory functionality tests
+# Deploy to testnet
+bun run deploy:testnet
 
-## 📊 Test Results
-
-```
-Running Solidity tests
-  ✔ 68 tests passing
-  ✔ 0 tests failing
-  ✔ All functionality working correctly
+# Deploy to mainnet
+bun run deploy:mainnet
 ```
 
-## 🔒 Security Features
+## Usage Examples
 
-- **Time-based Access Controls**: Phase-specific function access
-- **Role-based Permissions**: Organizer, judge, and participant roles
-- **Input Validation**: Comprehensive validation for all parameters
-- **Reentrancy Protection**: Protected external calls
-- **Stake Protection**: Automatic refunds and locking mechanisms
-- **Emergency Mechanisms**: Controlled withdrawal functions
+### Creating a Hackathon
+```typescript
+const hackathonParams = {
+    hackathonId: 1,
+    startTime: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
+    endTime: Math.floor(Date.now() / 1000) + 86400,   // 24 hours from now
+    minimumSponsorContribution: parseEther("0.1"),
+    stakeAmount: parseEther("0.01"),
+    prizeDistribution: [parseEther("1"), parseEther("0.5"), parseEther("0.3")],
+    selectedJudges: [judge1, judge2, judge3],
+    votingConfig: {
+        systemType: 0, // Open voting
+        useQuadraticVoting: false,
+        votingPowerPerJudge: 100,
+        maxWinners: 3
+    }
+};
 
-## 🎯 Design Decisions
-
-### 1. Timestamp-Based Phase Management
-Instead of complex state progression functions, the system uses pre-calculated timestamps:
-
-```solidity
-// Calculated during initialization
-votingStartTime = _endTime;
-votingEndTime = votingStartTime + _judgingDuration;
-claimingStartTime = votingEndTime + _prizeClaimCooldown;
+const tx = await hackathonFactory.createHackathon(
+    ...Object.values(hackathonParams),
+    { value: parseEther("2") } // Prize pool
+);
 ```
 
-### 2. Exact Prize Distribution
-Prizes are defined as exact amounts rather than ratios:
+### Participating in a Hackathon
+```typescript
+// Register for hackathon
+await hackathon.register({ value: stakeAmount });
 
-```solidity
-// Organizer specifies exact amounts: [3000, 2000, 1000] (in wei)
-// Total must equal deposited prize pool
-uint256[] public prizeDistribution;
+// Submit project
+await hackathon.submitProject(
+    "My Awesome Project",
+    "https://github.com/user/project"
+);
+
+// Claim prize (if winning)
+await hackathon.claimPrize();
 ```
 
-### 3. Scalable Winner Tracking
-Avoids gas limit issues with large participant lists:
+### Sponsoring a Hackathon
+```typescript
+// Become sponsor with ETH
+await hackathon.becomeSponsor({ value: parseEther("0.5") });
 
-```solidity
-// Instead of: address[] public participantsWithSubmissions;
-uint256 public totalSubmissions; // Just a counter
+// Become sponsor with ERC20 token
+await token.approve(hackathon.address, parseEther("100"));
+await hackathon.becomeSponsorWithToken(token.address, parseEther("100"));
 
-// Dynamic winner tracking without sorting
-mapping(address => uint256) public winnerPosition;
-address[] public winners;
+// Distribute prize
+await hackathon.distributePrize(winnerAddress, parseEther("0.1"));
 ```
 
-## 🚀 Future Improvements
+## Security Considerations
 
-- **Oracle Integration**: Chainlink VRF for true randomness
-- **Multi-Token Support**: ERC-20 token prizes and stakes
-- **Advanced Governance**: Time-locked governance for parameter changes
-- **Layer 2 Deployment**: Polygon, Arbitrum support
-- **Batch Operations**: Enhanced batch functionality for large hackathons
+### Audit Recommendations
+- All contracts should undergo professional security audits
+- Test all voting systems thoroughly
+- Validate judge selection mechanisms
+- Review stake and prize distribution logic
 
-## 📄 License
+### Best Practices
+- Use multi-signature wallets for factory operations
+- Implement proper access controls
+- Regular security updates
+- Monitor for unusual activity
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Contributing
 
-## 🤝 Contributing
+We welcome contributions to the DeHack platform! Please see our contributing guidelines for more information.
 
+### Development Setup
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
+5. Submit a pull request
 
-## 📞 Support
+## License
 
-For questions or support, please open an issue on the GitHub repository or contact the development team.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support and questions:
+- Create an issue on GitHub
+- Join our Discord community
+- Check the documentation wiki
 
 ---
 
-*Last updated: October 17, 2025*  
-*Version: 1.0.0*
+**DeHack Platform** - Building the future of decentralized hackathons on Ethereum.

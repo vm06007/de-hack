@@ -7,6 +7,7 @@ import Card from "@/components/Card";
 import Image from "@/components/Image";
 import Button from "@/components/Button";
 import Icon from "@/components/Icon";
+import Select from "@/components/Select";
 import ProjectJudgingModal from "@/components/ProjectJudgingModal";
 
 import { useProjects, useHackathons } from "@/src/hooks/useApiData";
@@ -22,9 +23,18 @@ const SubmittedProjects = () => {
     const [selectedProject, setSelectedProject] = useState<any>(null);
     const [selectedProjectIndex, setSelectedProjectIndex] = useState<number>(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedHackathon, setSelectedHackathon] = useState<string>("all");
+    const [selectedHackathon, setSelectedHackathon] = useState<{id: string, name: string}>({id: "all", name: "All Hackathons"});
     const { data: projects, loading, error } = useProjects();
     const { data: hackathons } = useHackathons();
+
+    // Create hackathon options for the Select component
+    const hackathonOptions = [
+        { id: "all", name: "All Hackathons" },
+        ...(hackathons && Array.isArray(hackathons) ? hackathons.map((hackathon) => ({
+            id: hackathon.id.toString(),
+            name: hackathon.title
+        })) : [])
+    ];
 
     const handleSlideChange = (swiper: SwiperType) => {
         setIsFirstSlide(swiper.isBeginning);
@@ -85,7 +95,7 @@ const SubmittedProjects = () => {
                     };
 
                     const statusDisplay = {
-                        'submitted': 'Ready',
+                        'submitted': 'Ready To Vote',
                         'under_review': 'Ongoing',
                         'approved': 'Ready',
                         'rejected': 'Rejected'
@@ -129,11 +139,11 @@ const SubmittedProjects = () => {
 
     // Filter projects based on selected hackathon
     useEffect(() => {
-        if (selectedHackathon === "all") {
+        if (selectedHackathon.id === "all") {
             setFilteredProjects(transformedProjects);
         } else {
             const filtered = transformedProjects.filter(project =>
-                project.hackathonId === parseInt(selectedHackathon)
+                project.hackathonId === parseInt(selectedHackathon.id)
             );
             setFilteredProjects(filtered);
         }
@@ -155,18 +165,13 @@ const SubmittedProjects = () => {
             headContent={
                 <div className="flex items-center gap-3">
                     {/* Hackathon Filter Dropdown */}
-                    <select
+                    <Select
                         value={selectedHackathon}
-                        onChange={(e) => setSelectedHackathon(e.target.value)}
-                        className="px-3 py-2 bg-b-surface2 border border-s-stroke2 rounded-lg text-t-primary focus:outline-none focus:border-blue-500 min-w-48"
-                    >
-                        <option value="all">All Hackathons</option>
-                        {hackathons && Array.isArray(hackathons) && hackathons.map((hackathon) => (
-                            <option key={hackathon.id} value={hackathon.id}>
-                                {hackathon.title}
-                            </option>
-                        ))}
-                    </select>
+                        onChange={setSelectedHackathon}
+                        options={hackathonOptions}
+                        placeholder="Select hackathon"
+                        className="min-w-64"
+                    />
 
                     {/* Navigation Arrows */}
                     <div className="flex items-center gap-1">

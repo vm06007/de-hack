@@ -109,8 +109,10 @@ const SubmittedProjects = () => {
                         if (!address || typeof address !== 'string' || address.length < 10) return "0x0000...0000";
                         return `${address.slice(0, 5)}...${address.slice(-3)}`;
                     };
-                    const submittedBy = truncateAddress(project.submittedBy) || "0x0000...0000";
-                    const originalSubmittedBy = project.submittedBy; // Keep original full address
+                    // Use the same fallback logic as the modal: participantAddress || submittedBy || submittedByName
+                    const addressToUse = project.participantAddress || project.submittedBy || project.submittedByName;
+                    const submittedBy = truncateAddress(addressToUse);
+                    const originalSubmittedBy = addressToUse; // Keep original full address
 
                     return {
                         id: project.id,

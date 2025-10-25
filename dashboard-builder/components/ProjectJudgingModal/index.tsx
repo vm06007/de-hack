@@ -4,6 +4,7 @@ import Button from "@/components/Button";
 import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import { useAccount } from "wagmi";
+import { useDelegateToAgent } from "@/src/hooks/useDelegateToAgent";
 
 interface ProjectJudgingModalProps {
     open: boolean;
@@ -64,6 +65,10 @@ const ProjectJudgingModal = ({
     const [isScannerExpanded, setIsScannerExpanded] = useState(false);
     const { address } = useAccount();
 
+    // Default hackathon contract address
+    const HACKATHON_CONTRACT_ADDRESS = "0x553284c5b8A83905f29545132F7043cC34EAFca1";
+    const { delegateToAgent, isLoading: isDelegatingToAgent } = useDelegateToAgent(HACKATHON_CONTRACT_ADDRESS);
+
     // Reset scan results when project changes
     useEffect(() => {
         setScanResults(null);
@@ -100,19 +105,20 @@ const ProjectJudgingModal = ({
     };
 
     const handleAiDelegation = async () => {
-        if (!delegateAddress) {
-            alert("Please enter a delegate address");
-            return;
-        }
+        // Use the input value or default to the placeholder address
+        const addressToUse = delegateAddress || "0x19bF54d64bc776532fF03937b662226E4af59517";
 
         setIsDelegating(true);
         try {
-            // TODO: Implement AI delegation logic
-            console.log(`Delegating voting to ${delegateAddress}`);
-            alert(`Voting delegated to ${delegateAddress}`);
+            console.log(`Delegating voting to ${addressToUse}`);
+
+            await delegateToAgent(addressToUse, (result: any) => {
+                console.log("Delegation successful:", result);
+                // Optionally close the modal or show success message
+            });
         } catch (error) {
             console.error("Failed to delegate voting:", error);
-            alert("Failed to delegate voting. Please try again.");
+            // Error handling is done in the hook with toast notifications
         } finally {
             setIsDelegating(false);
         }
@@ -517,8 +523,8 @@ const ProjectJudgingModal = ({
                                                     // Handle both old format (number) and new format (object with scores)
                                                     const score = typeof judgeData === 'number'
                                                         ? judgeData
-                                                        : judgeData.scores
-                                                            ? Object.values(judgeData.scores).reduce((sum: number, val: any) => sum + val, 0) / Object.keys(judgeData.scores).length
+                                                        : (judgeData as any)?.scores
+                                                            ? Object.values((judgeData as any).scores).reduce((sum: number, val: any) => sum + val, 0) / Object.keys((judgeData as any).scores).length
                                                             : 0;
 
                                                     return (
@@ -781,7 +787,7 @@ const ProjectJudgingModal = ({
                                                 <div className="space-y-3">
                                                     <h4 className="text-t-primary font-medium">Flags</h4>
                                                     <div className="space-y-2">
-                                                        {scanResults.flags.map((flag, index) => (
+                                                        {scanResults.flags.map((flag: string, index: number) => (
                                                             <div key={index} className="text-sm text-red-400 flex items-center gap-2">
                                                                 <div className="w-1.5 h-1.5 rounded-full bg-red-400"></div>
                                                                 {flag}
@@ -900,10 +906,10 @@ const ProjectJudgingModal = ({
                                             </div>
                                             <Button
                                                 onClick={handleAiDelegation}
-                                                disabled={isDelegating || !delegateAddress}
+                                                disabled={isDelegating || isDelegatingToAgent}
                                                 className="w-full text-sm mt-2"
                                             >
-                                                {isDelegating ? "Delegating..." : "Delegate to AI Agent"}
+                                                {isDelegating || isDelegatingToAgent ? "Delegating..." : "Delegate to AI Agent"}
                                             </Button>
                                         </div>
                                     </div>

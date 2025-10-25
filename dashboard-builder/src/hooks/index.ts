@@ -9,3 +9,4 @@ export { useComments } from './useComments';
 export { useOrganizations } from './useOrganizations';
 export { useTimeSlots } from './useTimeSlots';
 export { useAffiliateCenter } from './useAffiliateCenter';
+export { useDelegateToAgent } from './useDelegateToAgent';

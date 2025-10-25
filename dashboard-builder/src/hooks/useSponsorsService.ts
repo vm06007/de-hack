@@ -50,6 +50,7 @@ export const useSponsorsService = (hackathonId?: number) => {
     const [sponsors, setSponsors] = useState<ApiSponsor[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isCreating, setIsCreating] = useState(false);
 
     useEffect(() => {
         const fetchSponsors = async () => {
@@ -93,10 +94,45 @@ export const useSponsorsService = (hackathonId?: number) => {
         fetchSponsors();
     }, [hackathonId]);
 
+    const createSponsor = async (sponsorData: {
+        hackathonId: number;
+        companyName: string;
+        contributionAmount: string;
+        companyLogo?: string;
+        prizeDistribution?: string;
+        depositHook?: string;
+        transactionHash?: string;
+        sponsorAddress?: string;
+    }): Promise<ApiSponsor> => {
+        try {
+            setIsCreating(true);
+            setError(null);
+
+            console.log('Creating sponsor with data:', sponsorData);
+            const response = await apiClient.post('/sponsors', sponsorData);
+            console.log('Sponsor created successfully:', response);
+
+            // Add the new sponsor to the local state
+            const newSponsor = response as ApiSponsor;
+            setSponsors(prev => [...prev, newSponsor]);
+
+            return newSponsor;
+        } catch (err) {
+            console.error('Error creating sponsor:', err);
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+            setError(errorMessage);
+            throw new Error(errorMessage);
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
     return {
         sponsors,
         loading,
         error,
+        isCreating,
+        createSponsor,
     };
 };
 

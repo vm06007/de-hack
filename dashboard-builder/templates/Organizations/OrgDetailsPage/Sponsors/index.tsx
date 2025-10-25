@@ -58,9 +58,10 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [prizeDistribution, setPrizeDistribution] = useState("");
     const [depositHook, setDepositHook] = useState({ id: 1, name: "Plain Deposit" });
+    const [selectedTransactionType, setSelectedTransactionType] = useState<'legacy' | 'batched'>('legacy');
 
     // Use the sponsors hook for backend data
-    const { sponsors: backendSponsors, loading: sponsorsLoading } = useSponsorsService(hackathon?.id);
+    const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor, isCreating: isCreatingSponsor } = useSponsorsService(hackathon?.id);
 
     // Use the becomeSponsor hook for smart contract interaction
     const {
@@ -182,7 +183,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                         hackathonId: hackathon.id,
                         companyName: companyName.trim(),
                         contributionAmount: contributionAmount,
-                        companyLogo: logoPreview, // Base64 image data
+                        companyLogo: logoPreview || undefined, // Convert null to undefined
                         prizeDistribution: prizeDistribution,
                         depositHook: depositHook.name,
                         transactionHash: result.hash,
@@ -190,17 +191,19 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                     };
 
                     console.log("Storing sponsor data in backend...", sponsorData);
-                    // Note: createSponsor functionality needs to be implemented in useSponsorsService
-                    console.log("Sponsor data would be stored in backend:", sponsorData);
+                    
+                    // Call the backend API to create the sponsor
+                    const createdSponsor = await createSponsor(sponsorData);
+                    console.log("Sponsor created successfully in backend:", createdSponsor);
 
                     // Dispatch custom event to notify other components of sponsor update
                     window.dispatchEvent(new CustomEvent('sponsorUpdated', {
-                        detail: { sponsor: sponsorData }
+                        detail: { sponsor: createdSponsor }
                     }));
 
                     console.log("Complete sponsor flow successful:", {
                         contractResult: result,
-                        sponsorData
+                        sponsorData: createdSponsor
                     });
 
                     // Close modal and reset form after successful backend call
@@ -211,6 +214,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                     setLogoPreview(null);
                     setPrizeDistribution("");
                     setDepositHook({ id: 1, name: "Plain Deposit" });
+                    setSelectedTransactionType('legacy');
 
                 } catch (backendError) {
                     console.error("Backend call failed after successful contract transaction:", backendError);
@@ -218,7 +222,8 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                 }
             },
             hackathon?.sponsorCurrency,
-            tokenAddress
+            tokenAddress,
+            selectedTransactionType
             );
 
             console.log("Smart contract call initiated:", contractResult);
@@ -346,7 +351,17 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
         </Card>
 
         {showModal && (
-            <Modal open={showModal} onClose={() => setShowModal(false)} classWrapper="p-0">
+            <Modal open={showModal} onClose={() => {
+                setShowModal(false);
+                setCompanyName("");
+                setContributionAmount("");
+                setCompanyLogo(null);
+                setLogoPreview(null);
+                setPrizeDistribution("");
+                setDepositHook({ id: 1, name: "Plain Deposit" });
+                setSelectedTransactionType('legacy');
+                setValidationErrors({});
+            }} classWrapper="p-0">
                 <div className="p-0 max-w-2xl">
                     <h3 className="text-h4 mb-6">Become a Sponsor</h3>
                     <div className="space-y-6">
@@ -429,6 +444,72 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                             </div>
                         </div>
 
+                        {/* Transaction Type Selection */}
+                        <div>
+                            <label className="block text-body-2 mb-2">Transaction Type</label>
+                            <div className="text-caption text-t-secondary mb-3">
+                                Choose how you want to execute the sponsorship transaction
+                            </div>
+                            <div className="grid grid-cols-1 gap-3">
+                                <div 
+                                    className={`p-4 rounded-lg border cursor-pointer transition-colors ${
+                                        selectedTransactionType === 'legacy' 
+                                            ? 'border-blue-500 bg-blue-50' 
+                                            : 'border-s-stroke2 bg-b-surface1 hover:bg-b-surface2'
+                                    }`}
+                                    onClick={() => setSelectedTransactionType('legacy')}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <div className="text-body-2 font-medium">Regular Transaction</div>
+                                            <div className="text-caption text-t-secondary">
+                                                Standard transaction flow (2 separate transactions for tokens)
+                                            </div>
+                                        </div>
+                                        <div className={`w-4 h-4 rounded-full border-2 ${
+                                            selectedTransactionType === 'legacy' 
+                                                ? 'border-blue-500 bg-blue-500' 
+                                                : 'border-s-stroke2'
+                                        }`}>
+                                            {selectedTransactionType === 'legacy' && (
+                                                <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {walletCapabilities?.supportsBatching && (
+                                    <div 
+                                        className={`p-4 rounded-lg border cursor-pointer transition-colors ${
+                                            selectedTransactionType === 'batched' 
+                                                ? 'border-blue-500 bg-blue-50' 
+                                                : 'border-s-stroke2 bg-b-surface1 hover:bg-b-surface2'
+                                        }`}
+                                        onClick={() => setSelectedTransactionType('batched')}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <div className="text-body-2 font-medium">Batched Transaction (EIP-7702)</div>
+                                                <div className="text-caption text-t-secondary">
+                                                    Single atomic transaction combining approval and sponsorship
+                                                </div>
+                                            </div>
+                                            <div className={`w-4 h-4 rounded-full border-2 ${
+                                                selectedTransactionType === 'batched' 
+                                                    ? 'border-blue-500 bg-blue-500' 
+                                                    : 'border-s-stroke2'
+                                            }`}>
+                                                {selectedTransactionType === 'batched' && (
+                                                    <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                            </div>
+                        </div>
+
                         {/* Token Information - only show if currency is not ETH */}
                         {hackathon?.sponsorCurrency && hackathon.sponsorCurrency !== 'ETH' && (
                             <div>
@@ -502,9 +583,6 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                     {transactionStrategy === 'batched' && (
                                         <span>Your wallet supports batched transactions for optimal efficiency.</span>
                                     )}
-                                    {transactionStrategy === 'smart-wallet' && (
-                                        <span>Your wallet supports smart wallet features for enhanced functionality.</span>
-                                    )}
                                 </div>
                             </div>
                         )}
@@ -532,7 +610,17 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
 
                         <div className="flex gap-3 pt-0">
                             <Button
-                                onClick={() => setShowModal(false)}
+                                onClick={() => {
+                                    setShowModal(false);
+                                    setCompanyName("");
+                                    setContributionAmount("");
+                                    setCompanyLogo(null);
+                                    setLogoPreview(null);
+                                    setPrizeDistribution("");
+                                    setDepositHook({ id: 1, name: "Plain Deposit" });
+                                    setSelectedTransactionType('legacy');
+                                    setValidationErrors({});
+                                }}
                                 className="flex-1"
                                 isStroke
                             >
@@ -541,12 +629,11 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                             <Button
                                 onClick={handleSubmit}
                                 className="flex-1"
-                                disabled={isSubmitting || contractLoading}
+                                disabled={isSubmitting || contractLoading || isCreatingSponsor}
                             >
-                                {isSubmitting || contractLoading ? "Processing..." :
-                                 transactionStrategy === 'legacy' ? "Proceed (2 Transactions)" :
-                                 transactionStrategy === 'batched' ? "Proceed (Batched)" :
-                                 transactionStrategy === 'smart-wallet' ? "Proceed (Smart Wallet)" :
+                                {isSubmitting || contractLoading || isCreatingSponsor ? "Processing..." :
+                                 selectedTransactionType === 'legacy' ? "Proceed (2 Transactions)" :
+                                 selectedTransactionType === 'batched' ? "Proceed (Batched)" :
                                  "Proceed"}
                             </Button>
                         </div>

@@ -114,7 +114,7 @@ export const useBecomeSponsor = (contractAddress: string) => {
     const [isLoading, setIsLoading] = useState(false);
     const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
     const [walletCapabilities, setWalletCapabilities] = useState<WalletCapabilities | null>(null);
-    const [transactionStrategy, setTransactionStrategy] = useState<'legacy' | 'batched' | 'smart-wallet'>('legacy');
+    const [transactionStrategy, setTransactionStrategy] = useState<'legacy' | 'batched'>('legacy');
     const callbackRef = useRef<((result: BecomeSponsorResult) => void) | null>(null);
     const contributionAmountRef = useRef<string>('');
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -332,10 +332,8 @@ export const useBecomeSponsor = (contractAddress: string) => {
                 // Approach 2: Try using wallet's native batching if available
                 await executeNativeBatching(tokenAddress, tokenAmount);
             } catch (nativeError) {
-                console.log('Native batching failed, falling back to sequential...');
-
-                // Approach 3: Fallback to sequential transactions
-                await executeSequentialTransactions(tokenAddress, tokenAmount);
+                console.log('Native batching failed, no fallback for batched transactions');
+                throw new Error('Batched transaction failed. Please try with regular transaction type.');
             }
         }
     };
@@ -487,12 +485,7 @@ export const useBecomeSponsor = (contractAddress: string) => {
 
         } catch (error) {
             console.error('Batched transaction failed:', error);
-
-            // Fallback to sequential transactions
-            console.log('Batched transaction failed, falling back to sequential...');
-            toast('Batched transaction failed. Using sequential transactions instead.');
-
-            await executeSequentialTransactions(tokenAddress, tokenAmount);
+            throw error;
         }
     };
 
@@ -639,65 +632,13 @@ export const useBecomeSponsor = (contractAddress: string) => {
         }
     };
 
-    // Helper function to handle smart wallet transactions
-    const handleSmartWalletTransaction = async (
-        contributionAmount: string,
-        sponsorCurrency?: string,
-        tokenAddress?: string
-    ): Promise<void> => {
-        try {
-            toast.loading("Enabling smart wallet and preparing transaction...", { id: "smart-wallet" });
-
-            // This would involve enabling the smart wallet first
-            // Then preparing the transaction with the smart wallet context
-            console.log('Smart wallet transaction:', {
-                contributionAmount,
-                sponsorCurrency,
-                tokenAddress,
-                capabilities: walletCapabilities
-            });
-
-            // For now, fall back to standard transaction
-            // In a real implementation, this would use smart wallet specific methods
-            if (sponsorCurrency === 'ETH' || !sponsorCurrency) {
-                const contributionInWei = parseEther(contributionAmount);
-                writeContract({
-                    address: contractAddress as `0x${string}`,
-                    abi: HACKATHON_ABI,
-                    functionName: "becomeSponsor",
-                    value: contributionInWei
-                });
-            } else {
-                if (!tokenAddress) {
-                    throw new Error("Token address is required for token sponsorship");
-                }
-
-                const tokenDecimals = getTokenDecimals(sponsorCurrency || '');
-                if (!tokenDecimals) {
-                    throw new Error(`Token decimals not found for ${sponsorCurrency}`);
-                }
-
-                const tokenAmount = parseUnits(contributionAmount, tokenDecimals);
-
-                writeContract({
-                    address: contractAddress as `0x${string}`,
-                    abi: HACKATHON_ABI,
-                    functionName: "becomeSponsorWithToken",
-                    args: [tokenAddress as `0x${string}`, tokenAmount]
-                });
-            }
-        } catch (error) {
-            console.error('Error in smart wallet transaction:', error);
-            toast.error('Failed to execute smart wallet transaction');
-            throw error;
-        }
-    };
 
     const becomeSponsor = async (
         contributionAmount: string,
         onSuccess?: (result: BecomeSponsorResult) => void,
         sponsorCurrency?: string,
-        tokenAddress?: string
+        tokenAddress?: string,
+        transactionType?: 'legacy' | 'batched'
     ): Promise<BecomeSponsorResult> => {
         if (!contributionAmount || parseFloat(contributionAmount) <= 0) {
             toast.error("Please enter a valid contribution amount");
@@ -732,15 +673,14 @@ export const useBecomeSponsor = (contractAddress: string) => {
             // Add a small delay to ensure wallet is ready
             await new Promise(resolve => setTimeout(resolve, 500));
 
-            // Determine transaction strategy based on wallet capabilities
-            console.log("Transaction strategy:", transactionStrategy);
+            // Use provided transaction type or fall back to detected strategy
+            const selectedTransactionType = transactionType || transactionStrategy;
+            console.log("Selected transaction type:", selectedTransactionType);
             console.log("Wallet capabilities:", walletCapabilities);
 
             // Handle different transaction strategies
-            if (transactionStrategy === 'batched') {
+            if (selectedTransactionType === 'batched') {
                 await handleBatchedTransaction(contributionAmount, sponsorCurrency, tokenAddress);
-            } else if (transactionStrategy === 'smart-wallet') {
-                await handleSmartWalletTransaction(contributionAmount, sponsorCurrency, tokenAddress);
             } else {
                 // Legacy transaction handling
                 if (sponsorCurrency === 'ETH' || !sponsorCurrency) {

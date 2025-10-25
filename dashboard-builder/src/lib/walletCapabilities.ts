@@ -157,7 +157,7 @@ const queryWalletCapabilities = async (address: string, chainId: number): Promis
 /**
  * Get the appropriate transaction strategy based on wallet capabilities
  */
-export const getTransactionStrategy = (capabilities: WalletCapabilities): 'legacy' | 'batched' | 'smart-wallet' => {
+export const getTransactionStrategy = (capabilities: WalletCapabilities): 'legacy' | 'batched' => {
     console.log('Determining transaction strategy:', {
         supportsEIP7702: capabilities.supportsEIP7702,
         supportsBatching: capabilities.supportsBatching,
@@ -169,12 +169,6 @@ export const getTransactionStrategy = (capabilities: WalletCapabilities): 'legac
     if (capabilities.supportsBatching) {
         console.log('Using batched strategy - wallet supports atomic batching');
         return 'batched';
-    }
-
-    // If wallet supports EIP-7702 but not batching, use smart-wallet strategy
-    if (capabilities.supportsEIP7702 && capabilities.supportsSmartWallets) {
-        console.log('Using smart-wallet strategy - wallet supports EIP-7702');
-        return 'smart-wallet';
     }
 
     // Default to legacy for all other cases (including wallets like Rabby)

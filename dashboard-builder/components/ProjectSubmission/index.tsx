@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { useSponsors } from "@/src/hooks/useSponsors";
 import { useSubmitProject, ProjectSubmissionData } from "@/src/hooks/useSubmitProject";
 import CongratsScreen from "@/components/CongratsScreen";
+import { useAccount } from "wagmi";
 
 type ProjectSubmissionProps = {
     open: boolean;
@@ -30,6 +31,9 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
 
     // Get sponsors list for sponsor track selection
     const { sponsors: backendSponsors, loading: sponsorsLoading, fetchSponsors } = useSponsors(hackathon?.id);
+
+    // Get wallet address for participant identification
+    const { address } = useAccount();
 
     // Use the submit project hook
     const {
@@ -191,7 +195,9 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                 githubUrl: githubLink.trim(),
                 images: imageBase64Array,
                 technologies: [], // Could be extracted from description or added as a field
-                submittedByName: "Anonymous" // Could be fetched from user context
+                submittedByName: address || "Anonymous", // Use wallet address or fallback
+                participantAddress: address, // Wallet address of the submitter
+                contractAddress: hackathon?.contractAddress // Hackathon contract address
             };
 
             console.log("Submitting project:", fullProjectData);

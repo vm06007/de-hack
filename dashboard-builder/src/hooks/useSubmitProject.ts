@@ -76,6 +76,8 @@ export interface ProjectSubmissionData {
     technologies: string[];
     submittedBy?: number;
     submittedByName?: string;
+    participantAddress?: string; // Wallet address of the submitter
+    contractAddress?: string; // Hackathon contract address
 }
 
 export const useSubmitProject = (contractAddress: string) => {

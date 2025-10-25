@@ -11,7 +11,7 @@ export const useComments = () => {
             try {
                 setLoading(true);
                 const result = await apiClient.get('/comments');
-                setData(result);
+                setData(result as any[]);
                 setError(null);
             } catch (err) {
                 console.error('Failed to fetch comments:', err);

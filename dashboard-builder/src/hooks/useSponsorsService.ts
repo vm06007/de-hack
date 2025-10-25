@@ -56,30 +56,30 @@ export const useSponsorsService = (hackathonId?: number) => {
             try {
                 setLoading(true);
                 setError(null);
-                
+
                 const endpoint = hackathonId
                     ? `/sponsors?hackathonId=${hackathonId}`
                     : '/sponsors';
-                
+
                 console.log('useSponsorsService - Fetching from endpoint:', endpoint);
                 const apiResponse = await apiClient.get(endpoint);
                 console.log('useSponsorsService - API Response:', apiResponse);
-                
+
                 const sponsorsData = (apiResponse as any)?.sponsors;
                 if (!sponsorsData || !Array.isArray(sponsorsData)) {
                     console.log('useSponsorsService - No sponsors data found');
                     setSponsors([]);
                     return;
                 }
-                
+
                 const apiSponsors: ApiSponsor[] = sponsorsData;
                 console.log('useSponsorsService - API Sponsors count:', apiSponsors.length);
-                
+
                 // Return raw API data instead of transforming it
                 // Limit to 5 sponsors
                 const limitedSponsors = apiSponsors.slice(0, 5);
                 console.log('useSponsorsService - Limited sponsors count:', limitedSponsors.length);
-                
+
                 setSponsors(limitedSponsors);
             } catch (err) {
                 console.error('useSponsorsService - Error fetching sponsors:', err);
@@ -118,7 +118,7 @@ const aggregateSponsorsByName = (sponsors: ApiSponsor[]): Sponsor[] => {
                 hackathonsSponsored: 0
             });
         }
-        
+
         const group = aggregated.get(companyName)!;
         group.sponsors.push(sponsor);
         group.totalContributions += parseFloat(sponsor.contributionAmount) || 0;
@@ -143,7 +143,7 @@ const aggregateSponsorsByName = (sponsors: ApiSponsor[]): Sponsor[] => {
                     'ETHGlobal': 52, // Swapped from 18 to 52
                     'Token 2049': 18, // Swapped from 52 to 18
                 };
-                
+
                 // Return custom rate if defined, otherwise use deterministic calculation
                 return customRates[companyName] ?? Math.abs(companyName.split('').reduce((hash, char) => hash + char.charCodeAt(0), 0)) % 100;
             })(),
@@ -164,7 +164,7 @@ const aggregateSponsorsByName = (sponsors: ApiSponsor[]): Sponsor[] => {
                         'Verse Token': 'https://verse.io',
                         'Test.com': 'https://test.com'
                     };
-                    
+
                     // Return mapped website or create a generic one
                     return websiteMap[companyName] || `https://${companyName.toLowerCase().replace(/\s+/g, '')}.com`;
                 })(),
@@ -180,7 +180,7 @@ const aggregateSponsorsByName = (sponsors: ApiSponsor[]): Sponsor[] => {
                     'Verse Token': 'https://verse.io',
                     'Test.com': 'https://test.com'
                 };
-                
+
                 // Return mapped website or create a generic one
                 return websiteMap[companyName] || `https://${companyName.toLowerCase().replace(/\s+/g, '')}.com`;
             })(),
@@ -199,33 +199,33 @@ export const useSponsorsList = (hackathonId?: number) => {
             try {
                 setLoading(true);
                 setError(null);
-                
+
                 const endpoint = hackathonId
                     ? `/sponsors?hackathonId=${hackathonId}`
                     : '/sponsors';
-                
+
                 console.log('useSponsorsList - Fetching from endpoint:', endpoint);
                 const apiResponse = await apiClient.get(endpoint);
                 console.log('useSponsorsList - API Response:', apiResponse);
-                
+
                 const sponsorsData = (apiResponse as any)?.sponsors;
                 if (!sponsorsData || !Array.isArray(sponsorsData)) {
                     console.log('useSponsorsList - No sponsors data found');
                     setSponsors([]);
                     return;
                 }
-                
+
                 const apiSponsors: ApiSponsor[] = sponsorsData;
                 console.log('useSponsorsList - API Sponsors count:', apiSponsors.length);
-                
+
                 // Group sponsors by name and aggregate data
                 const aggregatedSponsors = aggregateSponsorsByName(apiSponsors);
                 console.log('useSponsorsList - Aggregated sponsors count:', aggregatedSponsors.length);
-                
+
                 // Limit to first 5 unique sponsors
                 const limitedSponsors = aggregatedSponsors.slice(0, 5);
                 console.log('useSponsorsList - Limited sponsors count:', limitedSponsors.length);
-                
+
                 setSponsors(limitedSponsors);
             } catch (err) {
                 console.error('useSponsorsList - Error fetching sponsors:', err);

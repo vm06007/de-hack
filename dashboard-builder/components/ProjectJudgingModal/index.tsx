@@ -52,7 +52,7 @@ const ProjectJudgingModal = ({
             !image.includes('picsum.photos') &&
             !image.includes('via.placeholder.com') &&
             !image.includes('localhost') &&
-            (image.startsWith('http') || image.startsWith('/'))
+            (image.startsWith('http') || image.startsWith('/') || image.startsWith('data:'))
         );
     };
     const [score, setScore] = useState(1.0);
@@ -66,6 +66,12 @@ const ProjectJudgingModal = ({
     const [isRulesExpanded, setIsRulesExpanded] = useState(false);
     const [isScannerExpanded, setIsScannerExpanded] = useState(false);
     const { address } = useAccount();
+
+    // Utility function to truncate addresses for display
+    const truncateAddress = (address: string) => {
+        if (!address || typeof address !== 'string' || address.length < 10) return "0x0000...0000";
+        return `${address.slice(0, 5)}...${address.slice(-3)}`;
+    };
 
     // Default hackathon contract address
     const HACKATHON_CONTRACT_ADDRESS = "0x553284c5b8A83905f29545132F7043cC34EAFca1";
@@ -332,7 +338,7 @@ const ProjectJudgingModal = ({
                             </div>
                             <div className="flex items-center gap-4">
                                 <span className="text-t-secondary">
-                                    Submitted by {project.participantAddress || project.submittedBy || project.submittedByName}
+                                    Submitted by {truncateAddress(project.participantAddress || project.submittedBy || project.submittedByName)}
                                 </span>
                             </div>
                         </div>

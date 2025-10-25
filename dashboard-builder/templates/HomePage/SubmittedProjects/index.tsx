@@ -100,6 +100,7 @@ const SubmittedProjects = () => {
                         return `${address.slice(0, 5)}...${address.slice(-3)}`;
                     };
                     const submittedBy = truncateAddress(project.submittedBy) || "0x0000...0000";
+                    const originalSubmittedBy = project.submittedBy; // Keep original full address
 
                     return {
                         id: project.id,
@@ -118,6 +119,7 @@ const SubmittedProjects = () => {
                         statusColor: statusColors[project.status as keyof typeof statusColors] || "label-green",
                         project: project,
                         submittedBy: submittedBy,
+                        originalSubmittedBy: originalSubmittedBy, // Store original full address
                         hackathonId: project.hackathonId
                     };
                 });
@@ -252,8 +254,8 @@ const SubmittedProjects = () => {
                 onClose={handleCloseModal}
                 project={{
                     ...selectedProject.project,
-                    participantAddress: selectedProject.submittedBy,
-                    submittedBy: selectedProject.submittedBy
+                    participantAddress: selectedProject.originalSubmittedBy, // Use original full address
+                    submittedBy: selectedProject.originalSubmittedBy // Use original full address
                 }}
                 onScore={handleScoreSubmit}
                 onNextProject={handleNextProject}

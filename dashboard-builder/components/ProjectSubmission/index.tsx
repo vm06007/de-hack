@@ -20,6 +20,7 @@ type ProjectSubmissionProps = {
 const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmissionProps) => {
     const [projectName, setProjectName] = useState("");
     const [githubLink, setGithubLink] = useState("");
+    const [demoUrl, setDemoUrl] = useState("");
     const [description, setDescription] = useState("");
     const [teamMembers, setTeamMembers] = useState("");
     const [projectImages, setProjectImages] = useState<File[]>([]);
@@ -71,6 +72,7 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
     const resetForm = () => {
         setProjectName("");
         setGithubLink("");
+        setDemoUrl("");
         setDescription("");
         setTeamMembers("");
         setProjectImages([]);
@@ -192,6 +194,7 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                 description: description,
                 teamMembers: teamMembersArray,
                 selectedTracks: selectedTracks,
+                demoUrl: demoUrl.trim() || undefined, // Include demo URL if provided
                 githubUrl: githubLink.trim(),
                 images: imageBase64Array,
                 technologies: [], // Could be extracted from description or added as a field
@@ -271,6 +274,19 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
                         {validationErrors.githubLink && (
                             <div className="text-red-500 text-sm mt-1">{validationErrors.githubLink}</div>
                         )}
+                    </div>
+
+                    {/* Project Demo */}
+                    <div>
+                        <Field
+                            label="Project Demo (Optional)"
+                            placeholder="https://your-demo-url.com or https://youtube.com/watch?v=..."
+                            value={demoUrl}
+                            onChange={(e) => setDemoUrl(e.target.value)}
+                        />
+                        <div className="text-caption text-t-secondary mt-1">
+                            Share a live demo, video walkthrough, or presentation of your project
+                        </div>
                     </div>
 
                     {/*

@@ -43,7 +43,7 @@ const Hackathon = ({ value }: HackathonProps) => (
             />
             <div
                 className={`inline-flex items-center h-6 px-1.5 rounded-lg border text-caption leading-none capitalize ${
-                    value.status === "active" ? "label-green" : 
+                    value.status === "active" ? "label-green" :
                     value.status === "upcoming" ? "label-blue" : "label-red"
                 }`}
             >

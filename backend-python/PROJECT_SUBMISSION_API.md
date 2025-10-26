@@ -6,6 +6,7 @@ This document describes the API endpoints for managing project submissions in th
 ```
 http://localhost:5000/api
 ```
+**Note**: In production, this will be `https://octopus-app-szca5.ondigitalocean.app/api`
 
 ## Endpoints
 
@@ -377,11 +378,11 @@ const submitProject = async (projectData) => {
     },
     body: JSON.stringify(projectData)
   });
-  
+
   if (!response.ok) {
     throw new Error('Failed to submit project');
   }
-  
+
   return await response.json();
 };
 
@@ -400,7 +401,7 @@ const judgeProject = async (projectId, judgeId, scores) => {
     },
     body: JSON.stringify({ judgeId, scores })
   });
-  
+
   return await response.json();
 };
 ```

@@ -54,9 +54,10 @@ export const useSponsors = (hackathonId?: number) => {
         setError(null);
 
         try {
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
             const url = hackathonId
-                ? `http://localhost:5000/api/sponsors?hackathonId=${hackathonId}`
-                : 'http://localhost:5000/api/sponsors';
+                ? `${baseUrl}/sponsors?hackathonId=${hackathonId}`
+                : `${baseUrl}/sponsors`;
 
             const response = await fetch(url);
 
@@ -92,7 +93,8 @@ export const useSponsors = (hackathonId?: number) => {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:5000/api/sponsors', {
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${baseUrl}/sponsors`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -14,6 +14,11 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# Configuration
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
+PORT = int(os.getenv('PORT', 5000))
+DEBUG = os.getenv('FLASK_DEBUG', 'true').lower() == 'true'
+
 # Data directory
 DATA_DIR = "data"
 
@@ -160,7 +165,7 @@ def create_hackathon():
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
             filename = f"{timestamp}_{safe_name}"
             image_file.save(os.path.join(UPLOAD_DIR, filename))
-            image_path = f"http://localhost:5000/uploads/{filename}"
+            image_path = f"{BASE_URL}/uploads/{filename}"
     else:
         # JSON payload may include base64 image or direct URL/path
         import base64
@@ -184,7 +189,7 @@ def create_hackathon():
             filename = f"{timestamp}_upload.{ext}"
             with open(os.path.join(UPLOAD_DIR, filename), 'wb') as f:
                 f.write(binary)
-            image_path = f"http://localhost:5000/uploads/{filename}"
+            image_path = f"{BASE_URL}/uploads/{filename}"
         elif form.get('image'):
             image_path = form.get('image')
 
@@ -556,7 +561,7 @@ def upload_file():
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
             filename = f"{timestamp}_{safe_name}"
             image_file.save(os.path.join(UPLOAD_DIR, filename))
-            return jsonify({"url": f"http://localhost:5000/uploads/{filename}", "filename": filename}), 201
+            return jsonify({"url": f"{BASE_URL}/uploads/{filename}", "filename": filename}), 201
 
         # JSON with base64
         if request.is_json:
@@ -580,7 +585,7 @@ def upload_file():
             filename = f"{timestamp}_upload.{ext}"
             with open(os.path.join(UPLOAD_DIR, filename), 'wb') as f:
                 f.write(binary)
-            return jsonify({"url": f"http://localhost:5000/uploads/{filename}", "filename": filename}), 201
+            return jsonify({"url": f"{BASE_URL}/uploads/{filename}", "filename": filename}), 201
 
         return jsonify({"error": "Unsupported upload format"}), 400
     except Exception as e:
@@ -953,13 +958,9 @@ if __name__ == '__main__':
     # Initialize sample data
     init_sample_data()
 
-    # Get port from environment variable, default to 5000
-    port = int(os.environ.get('PORT', 5000))
-    debug = os.environ.get('FLASK_DEBUG', 'true').lower() == 'true'
-
     print("Starting DeHack Python Backend...")
     print("Sample data initialized")
-    print(f"API available at: http://localhost:{port}")
-    print(f"API docs: http://localhost:{port}/api/hackathons")
+    print(f"API available at: {BASE_URL}")
+    print(f"API docs: {BASE_URL}/api/hackathons")
 
-    app.run(debug=debug, host='0.0.0.0', port=port)
+    app.run(debug=DEBUG, host='0.0.0.0', port=PORT)

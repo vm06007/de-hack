@@ -72,7 +72,8 @@ const NewHackathonPage = () => {
 
     const callBackendAPI = async (hackathonAddress: string, hackathonId: string) => {
         try {
-            const res = await fetch("http://localhost:5000/api/hackathons", {
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+            const res = await fetch(`${baseUrl}/hackathons`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Accept: "application/json" },
                 body: JSON.stringify({
@@ -135,13 +136,13 @@ const NewHackathonPage = () => {
             // Combine date and time for accurate timestamps
             const startDateTime = new Date(startDate);
             startDateTime.setHours(startTime.getHours(), startTime.getMinutes(), startTime.getSeconds());
-            
+
             const endDateTime = new Date(endDate);
             endDateTime.setHours(endTime.getHours(), endTime.getMinutes(), endTime.getSeconds());
-            
+
             const startTimestamp = Math.floor(startDateTime.getTime() / 1000);
             const endTimestamp = Math.floor(endDateTime.getTime() / 1000);
-            
+
             // Debug logging to verify timestamps include time
             console.log('Date/Time conversion:', {
                 startDate: startDate.toISOString(),

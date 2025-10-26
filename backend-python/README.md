@@ -39,6 +39,7 @@ kubectl get pods -l app=dehack-backend
 ### Environment Variables
 - `PORT`: Server port (default: 5000 for local, 8080 for production)
 - `FLASK_DEBUG`: Enable debug mode (default: true for local, false for production)
+- `BASE_URL`: Base URL for serving uploaded files (default: http://localhost:5000)
 
 ### Production vs Development
 - **Development**: Uses Flask development server on port 5000
@@ -124,7 +125,7 @@ backend-python/
 
 #### Health Check Failures
 **Problem**: Kubernetes reports unhealthy pods
-**Solution**: 
+**Solution**:
 1. Check if curl is installed in container
 2. Verify the `/` endpoint returns 200 OK
 3. Check resource limits

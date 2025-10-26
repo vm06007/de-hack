@@ -24,8 +24,9 @@ const Images = ({ setLogoUrl, setCoverUrl }: Props) => {
         setLogoImage(file);
         try {
             const dataUrl = await fileToDataUrl(file);
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
             // Upload to backend to get a stable URL
-            const res = await fetch("http://localhost:5000/api/uploads", {
+            const res = await fetch(`${baseUrl}/uploads`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ imageBase64: dataUrl }),
@@ -43,7 +44,8 @@ const Images = ({ setLogoUrl, setCoverUrl }: Props) => {
         setCoverImage(file);
         try {
             const dataUrl = await fileToDataUrl(file);
-            const res = await fetch("http://localhost:5000/api/uploads", {
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+            const res = await fetch(`${baseUrl}/uploads`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ imageBase64: dataUrl }),

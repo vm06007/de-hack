@@ -122,12 +122,12 @@ export const useSponsorsService = (hackathonId?: number) => {
             setSponsors(prev => [...prev, newSponsor]);
 
             // Dispatch custom event to notify other components
-            window.dispatchEvent(new CustomEvent('sponsorUpdated', { 
-                detail: { 
-                    action: 'created', 
+            window.dispatchEvent(new CustomEvent('sponsorUpdated', {
+                detail: {
+                    action: 'created',
                     sponsor: newSponsor,
-                    hackathonId: sponsorData.hackathonId 
-                } 
+                    hackathonId: sponsorData.hackathonId
+                }
             }));
 
             return newSponsor;

@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
         ignoreBuildErrors: true,
     },
     images: {
+        unoptimized: false,
         remotePatterns: [
             {
                 protocol: 'http',
@@ -21,6 +22,14 @@ const nextConfig: NextConfig = {
                 pathname: '/**',
             },
         ],
+    },
+    async rewrites() {
+        return [
+            {
+                source: '/images/:path*',
+                destination: '/images/:path*',
+            },
+        ];
     },
     webpack: (config) => {
         // Add fallback for node modules that aren't available in the browser

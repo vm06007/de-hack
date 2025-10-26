@@ -330,8 +330,14 @@ def get_hackathon(hackathon_id):
     applications = load_data('applications')
     hackathon_applications = [a for a in applications if a['hackathonId'] == hackathon_id]
 
+    # Get sponsors for this hackathon
+    sponsors = load_data('sponsors')
+    hackathon_sponsors = [s for s in sponsors if s.get('hackathonId') == hackathon_id]
+
     hackathon['applicationsCount'] = len(hackathon_applications)
     hackathon['applications'] = hackathon_applications
+    hackathon['sponsors'] = hackathon_sponsors
+    hackathon['sponsorsCount'] = len(hackathon_sponsors)
 
     return jsonify(hackathon)
 

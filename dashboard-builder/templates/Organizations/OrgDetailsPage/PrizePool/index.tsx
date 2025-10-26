@@ -19,16 +19,59 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
 
     // Use backend sponsor data (prioritize backend data over static props)
     const { sponsors: backendSponsors, refreshSponsors } = useSponsorsService(hackathon?.id);
-    const sponsorData = backendSponsors || sponsors;
+    
+    // Combine sponsors from hackathon data and separate sponsors API
+    const sponsorData = useMemo(() => {
+        const hackathonSponsors = hackathon?.sponsors || [];
+        const apiSponsors = backendSponsors || [];
+        
+        // Merge both sources, prioritizing API data
+        const allSponsors = [...apiSponsors, ...hackathonSponsors];
+        
+        // Remove duplicates based on companyName or sponsorAddress
+        const uniqueSponsors = allSponsors.filter((sponsor, index, self) => 
+            index === self.findIndex(s => 
+                (s.companyName && s.companyName === sponsor.companyName) ||
+                (s.sponsorAddress && s.sponsorAddress === sponsor.sponsorAddress)
+            )
+        );
+        
+        console.log('Prize Pool - Combined sponsors:', {
+            hackathonSponsors: hackathonSponsors.length,
+            apiSponsors: apiSponsors.length,
+            uniqueSponsors: uniqueSponsors.length,
+            sponsors: uniqueSponsors
+        });
+        
+        return uniqueSponsors;
+    }, [hackathon?.sponsors, backendSponsors]);
 
     // Memoize sponsor contributions calculation to prevent unnecessary recalculations
     const sponsorContributions = useMemo(() => {
         if (!sponsorData || !Array.isArray(sponsorData)) return 0;
         
-        return sponsorData.reduce((sum, sponsor) => {
-            const amount = parseFloat(sponsor.contributionAmount || '0');
+        const total = sponsorData.reduce((sum, sponsor) => {
+            // Handle different sponsor data structures
+            const amount = parseFloat(
+                sponsor.contributionAmount || 
+                sponsor.contribution || 
+                sponsor.amount || 
+                '0'
+            );
+            
+            console.log('Prize Pool - Processing sponsor:', {
+                companyName: sponsor.companyName,
+                contributionAmount: sponsor.contributionAmount,
+                contribution: sponsor.contribution,
+                amount: sponsor.amount,
+                parsedAmount: amount
+            });
+            
             return sum + amount;
         }, 0);
+        
+        console.log('Prize Pool - Total sponsor contributions:', total);
+        return total;
     }, [sponsorData]);
 
     // Memoize total prize pool calculation
@@ -94,7 +137,8 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
             sponsorCount: sponsorData?.length || 0,
             sponsorContributions,
             basePrize: totalPrize,
-            totalPrizePool
+            totalPrizePool,
+            sponsorData: sponsorData
         });
     }, [sponsorData?.length, sponsorContributions, totalPrize, totalPrizePool]);
 

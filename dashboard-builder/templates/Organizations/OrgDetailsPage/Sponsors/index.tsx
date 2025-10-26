@@ -61,7 +61,7 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
     const [selectedTransactionType, setSelectedTransactionType] = useState<'legacy' | 'batched'>('legacy');
 
     // Use the sponsors hook for backend data
-    const { sponsors: backendSponsors, loading: sponsorsLoading, createSponsor, isCreating: isCreatingSponsor, refreshSponsors } = useSponsorsService(hackathon?.id);
+    const { sponsors: backendSponsors, loading: sponsorsLoading, error: sponsorsError, createSponsor, isCreating: isCreatingSponsor, refreshSponsors } = useSponsorsService(hackathon?.id);
 
     // Use the becomeSponsor hook for smart contract interaction
     const {
@@ -284,6 +284,16 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                     {sponsorsLoading ? (
                         <div className="text-center py-4">
                             <div className="text-body-2 text-t-secondary">Loading sponsors...</div>
+                        </div>
+                    ) : sponsorsError ? (
+                        <div className="text-center py-4">
+                            <div className="text-body-2 text-red-500 mb-2">Error loading sponsors: {sponsorsError}</div>
+                            <button 
+                                onClick={() => refreshSponsors?.()}
+                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                            >
+                                Retry
+                            </button>
                         </div>
                     ) : list.length > 0 ? (
                         list.map((sponsor) => (

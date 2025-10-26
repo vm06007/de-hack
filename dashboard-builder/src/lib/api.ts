@@ -7,7 +7,7 @@ class ApiClient {
         this.baseUrl = baseUrl;
     }
 
-    private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    private async request<T>(endpoint: string, options: RequestInit = {}, retries = 3): Promise<T> {
         const url = `${this.baseUrl}${endpoint}`;
 
         const config: RequestInit = {
@@ -18,23 +18,36 @@ class ApiClient {
             ...options,
         };
 
-        try {
-            const response = await fetch(url, config);
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                console.log(`API request attempt ${attempt}/${retries} for ${endpoint}`);
+                const response = await fetch(url, config);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
 
-            return await response.json();
-        } catch (error) {
-            console.error(`API request failed for ${endpoint}:`, error);
-            // For single item endpoints, return null instead of empty array
-            if (endpoint.includes('/') && !endpoint.endsWith('s')) {
-                return null as T;
+                const data = await response.json();
+                console.log(`API request successful for ${endpoint}:`, data);
+                return data;
+            } catch (error) {
+                console.error(`API request failed for ${endpoint} (attempt ${attempt}/${retries}):`, error);
+                
+                if (attempt === retries) {
+                    // On final attempt, re-throw the error instead of returning empty data
+                    throw error;
+                }
+                
+                // Wait before retrying (exponential backoff)
+                const delay = Math.pow(2, attempt - 1) * 1000;
+                console.log(`Retrying in ${delay}ms...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
             }
-            // Return empty array for all other endpoints to maintain consistency
-            return [] as T;
         }
+
+        // This should never be reached due to the throw in the catch block
+        throw new Error(`API request failed after ${retries} attempts`);
     }
 
     async get<T>(endpoint: string): Promise<T> {

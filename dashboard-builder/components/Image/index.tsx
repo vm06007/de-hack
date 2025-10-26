@@ -56,6 +56,8 @@ const Image = ({
             onError={() => setError(true)}
             src={processedSrc}
             loader={loader}
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
             {...nextImageProps}
         />
     );

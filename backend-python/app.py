@@ -7,12 +7,22 @@ Simple JSON-based API server
 import json
 import os
 from datetime import datetime
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["*"], supports_credentials=True)
+
+# Add global CORS headers for all responses
+@app.after_request
+def after_request(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+    response.headers['Referrer-Policy'] = 'no-referrer'
+    return response
 
 # Configuration
 PORT = int(os.getenv('PORT', 5000))
@@ -21,16 +31,30 @@ DEBUG = os.getenv('FLASK_DEBUG', 'true').lower() == 'true'
 def get_base_url():
     """Get the base URL based on the current request"""
     from flask import request
-    if request and hasattr(request, 'host'):
-        # Use the actual request host
-        scheme = 'https' if request.is_secure else 'http'
-        return f"{scheme}://{request.host}"
     
-    # Fallback: check if we're in production by looking at common production indicators
-    if os.getenv('KUBERNETES_SERVICE_HOST') or os.getenv('DOCKER_CONTAINER') or PORT == 8080:
+    # Check if we're in production first
+    is_production = (os.getenv('KUBERNETES_SERVICE_HOST') or 
+                    os.getenv('DOCKER_CONTAINER') or 
+                    PORT == 8080)
+    
+    if is_production:
+        print(f"Production detected, using HTTPS URL")
         return 'https://octopus-app-szca5.ondigitalocean.app'
     
+    # For development, use request host if available
+    if request and hasattr(request, 'host'):
+        # Check for forwarded headers that indicate HTTPS
+        if (request.headers.get('X-Forwarded-Proto') == 'https' or 
+            request.headers.get('X-Forwarded-Ssl') == 'on' or
+            request.is_secure):
+            print(f"HTTPS detected via headers, using: https://{request.host}")
+            return f"https://{request.host}"
+        else:
+            print(f"HTTP detected, using: http://{request.host}")
+            return f"http://{request.host}"
+    
     # Default to localhost for development
+    print(f"Using default localhost URL")
     return 'http://localhost:5000'
 
 # Log the configuration for debugging
@@ -563,9 +587,27 @@ def get_overview():
     return jsonify(active_hackathons)
 
 # Serve uploaded files
-@app.route('/uploads/<path:filename>', methods=['GET'])
+@app.route('/uploads/<path:filename>', methods=['GET', 'OPTIONS'])
 def serve_upload(filename):
-    return send_from_directory(UPLOAD_DIR, filename)
+    if request.method == 'OPTIONS':
+        response = Response()
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+        response.headers['Referrer-Policy'] = 'no-referrer'
+        return response
+    
+    response = send_from_directory(UPLOAD_DIR, filename)
+    
+    # Add CORS headers for image loading
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+    response.headers['Referrer-Policy'] = 'no-referrer'
+    
+    return response
 
 # Generic upload endpoint – returns a URL for the uploaded image
 @app.route('/api/uploads', methods=['POST'])

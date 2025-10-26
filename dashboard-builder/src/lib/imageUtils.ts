@@ -83,9 +83,17 @@ export function processImageUrl(
     // Debug logging
     console.log('Processing image URL:', imageUrl);
 
-    // If it's already a complete URL, return as is
+    // If it's already a complete URL, handle mixed content
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
         console.log('URL is already complete:', imageUrl);
+        
+        // Fix mixed content by converting HTTP to HTTPS for production domains
+        if (imageUrl.startsWith('http://octopus-app-szca5.ondigitalocean.app')) {
+            const httpsUrl = imageUrl.replace('http://', 'https://');
+            console.log('Fixed mixed content, converted to HTTPS:', httpsUrl);
+            return httpsUrl;
+        }
+        
         return imageUrl;
     }
 

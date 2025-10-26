@@ -67,7 +67,7 @@ export const useSponsorsService = (hackathonId?: number) => {
 
             const sponsorsData = (apiResponse as any)?.sponsors;
             if (!sponsorsData || !Array.isArray(sponsorsData)) {
-                console.log('useSponsorsService - No sponsors data found');
+                console.log('useSponsorsService - No sponsors data found, setting empty array');
                 setSponsors([]);
                 return;
             }
@@ -81,9 +81,11 @@ export const useSponsorsService = (hackathonId?: number) => {
             console.log('useSponsorsService - Limited sponsors count:', limitedSponsors.length);
 
             setSponsors(limitedSponsors);
+            setError(null); // Clear any previous errors on success
         } catch (err) {
             console.error('useSponsorsService - Error fetching sponsors:', err);
-            setError(err instanceof Error ? err.message : 'Unknown error');
+            const errorMessage = err instanceof Error ? err.message : 'Failed to fetch sponsors';
+            setError(errorMessage);
             setSponsors([]);
         } finally {
             setLoading(false);

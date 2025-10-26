@@ -8,26 +8,29 @@ export const useHackathons = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const result = await apiClient.get('/hackathons');
-                setData(result.data || result);
-                setError(null);
-            } catch (err) {
-                console.error('Failed to fetch hackathons:', err);
-                setError(err instanceof Error ? err.message : 'Unknown error');
-                setData([]);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            console.log('Fetching hackathons...');
+            const result = await apiClient.get('/hackathons');
+            console.log('Hackathons fetched successfully:', result);
+            setData(result.data || result);
+        } catch (err) {
+            console.error('Failed to fetch hackathons:', err);
+            const errorMessage = err instanceof Error ? err.message : 'Failed to fetch hackathons';
+            setError(errorMessage);
+            setData([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchData();
     }, []);
 
-    return { data, loading, error };
+    return { data, loading, error, refetch: fetchData };
 };
 
 export const useHackathon = (id: string) => {
@@ -35,31 +38,34 @@ export const useHackathon = (id: string) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchHackathon = async () => {
-            try {
-                setLoading(true);
-                const result = await apiClient.get(`/hackathons/${id}`);
-                if (result) {
-                    setHackathon(result);
-                    setError(null);
-                } else {
-                    setError('Hackathon not found');
-                    setHackathon(null);
-                }
-            } catch (err) {
-                console.error('Failed to fetch hackathon:', err);
-                setError(err instanceof Error ? err.message : 'Unknown error');
+    const fetchHackathon = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            console.log(`Fetching hackathon ${id}...`);
+            const result = await apiClient.get(`/hackathons/${id}`);
+            console.log(`Hackathon ${id} fetched successfully:`, result);
+            if (result) {
+                setHackathon(result);
+            } else {
+                setError('Hackathon not found');
                 setHackathon(null);
-            } finally {
-                setLoading(false);
             }
-        };
+        } catch (err) {
+            console.error(`Failed to fetch hackathon ${id}:`, err);
+            const errorMessage = err instanceof Error ? err.message : 'Failed to fetch hackathon';
+            setError(errorMessage);
+            setHackathon(null);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         if (id) {
             fetchHackathon();
         }
     }, [id]);
 
-    return { hackathon, loading, error };
+    return { hackathon, loading, error, refetch: fetchHackathon };
 };

@@ -13,7 +13,7 @@ interface PageProps {
 
 export default function HackathonPage({ params }: PageProps) {
     const { id } = use(params);
-    const { hackathon, loading, error } = useHackathon(id);
+    const { hackathon, loading, error, refetch } = useHackathon(id);
 
     if (loading) {
         return (
@@ -26,7 +26,24 @@ export default function HackathonPage({ params }: PageProps) {
         );
     }
 
-    if (error || !hackathon) {
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-96">
+                <div className="text-center">
+                    <div className="text-red-500 text-lg mb-4">Failed to load hackathon</div>
+                    <p className="text-gray-600 mb-4">{error}</p>
+                    <button 
+                        onClick={() => refetch?.()}
+                        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    >
+                        Retry
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!hackathon) {
         notFound();
     }
 

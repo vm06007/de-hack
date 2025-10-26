@@ -24,8 +24,6 @@ spec:
                 value: "8080"
               - name: FLASK_DEBUG
                 value: "false"
-              - name: BASE_URL
-                value: "https://octopus-app-szca5.ondigitalocean.app"
               resources:
                 requests:
                     memory: "256Mi"

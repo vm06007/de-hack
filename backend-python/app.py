@@ -32,17 +32,25 @@ def get_base_url():
     """Get the base URL based on the current request"""
     from flask import request
     
-    # Check if we're in production first
-    is_production = (os.getenv('KUBERNETES_SERVICE_HOST') or 
-                    os.getenv('DOCKER_CONTAINER') or 
-                    PORT == 8080)
+    # Check if we're in production first - be more aggressive about production detection
+    is_production = (
+        os.getenv('KUBERNETES_SERVICE_HOST') or 
+        os.getenv('DOCKER_CONTAINER') or 
+        PORT == 8080 or
+        (request and hasattr(request, 'host') and 'octopus-app-szca5.ondigitalocean.app' in request.host)
+    )
     
     if is_production:
         print(f"Production detected, using HTTPS URL")
+        print(f"Production indicators: KUBERNETES_SERVICE_HOST={os.getenv('KUBERNETES_SERVICE_HOST')}, DOCKER_CONTAINER={os.getenv('DOCKER_CONTAINER')}, PORT={PORT}")
+        if request and hasattr(request, 'host'):
+            print(f"Request host: {request.host}")
         return 'https://octopus-app-szca5.ondigitalocean.app'
     
     # For development, use request host if available
     if request and hasattr(request, 'host'):
+        print(f"Not production, checking request host: {request.host}")
+        print(f"Headers: X-Forwarded-Proto={request.headers.get('X-Forwarded-Proto')}, X-Forwarded-Ssl={request.headers.get('X-Forwarded-Ssl')}, is_secure={request.is_secure}")
         # Check for forwarded headers that indicate HTTPS
         if (request.headers.get('X-Forwarded-Proto') == 'https' or 
             request.headers.get('X-Forwarded-Ssl') == 'on' or

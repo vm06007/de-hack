@@ -18,14 +18,28 @@ CORS(app)
 PORT = int(os.getenv('PORT', 5000))
 DEBUG = os.getenv('FLASK_DEBUG', 'true').lower() == 'true'
 
-# Simple: port 8080 = production, port 5000 = development
-BASE_URL = 'https://octopus-app-szca5.ondigitalocean.app' if PORT == 8080 else 'http://localhost:5000'
+def get_base_url():
+    """Get the base URL based on the current request"""
+    from flask import request
+    if request and hasattr(request, 'host'):
+        # Use the actual request host
+        scheme = 'https' if request.is_secure else 'http'
+        return f"{scheme}://{request.host}"
+    
+    # Fallback: check if we're in production by looking at common production indicators
+    if os.getenv('KUBERNETES_SERVICE_HOST') or os.getenv('DOCKER_CONTAINER') or PORT == 8080:
+        return 'https://octopus-app-szca5.ondigitalocean.app'
+    
+    # Default to localhost for development
+    return 'http://localhost:5000'
 
 # Log the configuration for debugging
 print(f"Backend Configuration:")
 print(f"  PORT: {PORT}")
 print(f"  DEBUG: {DEBUG}")
-print(f"  BASE_URL: {BASE_URL}")
+print(f"  KUBERNETES_SERVICE_HOST: {os.getenv('KUBERNETES_SERVICE_HOST')}")
+print(f"  DOCKER_CONTAINER: {os.getenv('DOCKER_CONTAINER')}")
+print(f"  BASE_URL will be determined dynamically from requests")
 
 # Data directory
 DATA_DIR = "data"
@@ -173,7 +187,7 @@ def create_hackathon():
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
             filename = f"{timestamp}_{safe_name}"
             image_file.save(os.path.join(UPLOAD_DIR, filename))
-            image_path = f"{BASE_URL}/uploads/{filename}"
+            image_path = f"{get_base_url()}/uploads/{filename}"
     else:
         # JSON payload may include base64 image or direct URL/path
         import base64
@@ -197,7 +211,7 @@ def create_hackathon():
             filename = f"{timestamp}_upload.{ext}"
             with open(os.path.join(UPLOAD_DIR, filename), 'wb') as f:
                 f.write(binary)
-            image_path = f"{BASE_URL}/uploads/{filename}"
+            image_path = f"{get_base_url()}/uploads/{filename}"
         elif form.get('image'):
             image_path = form.get('image')
 
@@ -569,7 +583,7 @@ def upload_file():
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
             filename = f"{timestamp}_{safe_name}"
             image_file.save(os.path.join(UPLOAD_DIR, filename))
-            return jsonify({"url": f"{BASE_URL}/uploads/{filename}", "filename": filename}), 201
+            return jsonify({"url": f"{get_base_url()}/uploads/{filename}", "filename": filename}), 201
 
         # JSON with base64
         if request.is_json:
@@ -593,7 +607,7 @@ def upload_file():
             filename = f"{timestamp}_upload.{ext}"
             with open(os.path.join(UPLOAD_DIR, filename), 'wb') as f:
                 f.write(binary)
-            return jsonify({"url": f"{BASE_URL}/uploads/{filename}", "filename": filename}), 201
+            return jsonify({"url": f"{get_base_url()}/uploads/{filename}", "filename": filename}), 201
 
         return jsonify({"error": "Unsupported upload format"}), 400
     except Exception as e:

@@ -45,12 +45,12 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                         <div className="grow">
                             <div className="-mt-1.5 text-h3 max-lg:mt-0 max-lg:text-h4 max-md:text-h5">{title}</div>
                             <div className="flex items-center gap-3 mt-2.5">
-                                <div className="">
+                                <div className="w-10 h-10">
                                     <Image
                                         style={{
                                             borderRadius: "50px",
                                         }}
-                                        className="w-full h-full object-contain opacity-100"
+                                        className="w-10 h-10 object-contain opacity-100"
                                         src={logo}
                                         width={40}
                                         height={40}
@@ -63,9 +63,9 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                     </div>
                     <Gallery coverUrl={coverImage} />
                 </div>
-                <Description 
-                    description={hackathon?.description} 
-                    title={hackathon?.title} 
+                <Description
+                    description={hackathon?.description}
+                    title={hackathon?.title}
                     hackathon={hackathon}
                     onSponsorModalOpen={() => {
                         console.log('Opening sponsor modal, current state:', showSponsorModal);
@@ -79,8 +79,8 @@ const OrgDetailsPage = ({ hackathon }: OrgDetailsPageProps) => {
                         sponsors={sponsors}
                         hackathon={hackathon}
                     />
-                    <Sponsors 
-                        sponsors={sponsors} 
+                    <Sponsors
+                        sponsors={sponsors}
                         hackathon={hackathon}
                         showModal={showSponsorModal}
                         setShowModal={setShowSponsorModal}

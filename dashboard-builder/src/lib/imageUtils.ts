@@ -80,17 +80,59 @@ export function processImageUrl(
         return FALLBACK_IMAGES[fallbackType];
     }
 
-    // If it's a localhost URL, replace with production URL
-    if (imageUrl.includes('localhost:5000')) {
+    // Debug logging
+    console.log('Processing image URL:', imageUrl);
+
+    // If it's already a complete URL, return as is
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        console.log('URL is already complete:', imageUrl);
+        return imageUrl;
+    }
+
+    // Check if we're in production or development
+    const isProduction = typeof window !== 'undefined' && 
+        (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1');
+
+    // If it's a localhost URL and we're in production, replace with production URL
+    if (imageUrl.includes('localhost:5000') && isProduction) {
         const productionUrl = imageUrl.replace('localhost:5000', 'https://octopus-app-szca5.ondigitalocean.app');
+        console.log('Converted localhost to production:', productionUrl);
         return productionUrl;
     }
 
-    // If it's a relative upload path, make it absolute with production URL
+    // If it's a relative upload path, make it absolute
     if (imageUrl.startsWith('/uploads/')) {
-        return `https://octopus-app-szca5.ondigitalocean.app${imageUrl}`;
+        if (isProduction) {
+            const fullUrl = `https://octopus-app-szca5.ondigitalocean.app${imageUrl}`;
+            console.log('Made relative upload path absolute (production):', fullUrl);
+            return fullUrl;
+        } else {
+            const fullUrl = `http://localhost:5000${imageUrl}`;
+            console.log('Made relative upload path absolute (local):', fullUrl);
+            return fullUrl;
+        }
+    }
+
+    // If it's a local static asset (images, icons, etc.), return as-is
+    if (imageUrl.startsWith('/images/') || imageUrl.startsWith('/icons/') || imageUrl.startsWith('/logos/')) {
+        console.log('Local static asset, returning as-is:', imageUrl);
+        return imageUrl;
+    }
+
+    // If it's any other relative path, make it absolute
+    if (imageUrl.startsWith('/')) {
+        if (isProduction) {
+            const fullUrl = `https://octopus-app-szca5.ondigitalocean.app${imageUrl}`;
+            console.log('Made relative path absolute (production):', fullUrl);
+            return fullUrl;
+        } else {
+            const fullUrl = `http://localhost:5000${imageUrl}`;
+            console.log('Made relative path absolute (local):', fullUrl);
+            return fullUrl;
+        }
     }
 
     // Return as is if it's already a valid URL
+    console.log('Returning URL as is:', imageUrl);
     return imageUrl;
 }

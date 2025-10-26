@@ -31,6 +31,9 @@ const Image = ({
         );
     }
 
+    // Filter out custom props that shouldn't be passed to NextImage
+    const { fallbackType: _, processUrl: __, ...nextImageProps } = props;
+
     return (
         <NextImage
             className={`inline-block align-top opacity-0 transition-opacity ${
@@ -39,7 +42,7 @@ const Image = ({
             onLoad={() => setLoaded(true)}
             onError={() => setError(true)}
             src={processedSrc}
-            {...props}
+            {...nextImageProps}
         />
     );
 };

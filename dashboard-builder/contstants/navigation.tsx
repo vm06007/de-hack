@@ -57,15 +57,16 @@ export const baseNavigation = [
             },
         ],
     },
-];
-
-// Judge-only navigation items
-export const judgeNavigation = [
     {
         title: "Judging Council",
         icon: "dashboard",
         href: "/judging",
     },
+];
+
+// Judge-only navigation items
+export const judgeNavigation = [
+    // No judge-only items currently
 ];
 
 // Function to get navigation based on judge status

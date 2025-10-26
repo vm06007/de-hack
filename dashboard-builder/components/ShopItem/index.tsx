@@ -37,12 +37,12 @@ const ShopItem = ({ className, value }: ShopItemProps) => {
 
     return (
         <Link
-            href={`/hackathon/${value.id}`}
+            href={`/hackathons/${value.id}`}
             className={`group flex flex-col gap-2 p-2 pb-6 bg-b-surface2 rounded-4xl max-3xl:pb-2 transition-shadow hover:shadow-depth ${
                 className || ""
             }`}
         >
-            <div className="relative aspect-[1.5]">
+            <div style={{backgroundColor: '#27294d', borderRadius: '20px'}} className="relative aspect-[1.5]">
                 <Image
                     className="w-full rounded-3xl object-cover"
                     src={value.image}

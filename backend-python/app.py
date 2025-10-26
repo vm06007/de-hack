@@ -982,7 +982,7 @@ if __name__ == '__main__':
 
     print("Starting DeHack Python Backend...")
     print("Sample data initialized")
-    print(f"API available at: {BASE_URL}")
-    print(f"API docs: {BASE_URL}/api/hackathons")
+    print(f"API available at: http://0.0.0.0:{PORT}")
+    print(f"API docs: http://0.0.0.0:{PORT}/api/hackathons")
 
     app.run(debug=DEBUG, host='0.0.0.0', port=PORT)

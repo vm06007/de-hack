@@ -22,6 +22,7 @@ const Hackathon = ({ value }: HackathonProps) => (
             <Image
                 className="size-16 rounded-xl opacity-100"
                 src={value.image}
+                fallbackType="banner"
                 width={64}
                 height={64}
                 alt=""

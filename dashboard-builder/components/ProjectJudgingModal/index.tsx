@@ -395,6 +395,7 @@ const ProjectJudgingModal = ({
                                         {project.images && project.images[index] && getValidImages([project.images[index]]).length > 0 ? (
                                             <Image
                                                 src={project.images[index]}
+                                                fallbackType="icon"
                                                 alt={`Project screenshot ${index + 1}`}
                                                 width={100}
                                                 height={100}

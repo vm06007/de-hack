@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: 'https',
+                hostname: 'octopus-app-szca5.ondigitalocean.app',
+                pathname: '/uploads/**',
+            },
+            {
+                protocol: 'https',
                 hostname: 'github.com',
                 pathname: '/**',
             },

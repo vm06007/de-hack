@@ -1,9 +1,27 @@
 import { useState } from "react";
 import { default as NextImage, ImageProps } from "next/image";
+import { getSafeImageUrl, processImageUrl } from "@/src/lib/imageUtils";
 
-const Image = ({ className, ...props }: ImageProps) => {
+interface SafeImageProps extends Omit<ImageProps, 'src'> {
+    src: string | null | undefined;
+    fallbackType?: 'icon' | 'banner';
+    processUrl?: boolean;
+}
+
+const Image = ({ 
+    className, 
+    src, 
+    fallbackType = 'icon', 
+    processUrl = true,
+    ...props 
+}: SafeImageProps) => {
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(false);
+
+    // Process the image URL
+    const processedSrc = processUrl 
+        ? processImageUrl(src, fallbackType)
+        : getSafeImageUrl(src, fallbackType);
 
     if (error) {
         return (
@@ -20,6 +38,7 @@ const Image = ({ className, ...props }: ImageProps) => {
             } ${className || ""}`}
             onLoad={() => setLoaded(true)}
             onError={() => setError(true)}
+            src={processedSrc}
             {...props}
         />
     );

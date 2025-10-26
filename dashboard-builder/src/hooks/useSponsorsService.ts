@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '../lib/api';
 import { Sponsor } from '@/types/sponsor';
 
@@ -52,7 +52,7 @@ export const useSponsorsService = (hackathonId?: number) => {
     const [error, setError] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
 
-    const fetchSponsors = async () => {
+    const fetchSponsors = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -88,7 +88,7 @@ export const useSponsorsService = (hackathonId?: number) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [hackathonId]);
 
     useEffect(() => {
         fetchSponsors();
@@ -118,6 +118,15 @@ export const useSponsorsService = (hackathonId?: number) => {
             // Add the new sponsor to the local state
             const newSponsor = response as ApiSponsor;
             setSponsors(prev => [...prev, newSponsor]);
+
+            // Dispatch custom event to notify other components
+            window.dispatchEvent(new CustomEvent('sponsorUpdated', { 
+                detail: { 
+                    action: 'created', 
+                    sponsor: newSponsor,
+                    hackathonId: sponsorData.hackathonId 
+                } 
+            }));
 
             return newSponsor;
         } catch (err) {

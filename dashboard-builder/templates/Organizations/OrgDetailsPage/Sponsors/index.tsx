@@ -304,10 +304,11 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                             sponsor
                                         });
 
-                                        return logoUrl ? (
+                                        return (
                                             <Image
                                                 className="rounded-lg opacity-100"
                                                 src={logoUrl}
+                                                fallbackType="icon"
                                                 width={40}
                                                 height={40}
                                                 alt={sponsorName}
@@ -315,12 +316,6 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                                     console.log('Image failed to load:', logoUrl);
                                                 }}
                                             />
-                                        ) : (
-                                            <div className="w-10 h-10 rounded-lg bg-b-surface2 flex items-center justify-center">
-                                                <div className="text-caption text-t-secondary">
-                                                    {sponsorName.charAt(0).toUpperCase()}
-                                                </div>
-                                            </div>
                                         );
                                     })()}
                                 </div>

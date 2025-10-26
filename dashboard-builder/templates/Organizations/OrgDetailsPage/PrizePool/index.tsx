@@ -3,7 +3,7 @@ import Icon from "@/components/Icon";
 import PlusIcon from "@/components/PlusIcon";
 import { NumericFormat } from "react-number-format";
 import { useSponsorsService } from "@/src/hooks/useSponsorsService";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 
 type PrizePoolProps = {
     totalPrize?: number;
@@ -14,19 +14,63 @@ type PrizePoolProps = {
 
 const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackathon }: PrizePoolProps) => {
     const ethPrice = 2500; // ETH price in USD
-    const [refreshKey, setRefreshKey] = useState(0);
+    const [lastSponsorCount, setLastSponsorCount] = useState(0);
     const isRefreshing = useRef(false);
 
     // Use backend sponsor data (prioritize backend data over static props)
     const { sponsors: backendSponsors, refreshSponsors } = useSponsorsService(hackathon?.id);
     const sponsorData = backendSponsors || sponsors;
 
-    // Listen for sponsor updates via custom events
+    // Memoize sponsor contributions calculation to prevent unnecessary recalculations
+    const sponsorContributions = useMemo(() => {
+        if (!sponsorData || !Array.isArray(sponsorData)) return 0;
+        
+        return sponsorData.reduce((sum, sponsor) => {
+            const amount = parseFloat(sponsor.contributionAmount || '0');
+            return sum + amount;
+        }, 0);
+    }, [sponsorData]);
+
+    // Memoize total prize pool calculation
+    const totalPrizePool = useMemo(() => {
+        return totalPrize + sponsorContributions;
+    }, [totalPrize, sponsorContributions]);
+
+    const ethAmount = useMemo(() => {
+        return totalPrizePool / ethPrice;
+    }, [totalPrizePool, ethPrice]);
+
+    // Only refresh when sponsor count changes (new sponsor added)
+    useEffect(() => {
+        if (!hackathon?.id || !refreshSponsors) return;
+
+        const currentSponsorCount = sponsorData?.length || 0;
+        
+        // Only refresh if sponsor count has increased (new sponsor added)
+        if (currentSponsorCount > lastSponsorCount) {
+            console.log(`Prize Pool - Sponsor count increased from ${lastSponsorCount} to ${currentSponsorCount}, refreshing...`);
+            setLastSponsorCount(currentSponsorCount);
+            
+            // Optional: refresh data from backend to ensure consistency
+            if (isRefreshing.current) return;
+            
+            isRefreshing.current = true;
+            refreshSponsors().finally(() => {
+                isRefreshing.current = false;
+            });
+        }
+    }, [sponsorData?.length, lastSponsorCount, hackathon?.id, refreshSponsors]);
+
+    // Listen for sponsor updates via custom events (for real-time updates)
     useEffect(() => {
         const handleSponsorUpdate = () => {
-            // Force a refresh by updating the refresh key
-            console.log('Sponsor updated, Prize Pool will refresh');
-            setRefreshKey(prev => prev + 1);
+            console.log('Prize Pool - Sponsor update event received, refreshing...');
+            if (refreshSponsors && !isRefreshing.current) {
+                isRefreshing.current = true;
+                refreshSponsors().finally(() => {
+                    isRefreshing.current = false;
+                });
+            }
         };
 
         // Listen for custom sponsor update events
@@ -35,67 +79,24 @@ const PrizePool = ({ totalPrize = 500000, prizeTiers = [], sponsors = [], hackat
         return () => {
             window.removeEventListener('sponsorUpdated', handleSponsorUpdate);
         };
-    }, [hackathon?.id]); // Remove refreshSponsors from dependencies
+    }, [refreshSponsors]);
 
-    // Polling mechanism to refresh sponsor data
+    // Initialize sponsor count on mount
     useEffect(() => {
-        if (!hackathon?.id || !refreshSponsors) return;
+        if (sponsorData?.length !== undefined) {
+            setLastSponsorCount(sponsorData.length);
+        }
+    }, [hackathon?.id]); // Only on hackathon change
 
-        const safeRefresh = async () => {
-            if (isRefreshing.current) {
-                console.log('Prize Pool - Refresh already in progress, skipping...');
-                return;
-            }
-            
-            isRefreshing.current = true;
-            try {
-                console.log('Prize Pool - Refreshing sponsor data...');
-                await refreshSponsors();
-            } catch (error) {
-                console.error('Prize Pool - Error refreshing:', error);
-            } finally {
-                isRefreshing.current = false;
-            }
-        };
-
-        // Initial refresh when component mounts or hackathon changes
-        safeRefresh();
-
-        // Simple polling every 2 seconds
-        const pollInterval = setInterval(() => {
-            safeRefresh();
-        }, 2000); // Poll every 2 seconds
-
-        return () => {
-            clearInterval(pollInterval);
-        };
-    }, [hackathon?.id]); // Remove refreshSponsors from dependencies to prevent infinite loop
-
-    // Calculate sponsor contributions from backend data
-    const sponsorContributions = sponsorData?.reduce((sum, sponsor) => {
-        const amount = parseFloat(sponsor.contributionAmount || '0');
-        console.log('Prize Pool - Processing sponsor:', {
-            companyName: sponsor.companyName,
-            contributionAmount: sponsor.contributionAmount,
-            parsedAmount: amount
+    // Debug logging (only when values actually change)
+    useEffect(() => {
+        console.log('Prize Pool - Updated values:', {
+            sponsorCount: sponsorData?.length || 0,
+            sponsorContributions,
+            basePrize: totalPrize,
+            totalPrizePool
         });
-        return sum + amount;
-    }, 0) || 0;
-
-    // Recalculate when refresh key changes
-    useEffect(() => {
-        console.log('Prize Pool - Recalculating due to refresh key change:', refreshKey);
-    }, [refreshKey, sponsorData]);
-
-    console.log('Prize Pool - Sponsor data:', sponsorData);
-    console.log('Prize Pool - Total sponsor contributions:', sponsorContributions);
-    console.log('Prize Pool - Base total prize:', totalPrize);
-
-    // Calculate total prize pool including sponsor contributions
-    const totalPrizePool = totalPrize + sponsorContributions;
-    const ethAmount = totalPrizePool / ethPrice;
-
-    console.log('Prize Pool - Total prize pool (including sponsors):', totalPrizePool);
+    }, [sponsorData?.length, sponsorContributions, totalPrize, totalPrizePool]);
 
     // Note: useSponsorsService automatically fetches data when hackathonId changes
 

@@ -61,6 +61,7 @@ const FieldImage = ({
                             classImage || ""
                         }`}
                         src={preview}
+                        fallbackType="banner"
                         width={944}
                         height={240}
                         alt="Preview"

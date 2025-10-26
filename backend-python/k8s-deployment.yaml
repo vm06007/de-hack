@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: dehack-backend
+    labels:
+        app: dehack-backend
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: dehack-backend
+    template:
+        metadata:
+            labels:
+                app: dehack-backend
+        spec:
+            containers:
+            - name: dehack-backend
+              image: dehack-backend:latest
+              ports:
+              - containerPort: 8080
+              env:
+              - name: PORT
+                value: "8080"
+              - name: FLASK_DEBUG
+                value: "false"
+              resources:
+                requests:
+                    memory: "256Mi"
+                    cpu: "250m"
+                limits:
+                    memory: "512Mi"
+                    cpu: "500m"
+              livenessProbe:
+                httpGet:
+                    path: /
+                    port: 8080
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                timeoutSeconds: 5
+                failureThreshold: 3
+              readinessProbe:
+                httpGet:
+                    path: /
+                    port: 8080
+                initialDelaySeconds: 5
+                periodSeconds: 5
+                timeoutSeconds: 3
+                failureThreshold: 3
+              volumeMounts:
+              - name: data-volume
+                mountPath: /app/data
+              - name: uploads-volume
+                mountPath: /app/uploads
+            volumes:
+            - name: data-volume
+              emptyDir: {}
+            - name: uploads-volume
+              emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: dehack-backend-service
+    labels:
+        app: dehack-backend
+spec:
+    selector:
+        app: dehack-backend
+    ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+    type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: dehack-backend-ingress
+    annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+    rules:
+    - host: api.dehack.local
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+                name: dehack-backend-service
+                port:
+                    number: 80

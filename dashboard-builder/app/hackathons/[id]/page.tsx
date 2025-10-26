@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from 'react';
+import { use, useState } from 'react';
 import { notFound } from 'next/navigation';
 import { useHackathon } from '@/src/hooks/useHackathons';
 import OrgDetailsPage from '@/templates/Organizations/OrgDetailsPage';
@@ -14,6 +14,7 @@ interface PageProps {
 export default function HackathonPage({ params }: PageProps) {
     const { id } = use(params);
     const { hackathon, loading, error, refetch } = useHackathon(id);
+    const [isRetrying, setIsRetrying] = useState(false);
 
     if (loading) {
         return (
@@ -27,16 +28,26 @@ export default function HackathonPage({ params }: PageProps) {
     }
 
     if (error) {
+        const handleRetry = async () => {
+            setIsRetrying(true);
+            try {
+                await refetch?.();
+            } finally {
+                setIsRetrying(false);
+            }
+        };
+
         return (
             <div className="flex items-center justify-center min-h-96">
                 <div className="text-center">
                     <div className="text-red-500 text-lg mb-4">Failed to load hackathon</div>
                     <p className="text-gray-600 mb-4">{error}</p>
                     <button 
-                        onClick={() => refetch?.()}
-                        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                        onClick={handleRetry}
+                        disabled={isRetrying}
+                        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Retry
+                        {isRetrying ? 'Retrying...' : 'Retry'}
                     </button>
                 </div>
             </div>

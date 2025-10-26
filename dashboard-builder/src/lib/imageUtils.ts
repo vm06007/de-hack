@@ -94,6 +94,13 @@ export function processImageUrl(
             return httpsUrl;
         }
         
+        // Also fix any other HTTP URLs that might cause mixed content in production
+        if (imageUrl.startsWith('http://') && typeof window !== 'undefined' && window.location.protocol === 'https:') {
+            const httpsUrl = imageUrl.replace('http://', 'https://');
+            console.log('Fixed mixed content for HTTPS page, converted to HTTPS:', httpsUrl);
+            return httpsUrl;
+        }
+        
         return imageUrl;
     }
 

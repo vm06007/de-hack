@@ -16,6 +16,8 @@ class ApiClient {
                 ...options.headers,
             },
             ...options,
+            // Add timeout for requests
+            signal: AbortSignal.timeout(10000), // 10 second timeout
         };
 
         for (let attempt = 1; attempt <= retries; attempt++) {

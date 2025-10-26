@@ -162,10 +162,6 @@ export const useCreateHackathon = () => {
             setIsLoading(true);
             callbackRef.current = onSuccess || null;
 
-            console.log("Wallet connected:", { address, isConnected });
-            console.log("Contract address:", DEHACK_PLATFORM_ADDRESS);
-            console.log("Parameters:", params);
-
             toast.loading("Submitting transaction...", { id: "create-hackathon" });
 
             // Convert ETH value to wei

@@ -587,7 +587,7 @@ export const DEHACK_PLATFORM_ABI = [
 ] as const
 
 // Contract address - DeHack Platform Factory on mainnet
-export const DEHACK_PLATFORM_ADDRESS = process.env.NEXT_PUBLIC_DEHACK_PLATFORM_ADDRESS || '0x553db01f160771DF2b483F6E9BB5AD173B040151'
+export const DEHACK_PLATFORM_ADDRESS = process.env.NEXT_PUBLIC_DEHACK_PLATFORM_ADDRESS || '0x9825A0d5cd39a76bf0aB5d47C84B2f3EbD3C40D4'
 
 export const config = createConfig(
     getDefaultConfig({

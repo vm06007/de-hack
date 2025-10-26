@@ -329,7 +329,7 @@ const NewHackathonPage = () => {
                         totalPrize={totalPrize}
                         judgingIncentivePercentage={judgingIncentivePercentage}
                     />
-                    <Demos />
+                    <Demos onDeploy={handleDeploy} isLoading={isLoading} />
                 </div>
             </div>
         </Layout>

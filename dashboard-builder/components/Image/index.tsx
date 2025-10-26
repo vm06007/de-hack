@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { default as NextImage, ImageProps } from "next/image";
-import { getSafeImageUrl, processImageUrl } from "@/src/lib/imageUtils";
+import { getSafeImageUrl, processImageUrl, FALLBACK_IMAGES } from "@/src/lib/imageUtils";
 
 interface SafeImageProps extends Omit<ImageProps, 'src'> {
     src: string | null | undefined;
@@ -34,10 +34,15 @@ const Image = ({
         : getSafeImageUrl(src, fallbackType);
 
     if (error) {
+        // Show the actual fallback image instead of a question mark
+        const fallbackSrc = FALLBACK_IMAGES[fallbackType];
         return (
-            <div className={`inline-block align-top bg-b-surface2 rounded-full flex items-center justify-center ${className || ""}`}>
-                <span className="text-t-secondary text-xs">?</span>
-            </div>
+            <NextImage
+                className={`inline-block align-top ${className || ""}`}
+                src={fallbackSrc}
+                alt="Fallback image"
+                {...nextImageProps}
+            />
         );
     }
 

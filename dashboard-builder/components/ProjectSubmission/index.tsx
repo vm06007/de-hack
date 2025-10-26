@@ -5,7 +5,7 @@ import Editor from "@/components/Editor";
 import Button from "@/components/Button";
 import Image from "@/components/Image";
 import toast from "react-hot-toast";
-import { useSponsors } from "@/src/hooks/useSponsors";
+import { useSponsorsService } from "@/src/hooks/useSponsorsService";
 import { useSubmitProject, ProjectSubmissionData } from "@/src/hooks/useSubmitProject";
 import CongratsScreen from "@/components/CongratsScreen";
 import { useAccount } from "wagmi";
@@ -31,7 +31,7 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
     const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
 
     // Get sponsors list for sponsor track selection
-    const { sponsors: backendSponsors, loading: sponsorsLoading, fetchSponsors } = useSponsors(hackathon?.id);
+    const { sponsors: backendSponsors, loading: sponsorsLoading, refreshSponsors } = useSponsorsService(hackathon?.id);
 
     // Get wallet address for participant identification
     const { address } = useAccount();
@@ -51,10 +51,10 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
         if (!open) {
             resetForm();
         } else {
-            // Fetch sponsors when modal opens
-            if (hackathon?.id && fetchSponsors) {
-                console.log('Fetching sponsors for hackathon:', hackathon.id);
-                fetchSponsors();
+            // Refresh sponsors when modal opens
+            if (hackathon?.id && refreshSponsors) {
+                console.log('Refreshing sponsors for hackathon:', hackathon.id);
+                refreshSponsors();
             }
         }
     }, [open, hackathon?.id]);
@@ -65,7 +65,8 @@ const ProjectSubmission = ({ open, onClose, hackathon, onSubmit }: ProjectSubmis
             backendSponsors,
             sponsorsLoading,
             hackathonId: hackathon?.id,
-            sponsorsCount: backendSponsors?.length || 0
+            sponsorsCount: backendSponsors?.length || 0,
+            sponsors: backendSponsors
         });
     }, [backendSponsors, sponsorsLoading, hackathon?.id]);
 

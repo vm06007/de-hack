@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Hackathon } from '@/lib/api';
 import { apiClient } from '@/src/lib/api';
+import Image from '@/components/Image';
 
 interface HackathonDetailsProps {
     hackathon: Hackathon;
@@ -88,9 +89,12 @@ const HackathonDetails = ({ hackathon }: HackathonDetailsProps) => {
 
                 {hackathon.image && (
                     <div className="mb-6">
-                        <img
+                        <Image
                             src={hackathon.image}
+                            fallbackType="banner"
                             alt={hackathon.title}
+                            width={800}
+                            height={256}
                             className="w-full h-64 object-cover rounded-lg"
                         />
                     </div>

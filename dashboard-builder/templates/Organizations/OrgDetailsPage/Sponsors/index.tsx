@@ -403,9 +403,12 @@ const Sponsors = ({ sponsors, hackathon, showModal: externalShowModal, setShowMo
                                     >
                                         {logoPreview ? (
                                             <div className="w-16 h-13 rounded-[50px] bg-b-surface1 border border-s-stroke2 overflow-hidden hover:bg-b-surface2 transition-colors">
-                                                <img
+                                                <Image
                                                     src={logoPreview}
+                                                    fallbackType="icon"
                                                     alt="Logo preview"
+                                                    width={64}
+                                                    height={52}
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>

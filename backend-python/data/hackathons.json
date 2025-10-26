@@ -1,326 +1,15 @@
 [
   {
-    "id": 1,
-    "title": "DeFi Protocol Template",
-    "description": "Build innovative DeFi protocols and smart contracts",
-    "image": "/images/hackathons/1.png",
-    "category": "DeFi",
-    "status": "active",
-    "startDate": "2025-01-15T00:00:00Z",
-    "endDate": "2025-01-29T23:59:59Z",
-    "registrationDeadline": "2025-01-14T23:59:59Z",
-    "totalPrizePool": "50000.00",
-    "maxParticipants": 500,
-    "currentParticipants": 234,
-    "requirements": [
-      "Solidity",
-      "Web3 development",
-      "DeFi knowledge"
-    ],
-    "tags": [
-      "DeFi",
-      "Smart Contracts",
-      "Protocol"
-    ],
-    "isOnline": true,
-    "location": null,
-    "organizerId": 1,
-    "createdBy": 1,
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-15T00:00:00Z"
-  },
-  {
-    "id": 2,
-    "title": "NFT Marketplace Kit",
-    "description": "Create the next generation NFT marketplace",
-    "image": "/images/hackathons/2.png",
-    "category": "NFT",
-    "status": "active",
-    "startDate": "2025-01-20T00:00:00Z",
-    "endDate": "2025-02-03T23:59:59Z",
-    "registrationDeadline": "2025-01-19T23:59:59Z",
-    "totalPrizePool": "30000.00",
-    "maxParticipants": 300,
-    "currentParticipants": 156,
-    "requirements": [
-      "NFT development",
-      "Marketplace design",
-      "Web3 UX"
-    ],
-    "tags": [
-      "NFT",
-      "Marketplace",
-      "Trading"
-    ],
-    "isOnline": true,
-    "location": null,
-    "organizerId": 2,
-    "createdBy": 1,
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-15T00:00:00Z"
-  },
-  {
-    "id": 3,
-    "title": "ETHGlobal Online 2025",
-    "description": "The biggest online Ethereum hackathon of the year",
-    "image": "/images/hackathons/lg-1.png",
-    "category": "Online hackathon",
-    "status": "scheduled",
-    "startDate": "2025-04-15T00:00:00Z",
-    "endDate": "2025-04-29T23:59:59Z",
-    "registrationDeadline": "2025-04-14T23:59:59Z",
-    "totalPrizePool": "100000.00",
-    "maxParticipants": 1000,
-    "currentParticipants": 0,
-    "requirements": [
-      "Ethereum knowledge",
-      "Web3 development experience"
-    ],
-    "tags": [
-      "Ethereum",
-      "DeFi",
-      "NFT",
-      "Web3"
-    ],
-    "isOnline": true,
-    "location": null,
-    "organizerId": 1,
-    "createdBy": 1,
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-15T00:00:00Z"
-  },
-  {
-    "id": 4,
-    "title": "Unite DeFi 2025",
-    "description": "Building the future of decentralized finance",
-    "image": "/images/hackathons/lg-2.png",
-    "category": "Online hackathon",
-    "status": "scheduled",
-    "startDate": "2025-05-15T00:00:00Z",
-    "endDate": "2025-05-29T23:59:59Z",
-    "registrationDeadline": "2025-05-14T23:59:59Z",
-    "totalPrizePool": "500000.00",
-    "maxParticipants": 500,
-    "currentParticipants": 0,
-    "requirements": [
-      "DeFi knowledge",
-      "Smart contract development"
-    ],
-    "tags": [
-      "DeFi",
-      "Yield Farming",
-      "AMM",
-      "Lending"
-    ],
-    "isOnline": true,
-    "location": null,
-    "organizerId": 2,
-    "createdBy": 1,
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-01-15T00:00:00Z"
-  },
-  {
-    "id": 5,
-    "title": "ETHGlobal Istanbul 2024",
-    "description": "The biggest Ethereum hackathon in Istanbul",
-    "image": "/images/hackathons/ethglobal-istanbul.png",
-    "category": "In-person hackathon",
-    "status": "completed",
-    "startDate": "2024-09-15T00:00:00Z",
-    "endDate": "2024-09-17T23:59:59Z",
-    "registrationDeadline": "2024-09-14T23:59:59Z",
-    "totalPrizePool": "200000.00",
-    "maxParticipants": 800,
-    "currentParticipants": 800,
-    "requirements": [
-      "Ethereum development",
-      "Web3 knowledge"
-    ],
-    "tags": [
-      "Ethereum",
-      "Istanbul",
-      "In-person",
-      "Web3"
-    ],
-    "isOnline": false,
-    "location": "Istanbul, Turkey",
-    "organizerId": 1,
-    "createdBy": 1,
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-09-17T00:00:00Z"
-  },
-  {
-    "id": 6,
-    "title": "Token2049 Singapore Hackathon",
-    "description": "Build the future of Web3 at Asia's premier crypto conference",
-    "image": "/images/hackathons/token2049-singapore.png",
-    "category": "In-person hackathon",
-    "status": "completed",
-    "startDate": "2024-09-13T00:00:00Z",
-    "endDate": "2024-09-15T23:59:59Z",
-    "registrationDeadline": "2024-09-12T23:59:59Z",
-    "totalPrizePool": "150000.00",
-    "maxParticipants": 500,
-    "currentParticipants": 500,
-    "requirements": [
-      "Blockchain development",
-      "Web3 protocols"
-    ],
-    "tags": [
-      "Singapore",
-      "Web3",
-      "In-person",
-      "Asia"
-    ],
-    "isOnline": false,
-    "location": "Singapore",
-    "organizerId": 2,
-    "createdBy": 1,
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-09-15T00:00:00Z"
-  },
-  {
-    "id": 7,
-    "title": "ETHGlobal London 2024",
-    "description": "Join the Ethereum community in London for an epic hackathon",
-    "image": "/images/hackathons/ethglobal-london.png",
-    "category": "In-person hackathon",
-    "status": "completed",
-    "startDate": "2024-07-19T00:00:00Z",
-    "endDate": "2024-07-21T23:59:59Z",
-    "registrationDeadline": "2024-07-18T23:59:59Z",
-    "totalPrizePool": "180000.00",
-    "maxParticipants": 600,
-    "currentParticipants": 600,
-    "requirements": [
-      "Ethereum ecosystem",
-      "Smart contracts"
-    ],
-    "tags": [
-      "Ethereum",
-      "London",
-      "In-person",
-      "Europe"
-    ],
-    "isOnline": false,
-    "location": "London, UK",
-    "organizerId": 1,
-    "createdBy": 1,
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-07-21T00:00:00Z"
-  },
-  {
-    "id": 8,
-    "title": "Token2049 Dubai Hackathon",
-    "description": "Innovate in the heart of the Middle East's crypto hub",
-    "image": "/images/hackathons/token2049-dubai.png",
-    "category": "In-person hackathon",
-    "status": "completed",
-    "startDate": "2024-04-18T00:00:00Z",
-    "endDate": "2024-04-20T23:59:59Z",
-    "registrationDeadline": "2024-04-17T23:59:59Z",
-    "totalPrizePool": "120000.00",
-    "maxParticipants": 400,
-    "currentParticipants": 400,
-    "requirements": [
-      "Blockchain innovation",
-      "DeFi protocols"
-    ],
-    "tags": [
-      "Dubai",
-      "Middle East",
-      "In-person",
-      "Innovation"
-    ],
-    "isOnline": false,
-    "location": "Dubai, UAE",
-    "organizerId": 2,
-    "createdBy": 1,
-    "createdAt": "2024-01-01T00:00:00Z",
-    "updatedAt": "2024-04-20T00:00:00Z"
-  },
-  {
-    "id": 9,
-    "title": "Cursor Test Hackathon",
-    "description": "End-to-end test create via API.",
-    "image": null,
+    "id": 17,
+    "title": "Nother Hackathon 2026",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. Nother Hackathon 2026 brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, Nother Hackathon 2026 provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251021004321087255_upload.jpeg",
     "category": null,
     "status": "scheduled",
-    "startDate": "2025-10-25T00:00:00Z",
-    "endDate": "2025-10-27T23:59:59Z",
-    "registrationDeadline": "2025-10-24T23:59:59Z",
-    "totalPrizePool": "12345",
-    "maxParticipants": 42,
-    "currentParticipants": 0,
-    "requirements": [
-      "Typing"
-    ],
-    "tags": [
-      "Test",
-      "API"
-    ],
-    "isOnline": true,
-    "location": null,
-    "organizerId": 1,
-    "createdBy": 1,
-    "createdAt": "2025-10-20T19:53:42.980411",
-    "updatedAt": "2025-10-20T19:53:42.980442"
-  },
-  {
-    "id": 10,
-    "title": "Untitled Hackathon",
-    "description": "Created from New Hackathon page",
-    "image": null,
-    "category": null,
-    "status": "scheduled",
-    "startDate": null,
-    "endDate": null,
+    "startDate": "2025-10-21T17:42:33.000Z",
+    "endDate": "2025-10-27T17:42:33.839Z",
     "registrationDeadline": null,
-    "totalPrizePool": null,
-    "maxParticipants": null,
-    "currentParticipants": 0,
-    "requirements": [],
-    "tags": [],
-    "isOnline": true,
-    "location": null,
-    "organizerId": null,
-    "createdBy": 1,
-    "createdAt": "2025-10-20T20:29:09.790820",
-    "updatedAt": "2025-10-20T20:29:09.790919"
-  },
-  {
-    "id": 11,
-    "title": "Untitled Hackathon",
-    "description": "Created from New Hackathon page",
-    "image": null,
-    "category": null,
-    "status": "scheduled",
-    "startDate": null,
-    "endDate": null,
-    "registrationDeadline": null,
-    "totalPrizePool": null,
-    "maxParticipants": null,
-    "currentParticipants": 0,
-    "requirements": [],
-    "tags": [],
-    "isOnline": true,
-    "location": null,
-    "organizerId": null,
-    "createdBy": 1,
-    "createdAt": "2025-10-20T20:38:08.503634",
-    "updatedAt": "2025-10-20T20:38:08.503639"
-  },
-  {
-    "id": 12,
-    "title": "My New Hackathon",
-    "description": "<p>Very Simple Test</p>",
-    "image": "http://localhost:5000/uploads/20251020210338990978_upload.jpeg",
-    "category": null,
-    "status": "scheduled",
-    "startDate": null,
-    "endDate": null,
-    "registrationDeadline": null,
-    "totalPrizePool": "1000",
+    "totalPrizePool": "1300",
     "maxParticipants": null,
     "currentParticipants": 0,
     "requirements": [],
@@ -332,22 +21,576 @@
     "prizeTiers": [
       {
         "name": "1st Place",
-        "amount": "333.33",
+        "amount": "650.00",
+        "percentage": 50
+      },
+      {
+        "name": "2nd Place",
+        "amount": "390.00",
+        "percentage": 30
+      },
+      {
+        "name": "3rd Place",
+        "amount": "260.00",
+        "percentage": 20
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": "http://localhost:5000/uploads/20251021004314364072_upload.png",
+    "allowSponsors": true,
+    "sponsorMinContribution": "500",
+    "sponsorCurrency": "USDC",
+    "requireStaking": true,
+    "stakingAmount": "0.001",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      1,
+      5,
+      4
+    ],
+    "judgingModel": "Commit Reveal",
+    "allowAIDelegation": true,
+    "createdAt": "2025-10-21T00:43:39.578320",
+    "updatedAt": "2025-10-21T00:43:39.578326"
+  },
+  {
+    "id": 18,
+    "title": "Dream Hackathon 2026",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. Dream Hackathon 2026 brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, Dream Hackathon 2026 provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251022162720452665_upload.jpeg",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-23T09:26:58.000Z",
+    "endDate": "2025-10-29T09:26:58.846Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "3000",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "1500.00",
+        "percentage": 50
+      },
+      {
+        "name": "2nd Place",
+        "amount": "900.00",
+        "percentage": 30
+      },
+      {
+        "name": "3rd Place",
+        "amount": "600.00",
+        "percentage": 20
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": "http://localhost:5000/uploads/20251022162717332081_upload.png",
+    "allowSponsors": true,
+    "sponsorMinContribution": "500",
+    "sponsorCurrency": "USDC",
+    "requireStaking": true,
+    "stakingAmount": "0.01",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      6
+    ],
+    "judgingModel": "Commit Reveal",
+    "allowAIDelegation": false,
+    "contractAddress": "0x81EbF8b27937E0d5eAAd47d54a033a878D675A2C",
+    "hackathonId": "1761124997951058",
+    "createdAt": "2025-10-22T16:30:07.476815",
+    "updatedAt": "2025-10-22T16:30:07.476822"
+  },
+  {
+    "id": 19,
+    "title": "Hacker Online 2025",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. Hacker Online 2026 brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, Hacker Online 2026 provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251022225302435608_upload.jpeg",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-23T15:52:41.000Z",
+    "endDate": "2025-10-29T15:52:41.075Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "2000",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "1000.00",
+        "percentage": 50
+      },
+      {
+        "name": "2nd Place",
+        "amount": "600.00",
+        "percentage": 30
+      },
+      {
+        "name": "3rd Place",
+        "amount": "400.00",
+        "percentage": 20
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": "http://localhost:5000/uploads/20251022225259256253_upload.png",
+    "allowSponsors": true,
+    "sponsorMinContribution": "0",
+    "sponsorCurrency": "USDC",
+    "requireStaking": true,
+    "stakingAmount": "0.0001",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      6
+    ],
+    "judgingModel": "Open Voting",
+    "allowAIDelegation": true,
+    "contractAddress": "0x902fca16e4a1444654b2ddea4394ee182bc8105b",
+    "hackathonId": "1761148401850136",
+    "createdAt": "2025-10-22T22:53:56.335704",
+    "updatedAt": "2025-10-22T22:53:56.335729"
+  },
+  {
+    "id": 20,
+    "title": "Online HackerFest 2026",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. Online HackerFest 2026 brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, Online HackerFest 2026 provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251023224401619345_upload.jpeg",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-23T13:55:43.051Z",
+    "endDate": "2025-10-30T13:30:43.051Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "10",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "5.00",
+        "percentage": 50
+      },
+      {
+        "name": "2nd Place",
+        "amount": "3.00",
+        "percentage": 30
+      },
+      {
+        "name": "3rd Place",
+        "amount": "2.00",
+        "percentage": 20
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": null,
+    "allowSponsors": true,
+    "sponsorMinContribution": "0.00001",
+    "sponsorCurrency": "USDC",
+    "requireStaking": true,
+    "stakingAmount": "0.0001",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      6
+    ],
+    "judgingModel": "Open Voting",
+    "allowAIDelegation": true,
+    "contractAddress": "0xbd7f543be9542169f85631a05e53d452912f5ef6",
+    "hackathonId": "17612262938960",
+    "createdAt": "2025-10-23T20:31:52.560942",
+    "updatedAt": "2025-10-23T20:31:52.560950"
+  },
+  {
+    "id": 21,
+    "title": "Final Hackathon 2026",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. Final Hackathon 2026 brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, Final Hackathon 2026 provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251023224401619345_upload.jpeg",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2026-01-14T16:06:38.000Z",
+    "endDate": "2026-01-21T16:06:38.000Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "20",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "6.67",
         "percentage": 33.333333333333336
       },
       {
         "name": "2nd Place",
-        "amount": "333.33",
+        "amount": "6.67",
         "percentage": 33.333333333333336
       },
       {
         "name": "3rd Place",
-        "amount": "333.33",
+        "amount": "6.67",
         "percentage": 33.333333333333336
       }
     ],
     "sponsors": null,
-    "createdAt": "2025-10-20T21:03:54.308555",
-    "updatedAt": "2025-10-20T21:03:54.308576"
+    "logoUrl": "http://localhost:5000/uploads/20251023224356149418_upload.webp",
+    "allowSponsors": true,
+    "sponsorMinContribution": "10",
+    "sponsorCurrency": "USDC",
+    "requireStaking": true,
+    "stakingAmount": "0.0001",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      3
+    ],
+    "judgingModel": "Open Voting",
+    "allowAIDelegation": false,
+    "contractAddress": "0x553284c5b8a83905f29545132f7043cc34eafca1",
+    "hackathonId": "1761234252332236",
+    "createdAt": "2025-10-23T22:44:30.313584",
+    "updatedAt": "2025-10-23T22:44:30.313604"
+  },
+  {
+    "id": 22,
+    "title": "ETHGlobal Online: Premier",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. ETHGlobal Online: Premier brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, ETHGlobal Online: Premier provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251024031407754716_upload.jpeg",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-23T20:38:34.467Z",
+    "endDate": "2025-10-30T20:13:34.467Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "20",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "10.00",
+        "percentage": 50
+      },
+      {
+        "name": "2nd Place",
+        "amount": "6.00",
+        "percentage": 30
+      },
+      {
+        "name": "3rd Place",
+        "amount": "4.00",
+        "percentage": 20
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": "http://localhost:5000/uploads/20251024031400199357_upload.png",
+    "allowSponsors": true,
+    "sponsorMinContribution": "10",
+    "sponsorCurrency": "PYUSD",
+    "requireStaking": true,
+    "stakingAmount": "0.01",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      3
+    ],
+    "judgingModel": "Open Voting",
+    "allowAIDelegation": true,
+    "contractAddress": "0x3446015b737ca7e1bee77825e37e6ee7e99cb198",
+    "hackathonId": "1761250487547356",
+    "createdAt": "2025-10-24T03:15:22.842586",
+    "updatedAt": "2025-10-24T03:15:22.842592"
+  },
+  {
+    "id": 23,
+    "title": "ETHGlobal Online: ReBoot",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. ETHGlobal Online: ReBoot brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, ETHGlobal Online: ReBoot provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251024032953138369_upload.jpeg",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-23T20:54:20.495Z",
+    "endDate": "2025-10-30T20:29:20.495Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "20",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "10.00",
+        "percentage": 50
+      },
+      {
+        "name": "2nd Place",
+        "amount": "6.00",
+        "percentage": 30
+      },
+      {
+        "name": "3rd Place",
+        "amount": "4.00",
+        "percentage": 20
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": "http://localhost:5000/uploads/20251024032947602965_upload.webp",
+    "allowSponsors": false,
+    "sponsorMinContribution": "500",
+    "sponsorCurrency": "PYUSD",
+    "requireStaking": false,
+    "stakingAmount": "0.0001",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      3
+    ],
+    "judgingModel": "Open Voting",
+    "allowAIDelegation": false,
+    "contractAddress": "0x35d62fa4612332e23335b475b67f2d394f850d4b",
+    "hackathonId": "1761251423598004",
+    "createdAt": "2025-10-24T03:30:50.212179",
+    "updatedAt": "2025-10-24T03:30:50.212185"
+  },
+  {
+    "id": 24,
+    "title": "ETHGlobal Online: Last Take",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. ETHGlobal Online: Last Take brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, ETHGlobal Online: Last Take provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251024033419181386_upload.jpeg",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-23T20:57:44.871Z",
+    "endDate": "2025-10-30T20:32:44.871Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "20",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "6.67",
+        "percentage": 33.333333333333336
+      },
+      {
+        "name": "2nd Place",
+        "amount": "6.67",
+        "percentage": 33.333333333333336
+      },
+      {
+        "name": "3rd Place",
+        "amount": "6.67",
+        "percentage": 33.333333333333336
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": "http://localhost:5000/uploads/20251024033413822180_upload.webp",
+    "allowSponsors": true,
+    "sponsorMinContribution": "10",
+    "sponsorCurrency": "PYUSD",
+    "requireStaking": true,
+    "stakingAmount": "0.01",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      3
+    ],
+    "judgingModel": "Open Voting",
+    "allowAIDelegation": true,
+    "contractAddress": "0x437ea11b3b1a06ed7ea04b8271365d355053ba06",
+    "hackathonId": "1761251668508842",
+    "createdAt": "2025-10-24T03:34:54.072213",
+    "updatedAt": "2025-10-24T03:34:54.072220"
+  },
+  {
+    "id": 25,
+    "title": "MyDefi Hacakthon",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. MyDefi Hacakthon brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, MyDefi Hacakthon provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251024234635454951_upload.jpeg",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-24T17:11:17.696Z",
+    "endDate": "2025-10-26T16:46:17.000Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "20",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "10.00",
+        "percentage": 50
+      },
+      {
+        "name": "2nd Place",
+        "amount": "6.00",
+        "percentage": 30
+      },
+      {
+        "name": "3rd Place",
+        "amount": "4.00",
+        "percentage": 20
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": "http://localhost:5000/uploads/20251024234628655585_upload.webp",
+    "allowSponsors": true,
+    "sponsorMinContribution": "10",
+    "sponsorCurrency": "PYUSD",
+    "requireStaking": true,
+    "stakingAmount": "0.001",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      3
+    ],
+    "judgingModel": "Open Voting",
+    "allowAIDelegation": true,
+    "contractAddress": "0x34022d854a7d2161ffb1f88209c06b8d2792a5c9",
+    "hackathonId": "1761324534769784",
+    "createdAt": "2025-10-24T23:49:15.039694",
+    "updatedAt": "2025-10-24T23:49:15.039705"
+  },
+  {
+    "id": 26,
+    "title": "Thailand Edition Hackathon",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. Thailand Edition Hackathon brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, Thailand Edition Hackathon provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251025160559803603_upload.webp",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-25T09:29:32.333Z",
+    "endDate": "2025-11-01T09:29:32.333Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "30",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "15.00",
+        "percentage": 50
+      },
+      {
+        "name": "2nd Place",
+        "amount": "9.00",
+        "percentage": 30
+      },
+      {
+        "name": "3rd Place",
+        "amount": "6.00",
+        "percentage": 20
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": "http://localhost:5000/uploads/20251025160553659344_upload.png",
+    "allowSponsors": true,
+    "sponsorMinContribution": "10",
+    "sponsorCurrency": "PYUSD",
+    "requireStaking": true,
+    "stakingAmount": "0.01",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      3
+    ],
+    "judgingModel": "Open Voting",
+    "allowAIDelegation": true,
+    "contractAddress": "0x5c147353538146400dfc7127f3cb584523a61482",
+    "hackathonId": "1761383207394039",
+    "createdAt": "2025-10-25T16:07:05.382858",
+    "updatedAt": "2025-10-25T16:07:05.382869"
+  },
+  {
+    "id": 27,
+    "title": "Hourly Hackathon 2025",
+    "description": "<p>Join the most prestigious <strong>blockchain hackathon</strong> in the ecosystem. Hourly Hackathon 2025 brings together the brightest minds in <strong>Web3 development</strong> for an intensive 30-day building experience. This global event connects developers, designers, and entrepreneurs from around the world to build the future of decentralized technology.</p><p>Participants will have access to cutting-edge tools, expert mentorship, and a supportive community. From DeFi protocols to NFT marketplaces, gaming platforms to infrastructure solutions - this hackathon welcomes all innovative projects that push the boundaries of what's possible on Ethereum \ud83d\ude80</p><p><strong>\ud83d\ude80 Perfect for:</strong></p><ul><li>DeFi Protocol Development</li><li>NFT & Gaming Projects</li><li>Infrastructure & Tooling</li><li>Privacy & Security Solutions</li><li>Social & DAO Applications</li><li>Cross-chain Integration</li></ul><p>Whether you're a seasoned blockchain developer or just starting your Web3 journey, Hourly Hackathon 2025 provides the perfect platform to showcase your skills, learn from industry experts, and potentially launch your next big project. The hackathon features workshops, networking events, and direct access to leading protocols and VCs. \ud83d\ude0e</p>",
+    "image": "http://localhost:5000/uploads/20251025165940281086_upload.png",
+    "category": null,
+    "status": "scheduled",
+    "startDate": "2025-10-25T10:23:47.582Z",
+    "endDate": "2025-10-25T09:58:47.000Z",
+    "registrationDeadline": null,
+    "totalPrizePool": "20",
+    "maxParticipants": null,
+    "currentParticipants": 0,
+    "requirements": [],
+    "tags": [],
+    "isOnline": true,
+    "location": null,
+    "organizerId": null,
+    "createdBy": 1,
+    "prizeTiers": [
+      {
+        "name": "1st Place",
+        "amount": "10.00",
+        "percentage": 50
+      },
+      {
+        "name": "2nd Place",
+        "amount": "6.00",
+        "percentage": 30
+      },
+      {
+        "name": "3rd Place",
+        "amount": "4.00",
+        "percentage": 20
+      }
+    ],
+    "sponsors": null,
+    "logoUrl": "http://localhost:5000/uploads/20251025165934650715_upload.png",
+    "allowSponsors": true,
+    "sponsorMinContribution": "50",
+    "sponsorCurrency": "PYUSD",
+    "requireStaking": true,
+    "stakingAmount": "0.01",
+    "stakingCurrency": "ETH",
+    "selectedJudges": [
+      3
+    ],
+    "judgingModel": "Open Voting",
+    "allowAIDelegation": true,
+    "contractAddress": "0x8034154ded30a8e2560d8807be4a78bb89fb5993",
+    "hackathonId": "176138639615270",
+    "createdAt": "2025-10-25T17:00:32.668103",
+    "updatedAt": "2025-10-25T17:00:32.668121"
   }
 ]

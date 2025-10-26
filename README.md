@@ -4,6 +4,86 @@
 
 DeHack is a comprehensive decentralized hackathon platform built on Ethereum that enables organizers to create hackathons, participants to register and submit projects, judges to evaluate submissions, and winners to claim prizes. The platform uses a factory pattern with cloning for gas-efficient hackathon creation and implements multiple voting systems for fair judging.
 
+## Mainnet Deployment
+
+The DeHack platform is now live on Ethereum Mainnet! The platform has been successfully deployed and is actively being used for hackathon creation and management.
+
+### Deployed Contracts
+
+#### HackathonFactory
+**Address**: [`0x9825a0d5cd39a76bf0ab5d47c84b2f3ebd3c40d4`](https://etherscan.io/address/0x9825a0d5cd39a76bf0ab5d47c84b2f3ebd3c40d4)
+
+The main factory contract that creates new hackathon instances. This contract handles:
+- Hackathon creation with ETH to PYUSD conversion via Curve Finance
+- Global judge governance and validation
+- Voting system deployment and configuration
+
+#### Live Hackathons
+
+**Hackathon A (No Sponsor)**
+- **Address**: [`0x8034154DeD30a8E2560d8807BE4a78bb89fb5993`](https://etherscan.io/address/0x8034154DeD30a8E2560d8807BE4a78bb89fb5993)
+- **Creation Transaction**: [`0x916e32d32b8ba2e827d9e7f2047de6d5b8af909a8f9afad618023a3c4400861c`](https://etherscan.io/tx/0x916e32d32b8ba2e827d9e7f2047de6d5b8af909a8f9afad618023a3c4400861c)
+- **Prize Pool**: 20.09 PYUSD (converted from 0.005 ETH)
+- **Voting System**: Open Voting with Quadratic Voting enabled
+- **Status**: Active hackathon ready for participants
+
+**Hackathon B (With Sponsor)**
+- **Address**: [`0x437eA11B3B1a06Ed7EA04b8271365D355053Ba06`](https://etherscan.io/address/0x437eA11B3B1a06Ed7EA04b8271365D355053Ba06)
+- **Features**: Includes sponsor contributions and additional prize pools
+- **Status**: Active hackathon with enhanced prize structure
+
+### Transaction Analysis
+
+The hackathon creation transaction ([`0x916e32d32b8ba2e827d9e7f2047de6d5b8af909a8f9afad618023a3c4400861c`](https://etherscan.io/tx/0x916e32d32b8ba2e827d9e7f2047de6d5b8af909a8f9afad618023a3c4400861c)) demonstrates the platform's key features:
+
+1. **ETH to PYUSD Conversion**: 0.005 ETH was automatically converted to 20.09 PYUSD via Curve Finance
+2. **Voting System Deployment**: Open voting system with quadratic voting enabled
+3. **Judge Addition**: Global judge was added to the system
+4. **Hackathon Initialization**: Complete hackathon setup with prize distribution
+
+### How to Interact with Live Contracts
+
+#### Using the Factory
+```typescript
+// Factory contract address
+const factoryAddress = "0x9825a0d5cd39a76bf0ab5d47c84b2f3ebd3c40d4";
+
+// Create a new hackathon
+const tx = await hackathonFactory.createHackathon(
+    hackathonId,
+    startTime,
+    endTime,
+    minimumSponsorContribution,
+    stakeAmount,
+    prizeDistribution,
+    selectedJudges,
+    votingConfig,
+    { value: prizePoolInETH }
+);
+```
+
+#### Interacting with Live Hackathons
+```typescript
+// Hackathon A (No Sponsor)
+const hackathonA = "0x8034154DeD30a8E2560d8807BE4a78bb89fb5993";
+
+// Register as participant
+await hackathon.register({ value: stakeAmount });
+
+// Submit project
+await hackathon.submitProject("Project Name", "https://github.com/user/project");
+
+// Become sponsor
+await hackathon.becomeSponsor({ value: sponsorContribution });
+```
+
+### Network Information
+- **Network**: Ethereum Mainnet
+- **Chain ID**: 1
+- **PYUSD Token**: [`0x6c3ea9036406852006290770bedfcaba0e23a0e8`](https://etherscan.io/token/0x6c3ea9036406852006290770bedfcaba0e23a0e8)
+- **Curve Router**: Used for ETH to PYUSD conversion
+- **Gas Optimization**: Clone pattern reduces deployment costs
+
 ## System Architecture
 
 ### Core Components

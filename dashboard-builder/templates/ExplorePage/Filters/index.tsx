@@ -9,10 +9,8 @@ import Tooltip from "@/components/Tooltip";
 
 const categories = [
     { id: 1, name: "All categories" },
-    { id: 2, name: "UI design" },
-    { id: 3, name: "Illustration" },
-    { id: 4, name: "Branding" },
-    { id: 5, name: "Animation" },
+    { id: 2, name: "Online Hackathon" },
+    { id: 3, name: "IRL Hackathon" },
 ];
 
 const ratings = [
@@ -24,10 +22,8 @@ const ratings = [
 ];
 
 const sortOptions = [
-    { id: 1, name: "Join date" },
-    { id: 2, name: "Sales" },
-    { id: 3, name: "Newest" },
-    { id: 4, name: "Oldest" },
+    { id: 1, name: "Newest" },
+    { id: 2, name: "Oldest" },
 ];
 
 const Filters = ({}) => {
@@ -93,7 +89,7 @@ const Filters = ({}) => {
                     />
                     <div className="flex items-center h-12 gap-4">
                         <div className="flex items-center mr-auto">
-                            <div className="text-button">Featured creator</div>
+                            <div className="text-button">Featured organizer</div>
                             <Tooltip
                                 className="ml-1.5"
                                 content="Maximum 100 characters. No HTML or emoji allowed"

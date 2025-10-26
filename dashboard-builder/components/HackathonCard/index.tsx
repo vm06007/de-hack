@@ -34,6 +34,7 @@ const HackathonCard = ({ hackathon }: HackathonCardProps) => {
                         <Image
                             className="w-12 h-12 rounded-lg object-cover"
                             src={hackathon.image}
+                            fallbackType="icon"
                             width={48}
                             height={48}
                             alt={hackathon.title}

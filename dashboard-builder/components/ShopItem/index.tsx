@@ -46,6 +46,7 @@ const ShopItem = ({ className, value }: ShopItemProps) => {
                 <Image
                     className="w-full rounded-3xl object-cover"
                     src={value.image}
+                    fallbackType="banner"
                     fill
                     alt=""
                     sizes="(max-width: 767px) 100vw, (max-width: 1200px) 50vw, 33.333vw"

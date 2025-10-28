@@ -33,6 +33,9 @@ const Image = ({
         ? processImageUrl(src, fallbackType)
         : getSafeImageUrl(src, fallbackType);
 
+    // Filter out custom props that shouldn't be passed to NextImage
+    const { fallbackType: _, processUrl: __, ...nextImageProps } = props;
+
     if (error) {
         // Show the actual fallback image instead of a question mark
         const fallbackSrc = FALLBACK_IMAGES[fallbackType];
@@ -45,9 +48,6 @@ const Image = ({
             />
         );
     }
-
-    // Filter out custom props that shouldn't be passed to NextImage
-    const { fallbackType: _, processUrl: __, ...nextImageProps } = props;
 
     // Use custom loader for uploaded images, default loader for others
     const loader = processedSrc.includes('/uploads/') ? customLoader : undefined;

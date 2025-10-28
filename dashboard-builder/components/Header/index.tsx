@@ -110,7 +110,7 @@ const Header = ({
                                     Create Hackathon
                                 </Button>
                             )}
-                            <WalletConnect className="max-md:hidden" />
+                            <WalletConnect />
                         </>
                     )}
                     {/*<Notifications />
@@ -127,7 +127,7 @@ const Header = ({
                         >
                             {isLoading ? "Deploying..." : "Deploy Now"}
                         </Button>
-                        <WalletConnect className="max-md:hidden" />
+                        <WalletConnect />
                     </div>
                 )}
             </div>

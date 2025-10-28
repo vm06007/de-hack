@@ -2,7 +2,7 @@
 
 import { use, useState } from 'react';
 import { notFound } from 'next/navigation';
-import { useHackathon } from '@/src/hooks/useHackathons';
+import { useHackathon } from '@/hooks/useHackathons';
 import OrgDetailsPage from '@/templates/Organizations/OrgDetailsPage';
 
 interface PageProps {

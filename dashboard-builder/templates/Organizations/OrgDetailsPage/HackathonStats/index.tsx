@@ -1,7 +1,7 @@
 import Card from "@/components/Card";
 import Icon from "@/components/Icon";
 import PlusIcon from "@/components/PlusIcon";
-import { useHackathonStats } from "@/src/hooks/useHackathonStats";
+import { useHackathonStats } from "@/hooks/useHackathonStats";
 
 type HackathonStatsProps = {
     hackathon?: any;

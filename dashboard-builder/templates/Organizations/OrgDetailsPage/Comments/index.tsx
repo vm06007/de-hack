@@ -4,7 +4,7 @@ import Image from "@/components/Image";
 import Message from "@/components/Message";
 import Answer from "./Answer";
 
-import { useComments } from "@/src/hooks/useApiData";
+import { useComments } from "@/hooks/useApiData";
 
 const sortOptions = [
     { id: 1, name: "Newest" },

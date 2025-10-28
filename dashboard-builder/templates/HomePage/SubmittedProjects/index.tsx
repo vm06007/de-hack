@@ -10,7 +10,7 @@ import Icon from "@/components/Icon";
 import Select from "@/components/Select";
 import ProjectJudgingModal from "@/components/ProjectJudgingModal";
 
-import { useProjects, useHackathons } from "@/src/hooks/useApiData";
+import { useProjects, useHackathons } from "@/hooks/useApiData";
 
 import "swiper/css";
 import "swiper/css/navigation";

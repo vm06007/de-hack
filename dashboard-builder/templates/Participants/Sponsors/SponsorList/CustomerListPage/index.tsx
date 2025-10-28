@@ -9,7 +9,7 @@ import Dropdown from "@/components/Dropdown";
 import List from "./List";
 import { Sponsor } from "@/types/sponsor";
 import { useSelection } from "@/hooks/useSelection";
-import { useSponsorsList } from "@/src/hooks/useSponsorsService";
+import { useSponsorsList } from "@/hooks/useSponsorsService";
 
 const views = [
     { id: 1, name: "All Sponsors" },

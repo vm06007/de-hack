@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Hackathon } from '@/lib/api';
-import { apiClient } from '@/src/lib/api';
+import { apiClient } from '@/lib/api';
 import Image from '@/components/Image';
 
 interface HackathonDetailsProps {

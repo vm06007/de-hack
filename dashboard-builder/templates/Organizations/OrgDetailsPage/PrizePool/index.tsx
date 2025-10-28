@@ -2,7 +2,7 @@ import Card from "@/components/Card";
 import Icon from "@/components/Icon";
 import PlusIcon from "@/components/PlusIcon";
 import { NumericFormat } from "react-number-format";
-import { useSponsorsService } from "@/src/hooks/useSponsorsService";
+import { useSponsorsService } from "@/hooks/useSponsorsService";
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 
 type PrizePoolProps = {

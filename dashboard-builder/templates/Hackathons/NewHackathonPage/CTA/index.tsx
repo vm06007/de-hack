@@ -2,6 +2,7 @@ import { useState } from "react";
 import Card from "@/components/Card";
 import Select from "@/components/Select";
 import { depositStrategies } from "@/constants/depositStrategies";
+import CompactUnifiedBalance from "@/components/nexus/CompactUnifiedBalance";
 
 type CtaProps = {
     ethAmount?: number;
@@ -45,6 +46,9 @@ const Cta = ({ ethAmount = 0, totalPrize = "", judgingIncentivePercentage = 0 }:
                             </div>
                         )}
                     </div>
+
+                    {/* Unified Balance Widget */}
+                    <CompactUnifiedBalance requiredEthAmount={ethAmount} />
                 </div>
             </div>
         </Card>

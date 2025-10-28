@@ -10,7 +10,7 @@ import List from "./List";
 import { Hacker } from "@/types/hacker";
 import { useSelection } from "@/hooks/useSelection";
 
-import { useUsers } from "@/src/hooks/useUsers";
+import { useUsers } from "@/hooks/useUsers";
 
 const views = [
     { id: 1, name: "All Hackers" },

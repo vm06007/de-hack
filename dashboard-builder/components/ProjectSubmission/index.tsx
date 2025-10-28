@@ -5,8 +5,8 @@ import Editor from "@/components/Editor";
 import Button from "@/components/Button";
 import Image from "@/components/Image";
 import toast from "react-hot-toast";
-import { useSponsorsService } from "@/src/hooks/useSponsorsService";
-import { useSubmitProject, ProjectSubmissionData } from "@/src/hooks/useSubmitProject";
+import { useSponsorsService } from "@/hooks/useSponsorsService";
+import { useSubmitProject, ProjectSubmissionData } from "@/hooks/useSubmitProject";
 import CongratsScreen from "@/components/CongratsScreen";
 import { useAccount } from "wagmi";
 

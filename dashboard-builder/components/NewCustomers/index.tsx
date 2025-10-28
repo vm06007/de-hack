@@ -2,7 +2,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import Image from "@/components/Image";
 import Percentage from "@/components/Percentage";
-import { useHackers } from "@/src/hooks/useHackers";
+import { useHackers } from "@/hooks/useHackers";
 
 type NewCustomersProps = {
     className?: string;

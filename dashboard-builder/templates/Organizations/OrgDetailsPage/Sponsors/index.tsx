@@ -8,8 +8,8 @@ import Editor from "@/components/Editor";
 import Select from "@/components/Select";
 import Field from "@/components/Field";
 import PlusIcon from "@/components/PlusIcon";
-import { useBecomeSponsor } from "@/src/hooks/useBecomeSponsor";
-import { useSponsorsService } from "@/src/hooks/useSponsorsService";
+import { useBecomeSponsor } from "@/hooks/useBecomeSponsor";
+import { useSponsorsService } from "@/hooks/useSponsorsService";
 import { depositStrategies } from "@/constants/depositStrategies";
 import { getTokenAddress, getTokenDecimals, isSupportedToken } from "@/constants/tokenAddresses";
 

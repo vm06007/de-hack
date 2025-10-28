@@ -4,7 +4,7 @@ import Icon from "@/components/Icon";
 import Modal from "@/components/Modal";
 import Image from "@/components/Image";
 
-import { useMessages } from "@/src/hooks/useMessages";
+import { useMessages } from "@/hooks/useMessages";
 
 const Messages = ({}) => {
     const [isOpen, setIsOpen] = useState(false);

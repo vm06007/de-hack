@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Tooltip from "@/components/Tooltip";
 import Image from "@/components/Image";
-import { useCompatibility } from "@/src/hooks/useCompatibility";
+import { useCompatibility } from "@/hooks/useCompatibility";
 
 type CompatibilityProps = {
     classItemName?: string;

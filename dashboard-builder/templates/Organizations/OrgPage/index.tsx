@@ -9,7 +9,7 @@ import ShopItem from "@/components/ShopItem";
 // import Spinner from "@/components/Spinner";
 import Profile from "./Profile";
 
-import { useHackathons } from "@/src/hooks/useHackathons";
+import { useHackathons } from "@/hooks/useHackathons";
 
 const types = [
     { id: 1, name: "Online Hackathons" },

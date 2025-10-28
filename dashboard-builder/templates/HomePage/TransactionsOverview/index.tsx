@@ -8,7 +8,7 @@ import Image from "@/components/Image";
 import Button from "@/components/Button";
 import Icon from "@/components/Icon";
 
-import { useTransactions } from "@/src/hooks/useApiData";
+import { useTransactions } from "@/hooks/useApiData";
 
 import "swiper/css";
 import "swiper/css/navigation";

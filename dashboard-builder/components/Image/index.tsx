@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { default as NextImage, ImageProps } from "next/image";
-import { getSafeImageUrl, processImageUrl, FALLBACK_IMAGES } from "@/src/lib/imageUtils";
+import { getSafeImageUrl, processImageUrl, FALLBACK_IMAGES } from "@/lib/imageUtils";
 
 interface SafeImageProps extends Omit<ImageProps, 'src'> {
     src: string | null | undefined;

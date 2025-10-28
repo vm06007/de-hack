@@ -7,7 +7,7 @@ import Card from "@/components/Card";
 import Image from "@/components/Image";
 import Button from "@/components/Button";
 
-import { useOverview } from "@/src/hooks/useOverview";
+import { useOverview } from "@/hooks/useOverview";
 
 import "swiper/css";
 import "swiper/css/navigation";

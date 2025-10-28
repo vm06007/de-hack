@@ -4,7 +4,7 @@ import Modal from "@/components/Modal";
 import Image from "@/components/Image";
 import Button from "@/components/Button";
 
-import { useHackathons } from "@/src/hooks/useApiData";
+import { useHackathons } from "@/hooks/useApiData";
 
 type UnpublishItemsProps = {
     items?: number[];

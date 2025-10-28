@@ -15,8 +15,8 @@ import Highlights from "./Highlights";
 import CTA from "./CTA";
 import Demos from "./Demos";
 import HackathonTiming from "./HackathonTiming";
-import { useCreateHackathon, VotingConfig } from "@/src/hooks/useCreateHackathon";
-import { useEthPrice, useUsdToEth } from "@/src/hooks/useEthPrice";
+import { useCreateHackathon, VotingConfig } from "@/hooks/useCreateHackathon";
+import { useEthPrice, useUsdToEth } from "@/hooks/useEthPrice";
 import { getTokenDecimals } from "@/constants/tokenAddresses";
 import { parseUnits } from "viem";
 

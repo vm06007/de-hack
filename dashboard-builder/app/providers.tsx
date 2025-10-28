@@ -6,7 +6,9 @@ import { WagmiProvider } from 'wagmi';
 import { ConnectKitProvider } from 'connectkit';
 import { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
-import { config } from '@/src/lib/wagmi';
+import { config } from '@/lib/wagmi';
+import { NexusProvider } from '@/provider/NexusProvider';
+import { useAccount } from 'wagmi';
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
     const [queryClient] = useState(() => new QueryClient({
@@ -32,7 +34,9 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
                     }}
                 >
                     <ThemeProvider defaultTheme="dark" disableTransitionOnChange>
-                        {children}
+                        <NexusWrapper>
+                            {children}
+                        </NexusWrapper>
                         <Toaster
                             position="top-right"
                             toastOptions={{
@@ -48,6 +52,15 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
                 </ConnectKitProvider>
             </QueryClientProvider>
         </WagmiProvider>
+    );
+};
+
+const NexusWrapper = ({ children }: { children: React.ReactNode }) => {
+    const { isConnected } = useAccount();
+    return (
+        <NexusProvider isConnected={isConnected}>
+            {children}
+        </NexusProvider>
     );
 };
 

@@ -1,6 +1,6 @@
 import { useWriteContract, useWaitForTransactionReceipt, useAccount } from "wagmi";
 import toast from "react-hot-toast";
-import { DEHACK_PLATFORM_ABI, DEHACK_PLATFORM_ADDRESS } from "@/src/lib/wagmi";
+import { DEHACK_PLATFORM_ABI, DEHACK_PLATFORM_ADDRESS } from "@/lib/wagmi";
 import { parseEther } from "viem";
 import { useState, useRef, useEffect } from "react";
 

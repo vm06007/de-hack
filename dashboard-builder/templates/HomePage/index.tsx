@@ -7,7 +7,7 @@ import SubmittedProjects from "./SubmittedProjects";
 import GetMoreHackers from "./GetMoreHackers";
 // import Comments from "./Comments";
 
-import { useHackathons } from "@/src/hooks/useApiData";
+import { useHackathons } from "@/hooks/useApiData";
 
 const HomePage = () => {
     const { data: hackathons, loading } = useHackathons();

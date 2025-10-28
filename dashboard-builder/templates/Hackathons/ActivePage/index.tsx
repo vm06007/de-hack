@@ -10,7 +10,7 @@ import Grid from "./Grid";
 import { HackathonDraft } from "@/types/hackathon";
 import { useSelection } from "@/hooks/useSelection";
 
-import { useHackathons } from "@/src/hooks/useApiData";
+import { useHackathons } from "@/hooks/useApiData";
 
 const views = [
     { id: 1, name: "grid" },

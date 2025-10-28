@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import millify from "millify";
 import { NumericFormat } from "react-number-format";
-import { useCharts } from "@/src/hooks/useApiData";
+import { useCharts } from "@/hooks/useApiData";
 
 const Balance = ({}) => {
     const { data: chartData, loading, error } = useCharts();

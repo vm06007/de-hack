@@ -1,7 +1,7 @@
 import Button from "@/components/Button";
 import ShopItem from "@/components/ShopItem";
 
-import { useHackathons } from "@/src/hooks/useHackathons";
+import { useHackathons } from "@/hooks/useHackathons";
 
 const Populars = ({}) => {
     const { data: hackathons, loading, error } = useHackathons();
@@ -15,14 +15,14 @@ const Populars = ({}) => {
     }
 
     // Filter for specific hackathons (24, 25, 26) - the most recent ones
-    const targetHackathons = [24, 25, 26];
-    const filteredHackathons = Array.isArray(hackathons) 
+    const targetHackathons = [17, 18, 19];
+    const filteredHackathons = Array.isArray(hackathons)
         ? hackathons.filter(hackathon => targetHackathons.includes(hackathon.id))
         : [];
 
     // If we don't have the target hackathons, fall back to the first 3 available
-    const displayHackathons = filteredHackathons.length >= 3 
-        ? filteredHackathons 
+    const displayHackathons = filteredHackathons.length >= 3
+        ? filteredHackathons
         : (Array.isArray(hackathons) ? hackathons.slice(0, 3) : []);
 
     // Debug logging

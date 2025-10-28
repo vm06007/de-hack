@@ -10,7 +10,7 @@ import List from "./List";
 import { HackathonDraft } from "@/types/hackathon";
 import { useSelection } from "@/hooks/useSelection";
 
-import { useHackathons } from "@/src/hooks/useApiData";
+import { useHackathons } from "@/hooks/useApiData";
 
 const timeCreateOptions = [
     { id: 1, name: "Newest first" },

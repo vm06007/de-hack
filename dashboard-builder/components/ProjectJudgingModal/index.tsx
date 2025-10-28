@@ -4,8 +4,8 @@ import Button from "@/components/Button";
 import Image from "@/components/Image";
 import Icon from "@/components/Icon";
 import { useAccount } from "wagmi";
-import { useDelegateToAgent } from "@/src/hooks/useDelegateToAgent";
-import { useScoreSubmission } from "@/src/hooks/useScoreSubmission";
+import { useDelegateToAgent } from "@/hooks/useDelegateToAgent";
+import { useScoreSubmission } from "@/hooks/useScoreSubmission";
 
 interface ProjectJudgingModalProps {
     open: boolean;
@@ -74,7 +74,7 @@ const ProjectJudgingModal = ({
     };
 
     // Default hackathon contract address
-    const HACKATHON_CONTRACT_ADDRESS = "0x8034154DeD30a8E2560d8807BE4a78bb89fb5993";
+    const HACKATHON_CONTRACT_ADDRESS = "0x49Decc04dC3d8b6fBd37A54E9209404bB1B01e65";
     const { delegateToAgent, isLoading: isDelegatingToAgent } = useDelegateToAgent(
         HACKATHON_CONTRACT_ADDRESS
     );

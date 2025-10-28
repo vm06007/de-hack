@@ -7,8 +7,9 @@ import Select from "@/components/Select";
 // import Spinner from "@/components/Spinner";
 import Filters from "./Filters";
 import Creator from "./Creator";
+import HomepageBalanceWidget from "@/components/nexus/HomepageBalanceWidget";
 
-import { useOrganizations } from "@/src/hooks/useApiData";
+import { useOrganizations } from "@/hooks/useApiData";
 
 const types = [
     { id: 1, name: "All" },
@@ -47,6 +48,9 @@ const ShopPage = () => {
                         world.
                     </div>
                 </div>
+                
+                {/* Unified Balance Widget */}
+                <HomepageBalanceWidget />
                 <div className="flex gap-3 mb-10 max-lg:block max-lg:mb-6">
                     <Tabs
                         className="mr-auto max-lg:mr-0 max-md:gap-0 max-md:-mx-3 max-md:overflow-x-auto max-md:scrollbar-none max-md:before:shrink-0 max-md:before:w-3 max-md:after:shrink-0 max-md:after:w-3"

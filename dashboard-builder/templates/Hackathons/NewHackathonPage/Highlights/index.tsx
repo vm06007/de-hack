@@ -4,7 +4,7 @@ import Field from "@/components/Field";
 import Icon from "@/components/Icon";
 import Button from "@/components/Button";
 import Select from "@/components/Select";
-import { useEthPrice, useUsdToEth, formatEthAmount, formatUsdAmount } from "@/src/hooks/useEthPrice";
+import { useEthPrice, useUsdToEth, formatEthAmount, formatUsdAmount } from "@/hooks/useEthPrice";
 
 type PrizeDistribution = {
     id: number;

@@ -4,7 +4,7 @@ import { RemoveScroll } from "react-remove-scroll";
 import NavLink from "@/components/NavLink";
 import Button from "@/components/Button";
 import Dropdown from "./Dropdown";
-import { useIsJudge } from "@/src/hooks/useIsJudge";
+import { useIsJudge } from "@/hooks/useIsJudge";
 
 import { getNavigation } from "@/contstants/navigation";
 

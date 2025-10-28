@@ -10,7 +10,7 @@ import List from "./List";
 import { Judge } from "@/types/judge";
 import { useSelection } from "@/hooks/useSelection";
 
-import { useJudges } from "@/src/hooks/useApiData";
+import { useJudges } from "@/hooks/useApiData";
 
 const JudgeListPage = () => {
     const [search, setSearch] = useState("");

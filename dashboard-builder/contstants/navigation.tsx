@@ -62,6 +62,11 @@ export const baseNavigation = [
         icon: "dashboard",
         href: "/judging",
     },
+    {
+        title: "Nexus Integration",
+        icon: "wallet",
+        href: "/nexus",
+    },
 ];
 
 // Judge-only navigation items

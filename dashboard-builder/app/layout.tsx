@@ -4,31 +4,31 @@ import localFont from "next/font/local";
 import Providers from "./providers";
 import "./globals.css";
 
-const interDisplay = localFont({
-    src: [
-        {
-            path: "../public/fonts/InterDisplay-Light.woff2",
-            weight: "300",
-        },
-        {
-            path: "../public/fonts/InterDisplay-Regular.woff2",
-            weight: "400",
-        },
-        {
-            path: "../public/fonts/InterDisplay-Medium.woff2",
-            weight: "500",
-        },
-        {
-            path: "../public/fonts/InterDisplay-SemiBold.woff2",
-            weight: "600",
-        },
-        {
-            path: "../public/fonts/InterDisplay-Bold.woff2",
-            weight: "700",
-        },
-    ],
-    variable: "--font-inter-display",
-});
+// const interDisplay = localFont({
+//     src: [
+//         {
+//             path: "./fonts/InterDisplay-Light.woff2",
+//             weight: "300",
+//         },
+//         {
+//             path: "./fonts/InterDisplay-Regular.woff2",
+//             weight: "400",
+//         },
+//         {
+//             path: "./fonts/InterDisplay-Medium.woff2",
+//             weight: "500",
+//         },
+//         {
+//             path: "./fonts/InterDisplay-SemiBold.woff2",
+//             weight: "600",
+//         },
+//         {
+//             path: "./fonts/InterDisplay-Bold.woff2",
+//             weight: "700",
+//         },
+//     ],
+//     variable: "--font-inter-display",
+// });
 
 export const metadata: Metadata = {
     title: "DeHack - Decentralized Hackathon Platform",
@@ -130,7 +130,7 @@ export default function RootLayout({
                 />
             </head>
             <body
-                className={`${interDisplay.variable} bg-b-surface1 font-inter text-body-1 text-t-primary antialiased`}
+                className="bg-b-surface1 font-inter text-body-1 text-t-primary antialiased"
             >
                 <Providers>{children}</Providers>
             </body>

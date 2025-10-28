@@ -1,3 +1,4 @@
+"use client";
 import Nexus from "@/components/nexus/Nexus";
 import { useAccount } from "wagmi";
 
